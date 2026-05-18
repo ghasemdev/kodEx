@@ -1,15 +1,18 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version change: 1.3.0 → 1.4.0
-Type of bump: MINOR (SSE async delivery, exam state machine, CORS, library links)
+Version change: 1.4.0 → 1.5.0
+Type of bump: MINOR (unified API response envelope, bilingual error messages, DELETE behavior change)
 
 Modified principles:
+  - Principle IX (API Design Conventions): replaced flat error schema + "no envelope" rule
+    with a unified success/error envelope; changed DELETE from 204 to 200 + data:null;
+    added bilingual userMessage (en/fa) in errors; moved pagination into meta.pagination
+
+Previous version notes (1.3.0 → 1.4.0):
   - Principle V (Role-Based Domain Model): added Exam State Machine (DRAFT/PUBLISHED/CLOSED)
   - Principle IX (API Design Conventions): added SSE async result delivery spec
   - Security & Execution Constraints: added CORS policy
-
-Modified sections:
   - Technology Stack: all library names now link to GitHub / official docs
 
 Remaining TODOs:
@@ -241,20 +244,71 @@ All backend HTTP endpoints MUST follow these conventions:
   - `POST` → 201 Created (resource created) or 200 OK (action without new resource)
   - `GET` → 200 OK
   - `PUT` / `PATCH` → 200 OK
-  - `DELETE` → 204 No Content
+  - `DELETE` → **200 OK** with `data: null` (see envelope below — 204 is not used)
   - Client errors → 4xx; server errors → 5xx
-- **Error response schema** (all errors, including validation failures):
-  ```json
-  {
-    "code":    "SNAKE_CASE_ERROR_CODE",
-    "message": "human-readable description",
-    "traceId": "uuid-correlation-id"
+
+#### Unified Response Envelope
+
+Every API response — success **and** error — MUST be wrapped in the following envelope.
+The `data` field carries the resource (or `null` for DELETE / actions with no return value).
+The `meta` field is always present and carries correlation and service information.
+
+**Success response** (all 2xx responses):
+```json
+{
+  "data": <resource or list or null>,
+  "meta": {
+    "requestId": "uuid-v4",
+    "timestamp": "2026-05-19T10:00:00Z",
+    "service": "kodex-api",
+    "serviceVersion": "1.0.0"
   }
-  ```
-  `traceId` MUST match the correlation ID in the structured log entry (see Principle VI).
-- **Pagination**: cursor-based for lists > 100 items. Query params: `cursor`, `limit`.
-  Response includes `nextCursor: String?`.
-- **No envelope wrapping** for success responses — return the resource or list directly.
+}
+```
+
+**Error response** (all 4xx and 5xx responses):
+```json
+{
+  "data": {
+    "code": "SNAKE_CASE_ERROR_CODE",
+    "message": "Technical developer-facing description",
+    "userMessage": {
+      "en": "User-friendly English message",
+      "fa": "پیام برای کاربر به فارسی"
+    }
+  },
+  "meta": {
+    "requestId": "uuid-v4",
+    "timestamp": "2026-05-19T10:00:00Z",
+    "service": "kodex-api",
+    "serviceVersion": "1.0.0"
+  }
+}
+```
+
+`requestId` MUST match the correlation ID in the structured log entry for the same request
+(see Principle VI). `message` is for developers/logs; `userMessage` is for UI display in both
+supported languages (English and Persian).
+
+**Paginated list response** — pagination metadata lives inside `meta.pagination`:
+```json
+{
+  "data": [...],
+  "meta": {
+    "requestId": "uuid-v4",
+    "timestamp": "2026-05-19T10:00:00Z",
+    "service": "kodex-api",
+    "serviceVersion": "1.0.0",
+    "pagination": {
+      "nextCursor": "opaque-cursor-string",
+      "hasMore": true
+    }
+  }
+}
+```
+
+Pagination uses **cursor-based** strategy for lists > 100 items. Query params: `cursor`, `limit`.
+`pagination` key is omitted from `meta` when the response is not a paginated list.
 
 #### Async Result Delivery
 
@@ -431,4 +485,4 @@ A feature plan that skips or voids this gate MUST NOT be merged.
 - MINOR: Adding a new principle or materially expanding guidance.
 - PATCH: Clarifications, wording fixes, non-semantic refinements.
 
-**Version**: 1.4.0 | **Ratified**: 2026-05-17 | **Last Amended**: 2026-05-18
+**Version**: 1.5.0 | **Ratified**: 2026-05-17 | **Last Amended**: 2026-05-19

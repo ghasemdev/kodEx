@@ -25,19 +25,29 @@ the database or Redis in this version — latency-free liveness check only.
 
 ```json
 {
-  "status": "UP",
-  "service": "kodex-api",
-  "version": "0.1.0-SNAPSHOT",
-  "startedAt": "2026-05-18T10:00:00Z"
+  "data": {
+    "status": "UP",
+    "service": "kodex-api",
+    "version": "0.1.0-SNAPSHOT",
+    "startedAt": "2026-05-18T10:00:00Z"
+  },
+  "meta": {
+    "requestId": "550e8400-e29b-41d4-a716-446655440000",
+    "timestamp": "2026-05-18T10:00:00Z",
+    "service": "kodex-api",
+    "serviceVersion": "0.1.0-SNAPSHOT"
+  }
 }
 ```
 
-| Field | Type | Notes |
+| Field (inside `data`) | Type | Notes |
 |---|---|---|
 | `status` | `"UP"` \| `"DOWN"` | `"UP"` when endpoint responds normally |
 | `service` | String | Fixed: `"kodex-api"` |
 | `version` | String | Gradle project version injected at build time |
 | `startedAt` | ISO-8601 UTC | JVM process start time |
+
+`meta.requestId` matches the correlation ID in the structured log entry for the same request.
 
 #### Response — 503 Service Unavailable
 
@@ -46,10 +56,20 @@ required dependency (DB, Redis) is unreachable and the service cannot serve traf
 
 ```json
 {
-  "status": "DOWN",
-  "code": "DEPENDENCY_UNAVAILABLE",
-  "message": "One or more required dependencies are unavailable.",
-  "traceId": "550e8400-e29b-41d4-a716-446655440000"
+  "data": {
+    "code": "DEPENDENCY_UNAVAILABLE",
+    "message": "One or more required dependencies are unavailable.",
+    "userMessage": {
+      "en": "The service is temporarily unavailable. Please try again shortly.",
+      "fa": "سرویس موقتاً در دسترس نیست. لطفاً کمی دیگر تلاش کنید."
+    }
+  },
+  "meta": {
+    "requestId": "550e8400-e29b-41d4-a716-446655440000",
+    "timestamp": "2026-05-18T10:00:05Z",
+    "service": "kodex-api",
+    "serviceVersion": "0.1.0-SNAPSHOT"
+  }
 }
 ```
 
@@ -66,18 +86,30 @@ dependency-level detail: DB pool state, Redis ping latency, JVM memory, etc.
 
 ## Standard Error Response
 
-All errors (4xx, 5xx) across the entire API follow this schema (Constitution §IX):
+All errors (4xx, 5xx) across the entire API follow the unified envelope schema (Constitution §IX):
 
 ```json
 {
-  "code": "SNAKE_CASE_ERROR_CODE",
-  "message": "Human-readable description of what went wrong.",
-  "traceId": "uuid-v4-correlation-id"
+  "data": {
+    "code": "SNAKE_CASE_ERROR_CODE",
+    "message": "Technical developer-facing description of what went wrong.",
+    "userMessage": {
+      "en": "User-friendly English message.",
+      "fa": "پیام برای کاربر به فارسی."
+    }
+  },
+  "meta": {
+    "requestId": "uuid-v4-correlation-id",
+    "timestamp": "2026-05-19T10:00:00Z",
+    "service": "kodex-api",
+    "serviceVersion": "0.1.0-SNAPSHOT"
+  }
 }
 ```
 
-`traceId` matches the `correlationId` field in the structured JSON log entry for the
+`meta.requestId` matches the `requestId` field in the structured JSON log entry for the
 same request, enabling log-to-response tracing in production.
+`data.message` is developer-facing (safe to log). `data.userMessage` is for UI display.
 
 ### Standard Error Codes (skeleton)
 
