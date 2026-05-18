@@ -130,12 +130,15 @@ get_highest_from_branches() {
 }
 
 # Extract the highest sequential feature number from a list of ref names (one per line).
+# Handles Git Flow prefixes such as "feature/", "bugfix/", "hotfix/" transparently.
 _extract_highest_number() {
     local highest=0
     while IFS= read -r name; do
         [ -z "$name" ] && continue
-        if echo "$name" | grep -Eq '^[0-9]{3,}-' && ! echo "$name" | grep -Eq '^[0-9]{8}-[0-9]{6}-'; then
-            number=$(echo "$name" | grep -Eo '^[0-9]+' || echo "0")
+        # Strip Git Flow type prefix (e.g., "feature/", "bugfix/") before number matching
+        local base="${name##*/}"
+        if echo "$base" | grep -Eq '^[0-9]{3,}-' && ! echo "$base" | grep -Eq '^[0-9]{8}-[0-9]{6}-'; then
+            number=$(echo "$base" | grep -Eo '^[0-9]+' || echo "0")
             number=$((10#$number))
             if [ "$number" -gt "$highest" ]; then
                 highest=$number
@@ -352,6 +355,18 @@ else
 
         FEATURE_NUM=$(printf "%03d" "$((10#$BRANCH_NUMBER))")
         BRANCH_NAME="${FEATURE_NUM}-${BRANCH_SUFFIX}"
+    fi
+fi
+
+# Apply Git Flow branch type prefix from config (e.g., "feature/")
+# Skipped when GIT_BRANCH_NAME override is active — caller controls the exact name.
+if [ -z "${GIT_BRANCH_NAME:-}" ]; then
+    _git_cfg="$REPO_ROOT/.specify/extensions/git/git-config.yml"
+    if [ -f "$_git_cfg" ]; then
+        _bp=$(grep -E '^branch_prefix:' "$_git_cfg" | sed 's/^branch_prefix:[[:space:]]*//' | tr -d "\"'" | head -1)
+        if [ -n "$_bp" ] && [ "$_bp" != "null" ]; then
+            BRANCH_NAME="${_bp}${BRANCH_NAME}"
+        fi
     fi
 fi
 

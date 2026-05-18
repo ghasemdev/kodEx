@@ -1,62 +1,121 @@
 # Git Branching Workflow Extension Configuration
-# Copied to .specify/extensions/git/git-config.yml on install
+
+# ── Git Flow ───────────────────────────────────────────────────────────────
+# Branch model for the project.
+#
+#   main      → always reflects production-ready code (never commit directly)
+#   develop   → integration branch; features merge here; branch new features from here
+#   feature/  → new work (001-short-name format)
+#   bugfix/   → non-urgent fixes on develop
+#   release/  → release preparation branched from develop, merged into main + develop
+#   hotfix/   → urgent production fixes branched from main, merged into main + develop
+#
+# Merge rules:
+#   feature/* → develop  (via PR)
+#   bugfix/*  → develop  (via PR)
+#   release/* → main + develop  (via PR)
+#   hotfix/*  → main + develop  (via PR)
+
+git_flow:
+  stable: main
+  integration: develop
+  prefixes:
+    feature: "feature/"
+    bugfix: "bugfix/"
+    release: "release/"
+    hotfix: "hotfix/"
 
 # Branch numbering strategy: "sequential" (001, 002, ...) or "timestamp" (YYYYMMDD-HHMMSS)
 branch_numbering: sequential
 
-# Commit message used by `git commit` during repository initialization
-init_commit_message: "[Spec Kit] Initial commit"
+# Prefix prepended to every new feature branch created by /speckit-git-feature.
+# Must match git_flow.prefixes.feature above.
+branch_prefix: "feature/"
 
-# Auto-commit before/after core commands.
-# Set "default" to enable for all commands, then override per-command.
-# Each key can be true/false. Message is customizable per-command.
+# ── Conventional Commits ───────────────────────────────────────────────────
+# Format: <type>(<scope>): <short description>
+#
+# Types:
+#   feat      → new feature visible to users
+#   fix       → bug fix visible to users
+#   docs      → documentation / spec artefacts only
+#   refactor  → code change with no behaviour change
+#   test      → adding or fixing tests
+#   chore     → build, deps, tooling, config
+#   ci        → CI/CD pipeline changes
+#   perf      → performance improvement
+#
+# Scopes (match module names):
+#   auth | exam | submission | sandbox | webapp | shared | server | infra | spec | plan | tasks
+#
+# Examples:
+#   feat(auth): add JWT refresh token rotation
+#   fix(sandbox): handle container OOM timeout correctly
+#   docs(spec): clarify exam state machine transitions
+#   chore(deps): bump Ktor to 3.1.0
+#   test(submission): add Testcontainers integration for grading pipeline
+#
+# Breaking changes → append "!" after type/scope: feat(auth)!: remove legacy token endpoint
+# Body / footer: free-form after a blank line, reference issues as "Closes #123"
+
+# Commit message used during repository initialisation
+init_commit_message: "chore: initial project setup from Specify template"
+
+# ── Auto-commit ────────────────────────────────────────────────────────────
+# Automatically stage and commit after/before Spec Kit commands.
+# Messages follow Conventional Commits defined above.
+
 auto_commit:
   default: false
+
+  # ── before hooks (checkpoint saves) ──
   before_clarify:
     enabled: false
-    message: "[Spec Kit] Save progress before clarification"
+    message: "docs(spec): wip — checkpoint before clarification"
   before_plan:
-    enabled: false
-    message: "[Spec Kit] Save progress before planning"
+    enabled: true
+    message: "docs(spec): checkpoint before planning"
   before_tasks:
     enabled: false
-    message: "[Spec Kit] Save progress before task generation"
+    message: "docs(plan): checkpoint before task generation"
   before_implement:
     enabled: false
-    message: "[Spec Kit] Save progress before implementation"
+    message: "docs(tasks): checkpoint before implementation"
   before_checklist:
     enabled: false
-    message: "[Spec Kit] Save progress before checklist"
+    message: "docs(spec): checkpoint before checklist"
   before_analyze:
     enabled: false
-    message: "[Spec Kit] Save progress before analysis"
+    message: "docs(spec): checkpoint before analysis"
   before_taskstoissues:
     enabled: false
-    message: "[Spec Kit] Save progress before issue sync"
+    message: "docs(tasks): checkpoint before issue sync"
+
+  # ── after hooks (persist completed artefacts) ──
   after_constitution:
-    enabled: false
-    message: "[Spec Kit] Add project constitution"
+    enabled: true
+    message: "docs(constitution): update project constitution"
   after_specify:
-    enabled: false
-    message: "[Spec Kit] Add specification"
+    enabled: true
+    message: "docs(spec): add feature specification"
   after_clarify:
-    enabled: false
-    message: "[Spec Kit] Clarify specification"
+    enabled: true
+    message: "docs(spec): clarify feature specification"
   after_plan:
-    enabled: false
-    message: "[Spec Kit] Add implementation plan"
+    enabled: true
+    message: "docs(plan): add implementation plan"
   after_tasks:
-    enabled: false
-    message: "[Spec Kit] Add tasks"
+    enabled: true
+    message: "docs(tasks): add task breakdown"
   after_implement:
-    enabled: false
-    message: "[Spec Kit] Implementation progress"
+    enabled: true
+    message: "feat: implement feature — wip progress"
   after_checklist:
-    enabled: false
-    message: "[Spec Kit] Add checklist"
+    enabled: true
+    message: "docs(spec): add feature checklist"
   after_analyze:
-    enabled: false
-    message: "[Spec Kit] Add analysis report"
+    enabled: true
+    message: "docs(analysis): add analysis report"
   after_taskstoissues:
     enabled: false
-    message: "[Spec Kit] Sync tasks to issues"
+    message: "chore(issues): sync tasks to GitHub issues"
