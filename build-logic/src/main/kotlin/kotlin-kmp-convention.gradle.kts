@@ -13,6 +13,7 @@ kotlin {
             compileTaskProvider.configure {
                 compilerOptions {
                     jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+                    optIn.add("kotlin.time.ExperimentalTime")
                 }
             }
         }

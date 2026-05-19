@@ -11,6 +11,7 @@ kotlin {
     jvmToolchain(25)
     compilerOptions {
         languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1)
+        optIn.add("kotlin.time.ExperimentalTime")
     }
 }
 
