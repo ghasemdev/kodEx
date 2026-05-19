@@ -29,6 +29,16 @@ optimizer:
   auto_generate_synthesis: false
   auto_index_on_doc_change: false
   auto_index_on_code_change: false
+project_profile:
+  language: kotlin
+  framework: ktor
+  shared_memory:
+    enabled: true
+    sync_channels:
+      - global
+      - kotlin
+      - ktor
+
 indexing:
   include:
     memory:
