@@ -8,9 +8,9 @@ The repository MUST follow this top-level structure:
 root/
 ├── core/
 │   ├── :core            # Cross-cutting JVM utilities: EnvConfig, LoggingConfig (MDC)
-│   └── :core:data       # KMP shared models & API contracts — used by server AND all clients
+│   └── :core:models       # KMP shared models & API contracts — used by server AND all clients
 ├── app/
-│   ├── shared/          # KMP client-shared layer — re-exports core:data; client-only models
+│   ├── shared/          # KMP client-shared layer — re-exports core:models; client-only models
 │   └── webApp/          # Kotlin/JS + Kilua frontend (v1 only client)
 ├── server/              # Main backend API service (Ktor JVM)
 │   ├── :app             # Composition root — DI wiring (Koin), Ktor engine, plugin setup
@@ -23,13 +23,13 @@ root/
 ```
 
 **Module ownership rules:**
-- `core:data` is the ONLY module that defines shared domain models, enums, and API contract
-  types. `app:shared` and `server:domain` MUST import from `core:data`, not from each other.
+- `core:models` is the ONLY module that defines shared domain models, enums, and API contract
+  types. `app:shared` and `server:domain` MUST import from `core:models`, not from each other.
 - `app:shared` is the client-side shared layer. It may later be split into
   `app:shared:ui`, `app:shared:data`, `app:shared:domain` as the frontend grows.
-- Future client modules (`androidApp/`, `iosApp/`, `desktopApp/`) depend on `core:data`
+- Future client modules (`androidApp/`, `iosApp/`, `desktopApp/`) depend on `core:models`
   directly and/or on `app:shared`.
-- `core:data` MUST remain KMP-compatible at all times (no JVM-only imports).
+- `core:models` MUST remain KMP-compatible at all times (no JVM-only imports).
 
 ## Backend Architecture — Clean Architecture
 

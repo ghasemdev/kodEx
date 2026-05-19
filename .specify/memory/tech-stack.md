@@ -41,18 +41,18 @@ libraries without a Kotlin-native equivalent (e.g., HikariCP, Logback, Flyway, a
 | Client-side logging | [**Napier**](https://github.com/AAkira/Napier) (KMP-native, browser console sink in JS) |
 | Client-side storage | [`kotlinx-browser`](https://github.com/Kotlin/kotlinx-browser) LocalStorage wrappers |
 
-## Shared Data Module (`core/data/`) — KMP
+## Shared Data Module (`core/models/`) — KMP
 
-`core:data` is the **cross-server-and-client KMP module**. It MUST contain all domain models
+`core:models` is the **cross-server-and-client KMP module**. It MUST contain all domain models
 (data classes, enums, sealed classes), validation logic, and API contract types used by
 **both the backend and any client** (web, Android, iOS, desktop).
 This module MUST NOT depend on any platform-specific library. Logging is NOT permitted here.
 
-**Dependency rule**: `server:domain` → `core:data` ← `app:shared` ← `app:webApp`
+**Dependency rule**: `server:domain` → `core:models` ← `app:shared` ← `app:webApp`
 
 ## Client Shared Module (`app/shared/`) — KMP
 
-`app:shared` is the **client-side shared layer**. It re-exports `core:data` via `api()` and
+`app:shared` is the **client-side shared layer**. It re-exports `core:models` via `api()` and
 adds any client-specific shared models or logic. It MUST NOT be imported by server modules.
 It may later be split into `app:shared:ui`, `app:shared:data`, `app:shared:domain`.
 

@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":server:domain"))
+    implementation(projects.server.domain)
     implementation(libs.bundles.exposed)
     implementation(libs.bundles.database)
     implementation(libs.lettuce.core)

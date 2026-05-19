@@ -21,7 +21,7 @@ rootProject.name = "kodex"
 
 include(
     ":core",
-    ":core:data",
+    ":core:models",
     ":app:shared",
     ":app:webApp",
     ":server:app",

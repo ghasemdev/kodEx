@@ -1,4 +1,4 @@
-package dev.kodex.core.data.health
+package dev.kodex.core.models.health
 
 import kotlinx.serialization.Serializable
 import kotlin.time.Instant

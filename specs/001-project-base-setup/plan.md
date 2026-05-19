@@ -32,7 +32,7 @@ correct dependency graph and a passing test suite.
 **Storage**: PostgreSQL + Redis — both in Docker Compose for local dev.
   Server skeleton does NOT connect to either DB (no business logic in this feature).
 
-**Testing**: Kotest for all JVM modules; kotlin.test for core:data and app:shared (KMP commonTest); Kover for coverage
+**Testing**: Kotest for all JVM modules; kotlin.test for core:models and app:shared (KMP commonTest); Kover for coverage
   reporting at **90% minimum threshold**; Testcontainers wired as a test dependency.
 
 **Target Platform**: JDK 25 (LTS) for server + sandbox-runner; Kotlin/JS **and** WASM-JS

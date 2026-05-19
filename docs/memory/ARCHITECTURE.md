@@ -11,8 +11,8 @@ KodEx is a multi-service system running inside Docker Compose (single-host, v1).
 | Component | Module | Type | Role |
 |---|---|---|---|
 | `core` | `:core` | JVM | `EnvConfig`, `LoggingConfig` (MDC), cross-cutting JVM utilities |
-| `core/data` | `:core:data` | **KMP** | Shared domain models, API contracts, validation — used by server AND all clients |
-| `app/shared` | `:app:shared` | **KMP** | Client-side shared layer; re-exports `core:data`; future: split into ui/data/domain |
+| `core/models` | `:core:models` | **KMP** | Shared domain models, API contracts, validation — used by server AND all clients |
+| `app/shared` | `:app:shared` | **KMP** | Client-side shared layer; re-exports `core:models`; future: split into ui/data/domain |
 | `app/webApp` | `:app:webApp` | KMP JS/WASM | Kilua frontend |
 | `server/api` | `:server:api` | JVM | Ktor routes, auth middleware, DTOs |
 | `server/domain` | `:server:domain` | JVM | Use cases, repository interfaces |
@@ -23,7 +23,7 @@ KodEx is a multi-service system running inside Docker Compose (single-host, v1).
 ## Boundaries
 
 ```
-core:data (KMP)
+core:models (KMP)
     ↑ api()           ↑ implementation()
 app:shared        server:domain
     ↑                     ↑
@@ -33,7 +33,7 @@ app:webApp         server:api → server:data
 ```
 
 - `server/api` → `server/domain` ← `server/data` (Clean Architecture — domain has no outward deps)
-- `server:domain` and `app:shared` MUST NOT import each other — both import from `core:data`
+- `server:domain` and `app:shared` MUST NOT import each other — both import from `core:models`
 - `sandbox-runner` ↔ `server/app` via HTTP + shared secret header (no direct DB access)
 - Frontend ↔ API via `/api/v1/` REST + SSE
 
