@@ -15,10 +15,13 @@ dependencyResolutionManagement {
     }
 }
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 rootProject.name = "kodex"
 
 include(
     ":core",
+    ":core:data",
     ":app:shared",
     ":app:webApp",
     ":server:app",

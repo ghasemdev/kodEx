@@ -15,9 +15,9 @@
 
 **Purpose**: Skeleton directories, root Gradle files, secrets template — no business logic.
 
-- [X] T001 Create top-level directory tree: `app/shared/`, `app/webApp/`, `server/app/`, `server/api/`, `server/domain/`, `server/data/`, `sandbox-runner/app/`, `sandbox-runner/executor/`, `core/`, `config/detekt/`, `sandbox/kotlin/`, `sandbox/android/`, `docker/`, `.github/workflows/`
-- [X] T002 Create `settings.gradle.kts` — `rootProject.name = "kodex"`, `includeBuild("build-logic")`, include all 10 submodules (`:core`, `:app:shared`, `:app:webApp`, `:server:app`, `:server:api`, `:server:domain`, `:server:data`, `:sandbox-runner:app`, `:sandbox-runner:executor`)
-- [X] T003 Create `gradle/libs.versions.toml` — all 21 pinned versions from research.md (Kotlin 2.3.21, Ktor 3.5.0, Kilua 0.0.34, Koin 4.2.1, Exposed 1.3.0, HikariCP 7.0.2, Flyway 12.6.1, Lettuce 7.5.2, argon2-jvm 2.12, kotlin-logging 8.0.0, Logback 1.5.32, logstash-logback-encoder 9.0, Napier 2.7.1, docker-java 3.7.1, kotlinx.coroutines 1.11.0, kotlinx-datetime 0.8.0, kotlinx.serialization 1.11.0, Kotest 6.1.11, Testcontainers 2.0.5, Detekt 1.23.8, Kover 0.9.8, Gradle 9.5.1) — include all bundle and alias definitions
+- [X] T001 Create top-level directory tree: `core/`, `core/data/`, `app/shared/`, `app/webApp/`, `server/app/`, `server/api/`, `server/domain/`, `server/data/`, `sandbox-runner/app/`, `sandbox-runner/executor/`, `config/detekt/`, `sandbox/kotlin/`, `sandbox/android/`, `docker/`, `.github/workflows/`
+- [X] T002 Create `settings.gradle.kts` — `rootProject.name = "kodex"`, `enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")`, `includeBuild("build-logic")`, include all 11 submodules (`:core`, `:core:data`, `:app:shared`, `:app:webApp`, `:server:app`, `:server:api`, `:server:domain`, `:server:data`, `:sandbox-runner:app`, `:sandbox-runner:executor`)
+- [X] T003 Create `gradle/libs.versions.toml` — all 21 pinned versions from research.md (Kotlin 2.3.21, Ktor 3.5.0, Kilua 0.0.34, Koin 4.2.1, Exposed 1.3.0, HikariCP 7.0.2, Flyway 12.6.1, Lettuce 7.5.2, argon2-jvm 2.12, kotlin-logging **8.0.03** (8.0.0 not published), Logback 1.5.32, logstash-logback-encoder 9.0, Napier 2.7.1, docker-java 3.7.1, kotlinx.coroutines 1.11.0, kotlinx-datetime 0.8.0, kotlinx.serialization 1.11.0, Kotest 6.1.11, Testcontainers 2.0.5, Detekt 1.23.8, Kover 0.9.8, Gradle 9.5.1) — include all bundle and alias definitions
 - [X] T004 Create `gradle/wrapper/gradle-wrapper.properties` — `distributionUrl` pointing to Gradle 9.5.1 bin; run `gradle wrapper` or create manually; commit wrapper JAR + scripts (`gradlew`, `gradlew.bat`)
 - [X] T005 [P] Create `.gitignore` — entries: `.env`, `.gradle/`, `build/`, `*.class`, `local.properties`, `*.iml`, `.idea/`, `node_modules/`, `dist/`; create `.env.example` — all 14 env vars from data-model.md with placeholder values and inline comments
 
@@ -55,17 +55,21 @@
 - [ ] T014 [P] [US1] Create `core/src/main/kotlin/dev/kodex/core/env/EnvConfig.kt` — `fun env(key: String): String` reads `System.getenv(key)`, throws `IllegalStateException("Missing required env var: $key")` if absent; `fun envOrNull(key: String): String?` for optional vars
 - [ ] T015 [P] [US1] Create `core/src/main/kotlin/dev/kodex/core/logging/LoggingConfig.kt` — `object LoggingConfig` with `fun setupMDC(requestId: String)` that puts `requestId` into Logback MDC; import `org.slf4j.MDC`
 
-### app/shared/ module (KMP)
+### core/data/ module (KMP) — shared domain models
 
-- [ ] T016 [US1] Create `app/shared/build.gradle.kts` — apply `kotlin-kmp-convention`; add `kotlinx-datetime` to commonMain; no platform-specific dependencies
-- [ ] T017 [P] [US1] Create `app/shared/src/commonMain/kotlin/dev/kodex/shared/health/HealthResponse.kt` — `@Serializable data class HealthResponse(val status: String, val service: String, val version: String, val startedAt: String)` using `kotlinx.datetime.Instant` for `startedAt` (serialized as ISO-8601)
+- [x] T016 [US1] Create `core/data/build.gradle.kts` — apply `kotlin-kmp-convention`; add `kotlinx-datetime` to commonMain
+- [x] T017 [P] [US1] Create `core/data/src/commonMain/kotlin/dev/kodex/core/data/health/HealthResponse.kt` — `@Serializable data class HealthResponse(val status: String, val startedAt: Instant)` using `kotlin.time.Instant` (kotlinx.datetime.Instant deprecated in Kotlin 2.3)
+
+### app/shared/ module (KMP) — client-side shared layer
+
+- [x] T016b [US1] Create `app/shared/build.gradle.kts` — apply `kotlin-kmp-convention`; add `api(projects.core.data)` to re-export shared models to all clients; no direct kotlinx-datetime dep (comes from core:data)
 
 ### server/ modules (domain → data → api → app)
 
-- [ ] T018 [P] [US1] Create `server/domain/build.gradle.kts` — apply `kotlin-jvm-convention`; add `implementation(project(":app:shared"))`; create `src/main/kotlin/dev/kodex/server/domain/.gitkeep` placeholder to satisfy Gradle source set
+- [x] T018 [P] [US1] Create `server/domain/build.gradle.kts` — apply `kotlin-jvm-convention`; add `implementation(projects.core.data)`; create `src/main/kotlin/dev/kodex/server/domain/.gitkeep` placeholder to satisfy Gradle source set
 - [ ] T019 [P] [US1] Create `server/data/build.gradle.kts` — apply `kotlin-jvm-convention`; add `implementation(project(":server:domain"))`; add Exposed, HikariCP, Flyway, Lettuce from version catalog; create placeholder source file `src/main/kotlin/dev/kodex/server/data/.gitkeep`
-- [ ] T020 [US1] Create `server/api/build.gradle.kts` — apply `ktor-service-convention`; add `implementation(project(":server:domain"))`, `implementation(project(":app:shared"))`, `implementation(project(":core"))`; add Ktor test engine + Kotest to `testImplementation`
-- [ ] T021 [US1] Create `server/api/src/main/kotlin/dev/kodex/server/api/routes/HealthRoutes.kt` — `fun Routing.healthRoutes(startedAt: Instant, version: String)`: registers `get("/api/v1/health")` that responds with `{"data": HealthResponse(status="UP", service="kodex-api", version=version, startedAt=startedAt.toString()), "meta": {"requestId": ..., "timestamp": ..., "service": "kodex-api", "serviceVersion": version}}`; sets `Cache-Control: no-store` header; wraps in `call.respond(buildEnvelope(data, meta))`
+- [ ] T020 [US1] Create `server/api/build.gradle.kts` — apply `ktor-service-convention`; add `implementation(projects.server.domain)`, `implementation(projects.core.data)`, `implementation(projects.core)`; add Ktor test engine + Kotest to `testImplementation`
+- [ ] T021 [US1] Create `server/api/src/main/kotlin/dev/kodex/server/api/routes/HealthRoutes.kt` — `fun Routing.healthRoutes(startedAt: Instant, version: String)`: registers `get("/api/v1/health")` that responds with `{"data": HealthResponse(status="UP", startedAt=startedAt), "meta": {"requestId": ..., "timestamp": ..., "service": "kodex-api", "serviceVersion": version}}`; sets `Cache-Control: no-store` header; uses `dev.kodex.core.data.health.HealthResponse`
 - [ ] T022 [US1] Create `server/app/build.gradle.kts` — apply `ktor-service-convention`; add `implementation(project(":server:api"))`, `implementation(project(":server:domain"))`, `implementation(project(":server:data"))`, `implementation(project(":core"))`; configure `devMain` source set as a named source set on the `main` classpath via a `devRun` task; configure `application { mainClass = "dev.kodex.server.ApplicationKt" }`; configure `installDist` to exclude devMain
 - [ ] T023 [US1] Create `server/app/src/main/kotlin/dev/kodex/server/Application.kt` — `fun main()`: reads `SERVER_PORT`/`SERVER_HOST` from env via `EnvConfig`; starts `embeddedServer(Netty, port, host)`; installs plugins: `ContentNegotiation { json() }`, `CallLogging`, `CORS { allowHost(env("WEBAPP_ORIGIN")) }`, `StatusPages { exception<Throwable> { ... } }`; starts Koin with an empty `serverModule`; registers `healthRoutes(startedAt = Clock.System.now(), version = BuildConfig.VERSION)`
 - [ ] T024 [P] [US1] Create `server/app/src/main/resources/application.conf` — HOCON: `ktor.deployment.port = ${?SERVER_PORT}`, `ktor.deployment.host = ${?SERVER_HOST}`; create `application-dev.conf` with `include "application.conf"` + dev-specific overrides (log level DEBUG, port 8080)
@@ -79,7 +83,7 @@
 
 ### app/webApp/ module (Kilua JS + WASM-JS)
 
-- [ ] T029 [US1] Create `app/webApp/build.gradle.kts` — apply `kotlin-kmp-convention` + `dev.kilua` plugin; configure `js(IR) { browser { binaries.executable() } }` + `wasmJs { browser { binaries.executable() } }` targets; add Kilua to commonMain; add `ktor-client-js` + `ktor-client-wasm` per target; add Napier + kotlinx-browser to commonMain; add `implementation(project(":app:shared"))`
+- [ ] T029 [US1] Create `app/webApp/build.gradle.kts` — apply `kotlin-kmp-convention` + `dev.kilua` plugin; configure `js(IR) { browser { binaries.executable() } }` + `wasmJs { browser { binaries.executable() } }` targets; add Kilua to commonMain; add `ktor-client-js` + `ktor-client-wasm` per target; add Napier + kotlinx-browser to commonMain; add `implementation(projects.app.shared)`
 - [ ] T030 [P] [US1] Create `app/webApp/src/commonMain/kotlin/dev/kodex/webapp/App.kt` — Kilua root component: `@Composable fun App()` renders `div { +"Hello KodEx" }` (single structural placeholder page); create `app/webApp/src/commonMain/kotlin/dev/kodex/webapp/store/AppStore.kt` — empty MVI store skeleton (`sealed class Intent`, `data class State(val loading: Boolean = false)`)
 - [ ] T031 [P] [US1] Create `app/webApp/src/jsMain/kotlin/dev/kodex/webapp/Main.kt` — JS entry point: `fun main() { startApplication { App() } }` (~5 lines); create `app/webApp/src/wasmJsMain/kotlin/dev/kodex/webapp/Main.kt` — identical WASM-JS entry point
 - [ ] T032 [US1] Create `app/webApp/vite.config.ts` — proxy `/api` → `http://localhost:8080`; configure MIME type `application/wasm` for `.wasm` files; WASM-JS bundle in `wasmJs/` subdirectory
@@ -105,7 +109,7 @@
 **Independent Test**: Add `val unused = 1` to any file → `./gradlew detekt` exits non-zero citing the file + rule. Revert → exits 0. Run `./gradlew test koverXmlReport` → `build/reports/kover/html/index.html` exists with ≥ 90% coverage.
 
 - [ ] T037 [P] [US2] Create `server/api/src/test/kotlin/dev/kodex/server/api/HealthRouteTest.kt` — Kotest `FunSpec`; use Ktor `testApplication { application { ... } }`; test: `GET /api/v1/health` returns 200; response body deserializes to envelope; `data.status == "UP"`; `data.service == "kodex-api"`; `meta.requestId` is a valid UUID; `meta.timestamp` is a parseable ISO-8601 string; response header `Cache-Control` is `no-store`
-- [ ] T038 [P] [US2] Create `app/shared/src/commonTest/kotlin/dev/kodex/shared/health/HealthResponseTest.kt` — `kotlin.test` `@Test fun serializationRoundTrip()`: encode `HealthResponse` to JSON string, decode back, assert equality; verifies `@Serializable` annotation is correctly applied
+- [ ] T038 [P] [US2] Create `core/data/src/commonTest/kotlin/dev/kodex/core/data/health/HealthResponseTest.kt` — `kotlin.test` `@Test fun serializationRoundTrip()`: encode `HealthResponse` to JSON string, decode back, assert equality; verifies `@Serializable` annotation and `kotlin.time.Instant` serialization work correctly
 
 **Checkpoint**: `./gradlew test koverXmlReport detekt` exits 0. Reports present: `build/reports/kover/html/index.html`, `build/reports/detekt/detekt.html`. Coverage ≥ 90% (skeleton has minimal code, tests cover all paths). US2 acceptance scenarios 1–3 all pass.
 
@@ -147,7 +151,7 @@ Phase 3 (US1 — System)    Phase 4 (US2 — Quality)    Phase 5 (US3 — CI/CD)
 
 - **Phase 1**: No dependencies — start immediately
 - **Phase 2**: Depends on Phase 1 completion — BLOCKS all module compilation
-- **Phase 3 (US1)**: Depends on Phase 2; internal order: `core/` + `app/shared/` → `server/domain/` + `server/data/` → `server/api/` → `server/app/` → `app/webApp/` → Docker → README
+- **Phase 3 (US1)**: Depends on Phase 2; internal order: `core/` + `core/data/` → `app/shared/` + `server/domain/` + `server/data/` → `server/api/` → `server/app/` → `app/webApp/` → Docker → README
 - **Phase 4 (US2)**: Can start as soon as `server/api/` (T020–T021) is done — does NOT require Docker or webapp
 - **Phase 5 (US3)**: Can start as soon as Phase 3 is complete — only needs passing tests + working build
 
@@ -156,7 +160,9 @@ Phase 3 (US1 — System)    Phase 4 (US2 — Quality)    Phase 5 (US3 — CI/CD)
 ```
 T013–T015 (core/)
     ↓
-T016–T017 (app/shared/)      T018 (server/domain/)      T027 (sandbox/executor/)
+T016–T017 (core/data/ — KMP shared models)
+    ↓
+T016b (app/shared/)    T018 (server/domain/)      T027 (sandbox/executor/)
                     ↓               ↓
                 T019 (server/data/) ↓
                             T020–T021 (server/api/)
@@ -176,14 +182,15 @@ T016–T017 (app/shared/)      T018 (server/domain/)      T027 (sandbox/executor
 
 **Phase 3 — Same level, different modules** (run in parallel after dependencies met):
 ```
-Parallel group A (after Phase 2):  T013+T014+T015 (core/) ‖ T016+T017 (shared/) ‖ T027 (sandbox/executor/)
+Parallel group A (after Phase 2):  T013+T014+T015 (core/) ‖ T027 (sandbox/executor/)
+Parallel group A2 (after T013):    T016+T017 (core/data/) → then T016b (app/shared/) ‖ T018 (server/domain/)
 Parallel group B (after group A):  T018 (domain/) ‖ T019 (data/)
 Parallel group C (after T020):     T024 (app.conf) ‖ T025 (logback.xml) ‖ T026 (DevModule.kt)
 Parallel group D (after T023):     T030 (App.kt+AppStore.kt) ‖ T031 (Main.kt×2) ‖ T032 (vite.config.ts)
 Parallel group E (after T028):     T033 (sandbox Dockerfiles) ‖ T034 (server/sandbox-runner Dockerfiles)
 ```
 
-**Phase 4**: T037 (HealthRouteTest) ‖ T038 (HealthResponseTest) — different modules, run in parallel
+**Phase 4**: T037 (HealthRouteTest in server:api) ‖ T038 (HealthResponseTest in core:data) — different modules, run in parallel
 
 ---
 

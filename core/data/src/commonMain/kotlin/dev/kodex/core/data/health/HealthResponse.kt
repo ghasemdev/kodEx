@@ -1,4 +1,4 @@
-package dev.kodex.shared.health
+package dev.kodex.core.data.health
 
 import kotlinx.serialization.Serializable
 import kotlin.time.Instant

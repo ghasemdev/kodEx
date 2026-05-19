@@ -8,23 +8,34 @@ KodEx is a multi-service system running inside Docker Compose (single-host, v1).
 
 ## Major Components
 
-| Component | Module | Role |
-|---|---|---|
-| `server/app` | `:server:app` | Main Ktor API — auth, exam CRUD, submission intake, SSE delivery |
-| `server/api` | `:server:api` | Route definitions, request/response models |
-| `server/domain` | `:server:domain` | Business logic, use cases |
-| `server/data` | `:server:data` | Exposed ORM, Flyway migrations, HikariCP pool |
-| `sandbox-runner` | `:sandbox-runner:app` | Ktor service — only component with Docker socket |
-| `app/webApp` | `:app:webApp` | Kilua (Kotlin/JS + WASM-JS) frontend |
-| `app/shared` | `:app:shared` | KMP shared module — domain models, API contracts, validation |
-| `core` | `:core` | Cross-cutting: `EnvConfig`, `LoggingConfig`, MDC setup |
+| Component | Module | Type | Role |
+|---|---|---|---|
+| `core` | `:core` | JVM | `EnvConfig`, `LoggingConfig` (MDC), cross-cutting JVM utilities |
+| `core/data` | `:core:data` | **KMP** | Shared domain models, API contracts, validation — used by server AND all clients |
+| `app/shared` | `:app:shared` | **KMP** | Client-side shared layer; re-exports `core:data`; future: split into ui/data/domain |
+| `app/webApp` | `:app:webApp` | KMP JS/WASM | Kilua frontend |
+| `server/api` | `:server:api` | JVM | Ktor routes, auth middleware, DTOs |
+| `server/domain` | `:server:domain` | JVM | Use cases, repository interfaces |
+| `server/data` | `:server:data` | JVM | Exposed ORM, Flyway, HikariCP, Redis (Lettuce) |
+| `server/app` | `:server:app` | JVM | Ktor engine, Koin DI composition root |
+| `sandbox-runner` | `:sandbox-runner:app` | JVM | Ktor service — only component with Docker socket |
 
 ## Boundaries
 
+```
+core:data (KMP)
+    ↑ api()           ↑ implementation()
+app:shared        server:domain
+    ↑                     ↑
+app:webApp         server:api → server:data
+                         ↑
+                     server:app (composition root)
+```
+
 - `server/api` → `server/domain` ← `server/data` (Clean Architecture — domain has no outward deps)
-- `app/webApp` → `app/shared` ← `server/api` (shared module is the contract layer)
-- `sandbox-runner` ↔ `server/app` via HTTP + shared secret header (no direct DB access from sandbox-runner)
-- Frontend ↔ API via `/api/v1/` REST + SSE (no direct DB/Redis access from frontend)
+- `server:domain` and `app:shared` MUST NOT import each other — both import from `core:data`
+- `sandbox-runner` ↔ `server/app` via HTTP + shared secret header (no direct DB access)
+- Frontend ↔ API via `/api/v1/` REST + SSE
 
 ## Integrations
 
