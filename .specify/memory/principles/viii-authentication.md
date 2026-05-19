@@ -16,7 +16,7 @@ Password storage:
   the required algorithm for new accounts.
 - Plaintext, MD5, SHA-1, and unsalted SHA-256 storage are strictly forbidden.
 - The JWT signing secret MUST be at minimum 256 bits, loaded from an environment variable
-  (never hardcoded). See `security.md`.
+  (never hardcoded). See `security_constitution.md`.
 
 **Rationale**: JWT enables stateless horizontal scaling of the API while the refresh-token
 Redis store allows instant revocation without full statefulness. Argon2id is the

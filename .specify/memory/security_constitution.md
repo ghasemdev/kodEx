@@ -1,6 +1,6 @@
 # KodEx Security Constitution
 
-**Version**: 1.0.0 | **Ratified**: 2026-05-19 | **Source**: Compiled from §III, §V, §VI, §VIII, §IX, security.md
+**Version**: 1.0.0 | **Ratified**: 2026-05-19 | **Source**: Compiled from §III, §V, §VI, §VIII, §IX
 
 > This file is the single source of truth for all security audits.
 > All rules are actionable: specific enough for an AI auditor to verify against code.

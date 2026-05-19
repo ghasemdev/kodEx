@@ -41,7 +41,7 @@ Remaining TODOs:
 
 **Supporting documents**:
 - [tech-stack.md](tech-stack.md) — Library choices with links for all modules
-- [security.md](security.md) — Execution constraints, CORS, secrets & environment policy
+- [security_constitution.md](security_constitution.md) — Security audit source of truth (trust boundaries, auth, secrets, OWASP mapping)
 
 ---
 
