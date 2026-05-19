@@ -6,7 +6,17 @@ specs/001-project-base-setup/plan.md
 Constitution index + quick reference: .specify/memory/constitution.md
 Constitution principles (read per task): .specify/memory/principles/<i-x>.md
 Tech stack: .specify/memory/tech-stack.md
-Security policy: .specify/memory/security.md
+Security policy: .specify/memory/security_constitution.md
 Research (library versions, decisions): specs/001-project-base-setup/research.md
 API contracts: specs/001-project-base-setup/contracts/api-v1.md
 <!-- SPECKIT END -->
+
+### Spec Kit
+
+You MUST follow the memory-first workflow defined in `.specify/memory/workflow.md`.
+Before planning, prepare context using the best available path:
+- MCP: call `speckit_memory_refresh_cache`, `speckit_memory_search`, `speckit_memory_synthesize`
+- Spec Kit commands: run `/speckit.memory-md.prepare-context`
+- Markdown-first fallback: read `docs/memory/INDEX.md` + `memory-synthesis.md` manually
+
+After implementation, capture durable lessons via `/speckit.memory-md.capture` or `/speckit.memory-md.capture-from-diff`.
