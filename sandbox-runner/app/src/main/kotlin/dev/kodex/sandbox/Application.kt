@@ -15,8 +15,10 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 
+private const val PORT = 8081
+
 fun main() {
-    val port = envOrNull("SANDBOX_RUNNER_PORT")?.toInt() ?: 8081
+    val port = envOrNull("SANDBOX_RUNNER_PORT")?.toInt() ?: PORT
     val host = envOrNull("SANDBOX_RUNNER_HOST") ?: "0.0.0.0"
     val sharedSecret = requireNotNull(envOrNull("SANDBOX_SHARED_SECRET")) {
         "Missing required env var: SANDBOX_SHARED_SECRET"
@@ -47,8 +49,7 @@ fun main() {
 
             // All routes below require the shared secret
             authenticate("secret-auth") {
-                route("/") {
-                }
+                route("/") {}
             }
         }
     }.start(wait = true)

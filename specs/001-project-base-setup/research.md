@@ -6,44 +6,45 @@
 
 ## Library Versions (pinned)
 
-| Library | Version | Artifact |
-|---|---|---|
-| Kotlin | **2.3.21** | `org.jetbrains.kotlin` |
-| JDK | **25** (LTS) | Temurin / Eclipse Adoptium |
-| Gradle | **9.5.1** | build tool |
-| Ktor | **3.5.0** | `io.ktor:ktor-server-core` |
-| Kilua | **0.0.34** | `io.kilua:kilua` |
-| Koin | **4.2.1** | `io.insert-koin:koin-core` |
-| Exposed | **1.3.0** | `org.jetbrains.exposed:exposed-core` |
-| HikariCP | **7.0.2** | `com.zaxxer:HikariCP` |
-| Flyway | **12.6.1** | `org.flywaydb:flyway-core` |
-| Lettuce | **7.5.2** | `io.lettuce:lettuce-core` |
-| argon2-jvm | **2.12** | `de.mkammerer:argon2-jvm` |
-| kotlin-logging | **8.0.0** | `io.github.oshai:kotlin-logging-jvm` |
-| Logback | **1.5.32** | `ch.qos.logback:logback-classic` |
-| logstash-logback-encoder | **9.0** | `net.logstash.logback:logstash-logback-encoder` |
-| Napier | **2.7.1** | `io.github.aakira:napier` |
-| docker-java | **3.7.1** | `com.github.docker-java:docker-java` |
-| kotlinx.coroutines | **1.11.0** | `org.jetbrains.kotlinx:kotlinx-coroutines-core` |
-| kotlinx-datetime | **0.8.0** | `org.jetbrains.kotlinx:kotlinx-datetime` |
-| kotlinx.serialization | **1.11.0** | `org.jetbrains.kotlinx:kotlinx-serialization-json` |
-| Kotest | **6.1.11** | `io.kotest:kotest-runner-junit5` |
-| Testcontainers | **2.0.5** | `org.testcontainers:testcontainers` |
-| Detekt | **1.23.8** | `io.gitlab.arturbosch.detekt:detekt-gradle-plugin` |
-| Kover (Gradle plugin) | **0.9.8** | `org.jetbrains.kotlinx.kover` |
+| Library                  | Version      | Artifact                                           |
+|--------------------------|--------------|----------------------------------------------------|
+| Kotlin                   | **2.3.21**   | `org.jetbrains.kotlin`                             |
+| JDK                      | **21** (LTS) | Temurin / Eclipse Adoptium                         |
+| Gradle                   | **9.5.1**    | build tool                                         |
+| Ktor                     | **3.5.0**    | `io.ktor:ktor-server-core`                         |
+| Kilua                    | **0.0.34**   | `io.kilua:kilua`                                   |
+| Koin                     | **4.2.1**    | `io.insert-koin:koin-core`                         |
+| Exposed                  | **1.3.0**    | `org.jetbrains.exposed:exposed-core`               |
+| HikariCP                 | **7.0.2**    | `com.zaxxer:HikariCP`                              |
+| Flyway                   | **12.6.1**   | `org.flywaydb:flyway-core`                         |
+| Lettuce                  | **7.5.2**    | `io.lettuce:lettuce-core`                          |
+| argon2-jvm               | **2.12**     | `de.mkammerer:argon2-jvm`                          |
+| kotlin-logging           | **8.0.0**    | `io.github.oshai:kotlin-logging-jvm`               |
+| Logback                  | **1.5.32**   | `ch.qos.logback:logback-classic`                   |
+| logstash-logback-encoder | **9.0**      | `net.logstash.logback:logstash-logback-encoder`    |
+| Napier                   | **2.7.1**    | `io.github.aakira:napier`                          |
+| docker-java              | **3.7.1**    | `com.github.docker-java:docker-java`               |
+| kotlinx.coroutines       | **1.11.0**   | `org.jetbrains.kotlinx:kotlinx-coroutines-core`    |
+| kotlinx-datetime         | **0.8.0**    | `org.jetbrains.kotlinx:kotlinx-datetime`           |
+| kotlinx.serialization    | **1.11.0**   | `org.jetbrains.kotlinx:kotlinx-serialization-json` |
+| Kotest                   | **6.1.11**   | `io.kotest:kotest-runner-junit5`                   |
+| Testcontainers           | **2.0.5**    | `org.testcontainers:testcontainers`                |
+| Detekt                   | **1.23.8**   | `io.gitlab.arturbosch.detekt:detekt-gradle-plugin` |
+| Kover (Gradle plugin)    | **0.9.8**    | `org.jetbrains.kotlinx.kover`                      |
 
 ---
 
 ## Decision 1 — Kotlin & JVM Version
 
-**Decision**: Kotlin **2.3.21**, JVM target **JDK 25** (LTS)
+**Decision**: Kotlin **2.3.21**, JVM target **JDK 21** (LTS)
 
 **Rationale**: Kotlin 2.3.x is the current stable release on the K2 compiler. JDK 25 is
 the latest Long-Term Support release (released September 2025, LTS cycle: 17 → 21 → 25).
-Gradle 9.5.1 and Ktor 3.5.0 both require JDK 21+ as the minimum; JDK 25 LTS is the
+Gradle 9.5.1 and Ktor 3.5.0 both require JDK 21+ as the minimum; JDK 21 LTS is the
 forward-looking choice for a new project.
 
 **Alternatives considered**:
+
 - JDK 21 — still valid LTS but one cycle behind; no reason to start a new project on it.
 - JDK 24 — non-LTS; avoid for production.
 
@@ -94,20 +95,22 @@ Older browsers or environments with restricted WASM (some corporate proxies) fal
 to the JS bundle transparently.
 
 **Browser detection pattern** (in `index.html` or a small JS loader):
+
 ```js
 (async () => {
-  const wasmSupported =
-    typeof WebAssembly !== 'undefined' &&
-    typeof WebAssembly.instantiateStreaming === 'function';
-  if (wasmSupported) {
-    await import('./wasmJs/kodex-webapp.mjs');   // WASM bundle
-  } else {
-    await import('./js/kodex-webapp.js');         // JS fallback
-  }
+    const wasmSupported =
+        typeof WebAssembly !== 'undefined' &&
+        typeof WebAssembly.instantiateStreaming === 'function';
+    if (wasmSupported) {
+        await import('./wasmJs/kodex-webapp.mjs');   // WASM bundle
+    } else {
+        await import('./js/kodex-webapp.js');         // JS fallback
+    }
 })();
 ```
 
 **Source set layout** for `app/webApp`:
+
 ```
 src/
 ├── commonMain/     # All application code (App.kt, MVI store, routes)
@@ -150,6 +153,7 @@ are not on the production classpath.
 ### Frontend (`app/webApp`)
 
 Vite handles dev/prod naturally:
+
 - `jsBrowserDevelopmentRun` / `wasmJsBrowserDevelopmentRun` → Vite dev server, HMR, source maps, verbose logging
 - `jsBrowserDistribution` / `wasmJsBrowserDistribution` → minified production bundle, no source maps
 
@@ -179,6 +183,7 @@ A Kilua/Kotlin `object Env` checks `js("import.meta.env.DEV")` to gate dev-only 
 convenience. See `contracts/api-v1.md` for full specification.
 
 **Production consumers**:
+
 - Docker `HEALTHCHECK` instruction in `docker/server.Dockerfile`
 - Kubernetes liveness and readiness probes (when k8s is adopted in future)
 - Load balancer health check (nginx / cloud LB)
@@ -196,5 +201,5 @@ and must be excluded from rate limiting. In future features, a `/api/v1/health/d
 Triggers: push to any branch + pull_request targeting `develop` or `main`.
 
 **Caching**: Gradle caches on hash of `libs.versions.toml` + all `*.gradle.kts`.
-**JDK**: `actions/setup-java` distribution `temurin`, `java-version: 25`.
+**JDK**: `actions/setup-java` distribution `temurin`, `java-version: 21`.
 **Branch protection**: Require all 3 jobs green before merge into `develop` and `main`.

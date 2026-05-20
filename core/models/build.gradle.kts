@@ -7,5 +7,8 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.kotlinx.datetime)
         }
+        jvmTest.dependencies {
+            implementation(libs.bundles.kotest)
+        }
     }
 }

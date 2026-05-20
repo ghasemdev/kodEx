@@ -3,21 +3,25 @@ package dev.kodex.server
 import dev.kodex.core.env.env
 import dev.kodex.core.env.envOrNull
 import dev.kodex.server.api.routes.healthRoutes
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.plugins.cors.routing.*
-import io.ktor.server.plugins.statuspages.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.server.application.install
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.cors.routing.CORS
+import io.ktor.server.plugins.statuspages.StatusPages
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.routing
 import org.koin.ktor.plugin.Koin
 import kotlin.time.Clock
 
+private const val PORT = 8080
+
 fun main() {
-    val port = envOrNull("SERVER_PORT")?.toInt() ?: 8080
+    val port = envOrNull("SERVER_PORT")?.toInt() ?: PORT
     val host = envOrNull("SERVER_HOST") ?: "0.0.0.0"
     val webAppOrigin = env("WEBAPP_ORIGIN")
     val startedAt = Clock.System.now()

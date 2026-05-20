@@ -10,7 +10,7 @@ on:
       - feature/**
       - bugfix/**
   pull_request:
-    branches: [develop, main]
+    branches: [ develop, main ]
 
 permissions:
   contents: read
@@ -29,7 +29,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 25
+          java-version: 21
 
       - uses: gradle/actions/setup-gradle@v4
         with:
@@ -51,14 +51,14 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 25
+          java-version: 21
 
       - uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: false
 
       - name: Run unit tests
-        run: ./gradlew test --no-daemon
+        run: ./gradlew test jvmTest --no-daemon
 
       - name: Upload test reports
         if: always()
@@ -66,8 +66,8 @@ jobs:
         with:
           name: test-reports-push
           path: |
-            build/reports/tests/
-            build/test-results/
+            "**/build/reports/tests/"
+            "**/build/test-results/"
 
   coverage:
     name: Coverage & Verify
@@ -82,21 +82,21 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 25
+          java-version: 21
 
       - uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: true
 
       - name: Run coverage tasks (koverXmlReport + koverVerify)
-        run: ./gradlew koverXmlReport koverVerify --no-daemon
+        run: ./gradlew test jvmTest koverXmlReport koverVerify --no-daemon
 
       - name: Publish Test Report in PR
         if: always()
         uses: dorny/test-reporter@v1
         with:
           name: Kotlin Tests
-          path: build/test-results/**/*.xml
+          path: "**/build/test-results/**/*.xml"
           reporter: java-junit
 
       - name: Comment coverage on PR
@@ -104,7 +104,7 @@ jobs:
         uses: madrapps/jacoco-report@v1.7.1
         with:
           paths: ${{ github.workspace }}/build/reports/kover/report.xml
-          token: ${{ secrets.JACOCO_TOKEN }}
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           min-coverage-overall: 90
           min-coverage-changed-files: 80
 
@@ -115,7 +115,7 @@ jobs:
           name: coverage-report
           path: |
             build/reports/kover/
-            build/test-results/
+            "**/build/test-results/"
 
   detekt:
     name: Detekt
@@ -130,7 +130,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 25
+          java-version: 21
 
       - uses: gradle/actions/setup-gradle@v4
         with:
@@ -144,4 +144,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: detekt-report
-          path: build/reports/detekt/
+          path: "**/build/reports/detekt/"

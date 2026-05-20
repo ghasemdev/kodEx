@@ -12,9 +12,10 @@ correct dependency graph and a passing test suite.
 
 ## Technical Context
 
-**Language/Version**: Kotlin **2.3.21** (JVM + JS + WASM-JS + KMP targets); JDK **25** (LTS)
+**Language/Version**: Kotlin **2.3.21** (JVM + JS + WASM-JS + KMP targets); JDK **21** (LTS)
 
 **Primary Dependencies**:
+
 - Backend: Ktor **3.5.0**, Koin **4.2.1**, kotlinx.serialization **1.11.0**,
   kotlinx.coroutines **1.11.0**, kotlinx-datetime **0.8.0**, Exposed **1.3.0**,
   HikariCP **7.0.2**, Flyway **12.6.1**, Lettuce **7.5.2**, ktor-server-auth-jwt,
@@ -30,22 +31,24 @@ correct dependency graph and a passing test suite.
   Testcontainers **2.0.5**; Gradle **9.5.1**
 
 **Storage**: PostgreSQL + Redis — both in Docker Compose for local dev.
-  Server skeleton does NOT connect to either DB (no business logic in this feature).
+Server skeleton does NOT connect to either DB (no business logic in this feature).
 
 **Testing**: Kotest for all JVM modules; kotlin.test for core:models and app:shared (KMP commonTest); Kover for coverage
-  reporting at **90% minimum threshold**; Testcontainers wired as a test dependency.
+reporting at **90% minimum threshold**; Testcontainers wired as a test dependency.
 
-**Target Platform**: JDK 25 (LTS) for server + sandbox-runner; Kotlin/JS **and** WASM-JS
-  for webApp (browser selects bundle at runtime based on WASM support detection).
+**Target Platform**: JDK 21 (LTS) for server + sandbox-runner; Kotlin/JS **and** WASM-JS
+for webApp (browser selects bundle at runtime based on WASM support detection).
 
 **Project Type**: Multi-module Kotlin Multiplatform monorepo (web service + web frontend).
 
 **Performance Goals**:
+
 - SC-001: New developer up and running in < 5 minutes
 - SC-003: CI pipeline completes full build-test-quality cycle in < 10 minutes
 - Health endpoint: < 50 ms response (no DB calls)
 
 **Constraints**:
+
 - All secrets via environment variables (Constitution §XI)
 - Gradle build reproducible and cacheable (configuration cache enabled)
 - Zero Detekt violations on skeleton; zero Kover violations (≥ 90% on skeleton paths)
@@ -57,19 +60,19 @@ correct dependency graph and a passing test suite.
 
 *GATE: Must pass before Phase 0 research. Re-checked after Phase 1 design.*
 
-| Principle | Applicable | Status | Notes |
-|---|---|---|---|
-| I — Kotlin-First Stack | ✅ Yes | ✅ PASS | All modules in Kotlin; no other language |
-| II — Dual Exam Modes | ➖ N/A | — | No exam logic in skeleton |
-| III — Secure Sandbox | ✅ Partial | ✅ PASS | sandbox-runner module scaffolded; Dockerfiles versioned under `sandbox/`; no execution logic yet |
-| IV — Test-Injection Grading | ➖ N/A | — | No grading logic |
-| V — Role-Based Domain Model | ✅ Partial | ✅ PASS | `/api/v1/health` is intentionally public (health checks are a universal exception to auth gates); all future endpoints will declare roles |
-| VI — Auditability & Observability | ✅ Partial | ✅ PASS | Structured JSON logging infrastructure configured (Logback + logstash-logback-encoder); no submission events yet |
-| VII — Architecture & Module Conventions | ✅ Yes | ✅ PASS | Primary deliverable; full directory layout per constitution; build-logic convention plugins; Detekt configured |
-| VIII — Authentication & Authorization | ➖ N/A | — | No protected endpoints in skeleton |
-| IX — API Design Conventions | ✅ Yes | ✅ PASS | `/api/v1/health` follows prefix convention; error response plugin configured |
-| X — Testing Policy | ✅ Yes | ✅ PASS | Kotest + Kover wired in all JVM modules; Testcontainers available as dependency |
-| Secrets & Environment Policy | ✅ Yes | ✅ PASS | `.env.example` committed; `.env` in `.gitignore`; no hardcoded values |
+| Principle                               | Applicable | Status | Notes                                                                                                                                     |
+|-----------------------------------------|------------|--------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| I — Kotlin-First Stack                  | ✅ Yes      | ✅ PASS | All modules in Kotlin; no other language                                                                                                  |
+| II — Dual Exam Modes                    | ➖ N/A      | —      | No exam logic in skeleton                                                                                                                 |
+| III — Secure Sandbox                    | ✅ Partial  | ✅ PASS | sandbox-runner module scaffolded; Dockerfiles versioned under `sandbox/`; no execution logic yet                                          |
+| IV — Test-Injection Grading             | ➖ N/A      | —      | No grading logic                                                                                                                          |
+| V — Role-Based Domain Model             | ✅ Partial  | ✅ PASS | `/api/v1/health` is intentionally public (health checks are a universal exception to auth gates); all future endpoints will declare roles |
+| VI — Auditability & Observability       | ✅ Partial  | ✅ PASS | Structured JSON logging infrastructure configured (Logback + logstash-logback-encoder); no submission events yet                          |
+| VII — Architecture & Module Conventions | ✅ Yes      | ✅ PASS | Primary deliverable; full directory layout per constitution; build-logic convention plugins; Detekt configured                            |
+| VIII — Authentication & Authorization   | ➖ N/A      | —      | No protected endpoints in skeleton                                                                                                        |
+| IX — API Design Conventions             | ✅ Yes      | ✅ PASS | `/api/v1/health` follows prefix convention; error response plugin configured                                                              |
+| X — Testing Policy                      | ✅ Yes      | ✅ PASS | Kotest + Kover wired in all JVM modules; Testcontainers available as dependency                                                           |
+| Secrets & Environment Policy            | ✅ Yes      | ✅ PASS | `.env.example` committed; `.env` in `.gitignore`; no hardcoded values                                                                     |
 
 **Gate result**: ALL PASS — proceed to Phase 0.
 

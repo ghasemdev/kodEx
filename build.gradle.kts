@@ -9,9 +9,20 @@ plugins {
     alias(libs.plugins.kilua) apply false
 }
 
+dependencies {
+    kover(projects.core.models)
+    kover(projects.server.api)
+}
+
 kover {
     reports {
         total {
+            xml {
+                onCheck = true
+            }
+            html {
+                onCheck = true
+            }
             verify {
                 rule {
                     minBound(90)
@@ -19,10 +30,4 @@ kover {
             }
         }
     }
-}
-
-tasks.register("detektAll") {
-    group = "verification"
-    description = "Run Detekt on all subprojects"
-    dependsOn(subprojects.mapNotNull { it.tasks.findByName("detekt") })
 }

@@ -1,8 +1,11 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
     kotlin("multiplatform")
     id("org.jetbrains.kotlin.plugin.serialization")
+    id("io.gitlab.arturbosch.detekt")
+    id("org.jetbrains.kotlinx.kover")
 }
 
 val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
@@ -40,5 +43,17 @@ kotlin {
         commonTest.dependencies {
             implementation(kotlin("test"))
         }
+    }
+}
+
+dependencies {
+    "detektPlugins"("io.gitlab.arturbosch.detekt:detekt-formatting:${libs.findVersion("detekt").get()}")
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+    testLogging {
+        exceptionFormat = TestExceptionFormat.FULL
+        showStandardStreams = false
     }
 }

@@ -1,15 +1,25 @@
 build:
   maxIssues: 0
+  excludeCorrectable: false
 
 config:
   validation: true
   warningsAsErrors: false
+  checkExhaustiveness: false
 
 processors:
   active: true
+  exclude:
+    - 'DetektProgressListener'
 
 console-reports:
   active: true
+  exclude:
+    - 'ProjectStatisticsReport'
+    - 'ComplexityReport'
+    - 'NotificationReport'
+    - 'FindingsReport'
+    - 'FileBasedFindingsReport'
 
 output-reports:
   active: true
@@ -18,21 +28,45 @@ comments:
   active: true
   AbsentOrWrongFileLicense:
     active: false
+  DeprecatedBlockTag:
+    active: true
+  EndOfSentenceFormat:
+    active: true
+    endOfSentenceFormat: '([.?!][ \t\n\r\f<])|([.?!:]$)'
+  KDocReferencesNonPublicProperty:
+    active: true
+  OutdatedDocumentation:
+    active: true
 
 complexity:
   active: true
+  CognitiveComplexMethod:
+    active: true
+    threshold: 30
   ComplexCondition:
+    active: true
     threshold: 4
+  ComplexInterface:
+    active: true
+    threshold: 10
   CyclomaticComplexMethod:
+    active: true
     threshold: 15
+  LargeClass:
+    active: true
+    threshold: 600
   LongMethod:
+    active: true
     threshold: 60
   LongParameterList:
-    threshold: 8
+    active: true
+    functionThreshold: 8
+    constructorThreshold: 8
   TooManyFunctions:
+    active: true
     thresholdInFiles: 20
     thresholdInClasses: 20
-    thresholdInInterfaces: 20
+    thresholdInInterfaces: 10
 
 coroutines:
   active: true
@@ -47,67 +81,25 @@ formatting:
   active: true
   android: false
   autoCorrect: true
-  AnnotationOnSeparateLine:
-    active: false
-  ChainWrapping:
-    active: true
-  CommentSpacing:
-    active: true
-  EnumEntryNameCase:
-    active: false
-  Filename:
-    active: true
-  FinalNewline:
-    active: true
-  ImportOrdering:
-    active: true
   Indentation:
     active: true
     indentSize: 4
   MaximumLineLength:
     active: true
     maxLineLength: 120
-  ModifierOrdering:
+  ImportOrdering:
     active: true
-  NoBlankLineBeforeRbrace:
-    active: true
-  NoConsecutiveBlankLines:
-    active: true
-  NoEmptyClassBody:
-    active: true
-  NoLineBreakAfterElse:
-    active: true
-  NoLineBreakBeforeAssignment:
-    active: true
-  NoMultipleSpaces:
-    active: true
-  NoSemicolons:
-    active: true
-  NoTrailingSpaces:
-    active: true
-  NoUnusedImports:
+  FinalNewline:
     active: true
   NoWildcardImports:
     active: true
-  PackageName:
+  NoUnusedImports:
     active: true
-  ParameterListWrapping:
-    active: true
-  SpacingAroundColon:
-    active: true
-  SpacingAroundComma:
-    active: true
-  SpacingAroundCurly:
-    active: true
-  SpacingAroundKeyword:
-    active: true
-  SpacingAroundOperators:
-    active: true
-  SpacingAroundParens:
-    active: true
-  SpacingAroundRangeOperator:
+  NoTrailingSpaces:
     active: true
   StringTemplate:
+    active: true
+  NoSemicolons:
     active: true
 
 naming:
@@ -129,22 +121,10 @@ potential-bugs:
 
 style:
   active: true
-  ForbiddenComment:
-    active: false
+
   MagicNumber:
     active: true
-    ignoreNumbers:
-      - '-1'
-      - '0'
-      - '1'
-      - '2'
-      - '200'
-      - '400'
-      - '401'
-      - '403'
-      - '404'
-      - '500'
-      - '8080'
+    ignoreNumbers: [ '-1', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '200', '400', '401', '403', '404', '500', '8080' ]
     ignoreHashCodeFunction: true
     ignorePropertyDeclaration: true
     ignoreConstantDeclaration: true
@@ -152,9 +132,12 @@ style:
     ignoreAnnotation: true
     ignoreNamedArgument: true
     ignoreEnums: true
+
   ReturnCount:
+    active: true
     max: 4
-  UnnecessaryAbstractClass:
-    active: false
+
   WildcardImport:
     active: true
+    excludeImports:
+      - 'java.util.*'

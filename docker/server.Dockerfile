@@ -1,17 +1,25 @@
-FROM gradle:9.5.1-jdk25 AS builder
+FROM gradle:9.5.1-jdk21-jammy AS builder
 
 WORKDIR /app
+
+COPY build.gradle settings.gradle gradlew ./
+COPY gradle ./gradle
+RUN ./gradlew dependencies --no-daemon
+
 COPY . .
 RUN ./gradlew :server:app:installDist --no-daemon
 
-FROM eclipse-temurin:25-jre
+FROM eclipse-temurin:21-jre-jammy
+
+RUN addgroup --system appgroup && adduser --system appuser --ingroup appgroup
+USER appuser
 
 WORKDIR /app
 COPY --from=builder /app/server/app/build/install/app/ .
 
 EXPOSE 8080
 
-HEALTHCHECK --interval=10s --timeout=5s --retries=3 \
-    CMD curl -f http://localhost:8080/api/v1/health || exit 1
+HEALTHCHECK --interval=30s --timeout=5s \
+  CMD /app/bin/app --health || exit 1
 
 CMD ["bin/app"]

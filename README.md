@@ -6,11 +6,11 @@ An online programming exam platform with Kotlin-first stack, secure code executi
 
 ## Prerequisites
 
-| Tool | Minimum Version | Purpose |
-|---|---|---|
-| Docker Desktop (or Docker Engine + Compose v2) | Latest stable | Run all services |
-| JDK | **25** (LTS) | Build and run JVM services locally |
-| Git | Any recent | Source control |
+| Tool                                           | Minimum Version | Purpose                            |
+|------------------------------------------------|-----------------|------------------------------------|
+| Docker Desktop (or Docker Engine + Compose v2) | Latest stable   | Run all services                   |
+| JDK                                            | **21** (LTS)    | Build and run JVM services locally |
+| Git                                            | Any recent      | Source control                     |
 
 > Everything else (Gradle wrapper, Node.js for Vite) is downloaded automatically on first build.
 
@@ -35,6 +35,7 @@ docker compose -f docker/docker-compose.yml up --build
 ```
 
 This command:
+
 - Builds the server and sandbox-runner Docker images
 - Starts PostgreSQL 17 and Redis 7
 - Starts the Ktor API server on port **8080**
@@ -87,6 +88,7 @@ Expected:
 ```
 
 Reports:
+
 - Coverage XML: `build/reports/kover/report.xml`
 - Coverage HTML: `build/reports/kover/html/index.html`
 - Detekt HTML: `build/reports/detekt/detekt.html`
@@ -120,13 +122,13 @@ docker compose -f docker/docker-compose.yml down -v
 
 ## Troubleshooting
 
-| Problem | Cause | Fix |
-|---|---|---|
-| `Port 8080 already in use` | Another process on 8080 | Change `SERVER_PORT` in `.env` |
-| `Port 5173 already in use` | Another Vite/dev server | Change Vite port in `app/webApp/vite.config.ts` |
-| `Missing prerequisite: JDK 25` | Wrong JDK version | Install [Temurin JDK 25](https://adoptium.net/) |
-| Docker build fails on first run | Dependencies downloading (~500 MB) | Re-run; cache warms after first build |
-| `.env not found` | Forgot step 1 | Run `cp .env.example .env` |
+| Problem                         | Cause                              | Fix                                             |
+|---------------------------------|------------------------------------|-------------------------------------------------|
+| `Port 8080 already in use`      | Another process on 8080            | Change `SERVER_PORT` in `.env`                  |
+| `Port 5173 already in use`      | Another Vite/dev server            | Change Vite port in `app/webApp/vite.config.ts` |
+| `Missing prerequisite: JDK 21`  | Wrong JDK version                  | Install [Temurin JDK 21](https://adoptium.net/) |
+| Docker build fails on first run | Dependencies downloading (~500 MB) | Re-run; cache warms after first build           |
+| `.env not found`                | Forgot step 1                      | Run `cp .env.example .env`                      |
 
 ---
 
