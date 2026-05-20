@@ -108,8 +108,8 @@
 
 **Independent Test**: Add `val unused = 1` to any file → `./gradlew detekt` exits non-zero citing the file + rule. Revert → exits 0. Run `./gradlew test koverXmlReport` → `build/reports/kover/html/index.html` exists with ≥ 90% coverage.
 
-- [ ] T037 [P] [US2] Create `server/api/src/test/kotlin/dev/kodex/server/api/HealthRouteTest.kt` — Kotest `FunSpec`; use Ktor `testApplication { application { ... } }`; test: `GET /api/v1/health` returns 200; response body deserializes to envelope; `data.status == "UP"`; `data.service == "kodex-api"`; `meta.requestId` is a valid UUID; `meta.timestamp` is a parseable ISO-8601 string; response header `Cache-Control` is `no-store`
-- [ ] T038 [P] [US2] Create `core/models/src/commonTest/kotlin/dev/kodex/core/models/health/HealthResponseTest.kt` — `kotlin.test` `@Test fun serializationRoundTrip()`: encode `HealthResponse` to JSON string, decode back, assert equality; verifies `@Serializable` annotation and `kotlin.time.Instant` serialization work correctly
+- [x] T037 [P] [US2] Create `server/api/src/test/kotlin/dev/kodex/server/api/HealthRouteTest.kt` — Kotest `FunSpec`; use Ktor `testApplication { application { ... } }`; test: `GET /api/v1/health` returns 200; response body deserializes to envelope; `data.status == "UP"`; `data.service == "kodex-api"`; `meta.requestId` is a valid UUID; `meta.timestamp` is a parseable ISO-8601 string; response header `Cache-Control` is `no-store`
+- [x] T038 [P] [US2] Create `core/models/src/commonTest/kotlin/dev/kodex/core/models/health/HealthResponseTest.kt` — `kotlin.test` `@Test fun serializationRoundTrip()`: encode `HealthResponse` to JSON string, decode back, assert equality; verifies `@Serializable` annotation and `kotlin.time.Instant` serialization work correctly
 
 **Checkpoint**: `./gradlew test koverXmlReport detekt` exits 0. Reports present: `build/reports/kover/html/index.html`, `build/reports/detekt/detekt.html`. Coverage ≥ 90% (skeleton has minimal code, tests cover all paths). US2 acceptance scenarios 1–3 all pass.
 
@@ -121,8 +121,8 @@
 
 **Independent Test**: Open a PR with `val unused = 1` → pipeline fails on `quality` job → merge button blocked. Revert → pipeline passes → merge available.
 
-- [ ] T039 [US3] Create `.github/workflows/ci.yml` — trigger: `push` (all branches) + `pull_request` (targeting `develop` or `main`); jobs: **build** (`./gradlew assemble`), **test** (`./gradlew test koverXmlReport`, upload coverage artifact), **quality** (`./gradlew detekt`); each job: `runs-on: ubuntu-latest`, `actions/setup-java@v4` (distribution: temurin, java-version: 25), Gradle cache action keyed on `hash(gradle/libs.versions.toml, **/*.gradle.kts)`; `needs:` chain enforces build → test → quality order; `fail-fast: false` so all jobs report
-- [ ] T040 [US3] Append GitHub branch protection setup section to `README.md` — explain: Settings → Branches → Add rule for `develop` and `main`; require status checks `ci / build`, `ci / test`, `ci / quality`; require branches up to date; dismiss stale reviews on push; document that this must be configured by a repo admin after first successful pipeline run
+- [x] T039 [US3] Create `.github/workflows/ci.yml` — trigger: `push` (all branches) + `pull_request` (targeting `develop` or `main`); jobs: **build** (`./gradlew assemble`), **test** (`./gradlew test koverXmlReport`, upload coverage artifact), **quality** (`./gradlew detekt`); each job: `runs-on: ubuntu-latest`, `actions/setup-java@v4` (distribution: temurin, java-version: 25), Gradle cache action keyed on `hash(gradle/libs.versions.toml, **/*.gradle.kts)`; `needs:` chain enforces build → test → quality order; `fail-fast: false` so all jobs report
+- [x] T040 [US3] Append GitHub branch protection setup section to `README.md` — explain: Settings → Branches → Add rule for `develop` and `main`; require status checks `ci / build`, `ci / test`, `ci / quality`; require branches up to date; dismiss stale reviews on push; document that this must be configured by a repo admin after first successful pipeline run
 
 **Checkpoint**: Push branch to GitHub → Actions tab shows 3 green jobs → PR shows all checks passing. Introduce a test failure → `ci / test` shows red → merge blocked. US3 acceptance scenarios 1–3 all pass.
 
@@ -130,8 +130,8 @@
 
 ## Phase 6: Polish & Cross-Cutting Concerns
 
-- [ ] T041 [P] Validate `quickstart.md` end-to-end on a fresh checkout — follow every step literally; update any step that no longer matches actual behaviour (port numbers, command output format, timing)
-- [ ] T042 [P] Run full quality suite from clean state: `./gradlew clean build detekt` — confirm no leftover debug code, no unused imports, no TODO comments leaked into production source sets; confirm `./gradlew :server:app:installDist` produces a runnable artifact without devMain code
+- [x] T041 [P] Validate `quickstart.md` end-to-end on a fresh checkout — follow every step literally; update any step that no longer matches actual behaviour (port numbers, command output format, timing)
+- [x] T042 [P] Run full quality suite from clean state: `./gradlew clean build detekt` — confirm no leftover debug code, no unused imports, no TODO comments leaked into production source sets; confirm `./gradlew :server:app:installDist` produces a runnable artifact without devMain code
 
 ---
 

@@ -63,10 +63,16 @@ Expected response:
 
 ```json
 {
-  "status": "UP",
-  "service": "kodex-api",
-  "version": "0.1.0-SNAPSHOT",
-  "startedAt": "2026-05-18T10:00:00Z"
+  "data": {
+    "status": "UP",
+    "startedAt": "2026-05-20T10:00:00Z"
+  },
+  "meta": {
+    "requestId": "...",
+    "timestamp": "...",
+    "service": "kodex-api",
+    "serviceVersion": "0.1.0-SNAPSHOT"
+  }
 }
 ```
 
