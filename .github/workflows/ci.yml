@@ -104,7 +104,7 @@ jobs:
         uses: madrapps/jacoco-report@v1.7.1
         with:
           paths: ${{ github.workspace }}/build/reports/kover/report.xml
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.JACOCO_TOKEN }}
           min-coverage-overall: 90
           min-coverage-changed-files: 80
 
