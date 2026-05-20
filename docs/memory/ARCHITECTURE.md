@@ -1,6 +1,6 @@
 # Architecture
 
-Last reviewed: 2026-05-19
+Last reviewed: 2026-05-20
 
 ## System Overview
 
@@ -11,14 +11,14 @@ KodEx is a multi-service system running inside Docker Compose (single-host, v1).
 | Component | Module | Type | Role |
 |---|---|---|---|
 | `core` | `:core` | JVM | `EnvConfig`, `LoggingConfig` (MDC), cross-cutting JVM utilities |
-| `core/models` | `:core:models` | **KMP** | Shared domain models, API contracts, validation — used by server AND all clients |
+| `core/models` | `:core:models` | **KMP** | Shared domain models, API contracts — used by server AND all clients |
 | `app/shared` | `:app:shared` | **KMP** | Client-side shared layer; re-exports `core:models`; future: split into ui/data/domain |
 | `app/webApp` | `:app:webApp` | KMP JS/WASM | Kilua frontend |
 | `server/api` | `:server:api` | JVM | Ktor routes, auth middleware, DTOs |
 | `server/domain` | `:server:domain` | JVM | Use cases, repository interfaces |
 | `server/data` | `:server:data` | JVM | Exposed ORM, Flyway, HikariCP, Redis (Lettuce) |
 | `server/app` | `:server:app` | JVM | Ktor engine, Koin DI composition root |
-| `sandbox-runner` | `:sandbox-runner:app` | JVM | Ktor service — only component with Docker socket |
+| `sandbox-runner` | `:sandbox-runner:app` | JVM | Ktor service — only component with Docker socket access |
 
 ## Boundaries
 
@@ -44,10 +44,45 @@ app:webApp         server:api → server:data
 - **Docker Engine**: sandbox-runner manages container lifecycle via `docker-java`
 - **Vite**: frontend build + HMR proxy (`/api` → `http://localhost:8080`)
 
+## Durable Constraints
+
+### 2026-05-20 - A1: Type-Safe Project Accessors are mandatory — string literals are prohibited
+
+**Status**: Active
+
+**Why this is durable**
+String-based `project(":path:module")` fails at configuration time, not compile time, and is not refactor-aware. This mistake occurred once in `sandbox-runner/app/build.gradle.kts`.
+
+**Constraint**
+All inter-module dependencies must use type-safe accessors:
+- ✅ `projects.sandboxRunner.executor`
+- ❌ `project(":sandbox-runner:executor")`
+
+`enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")` is active in `settings.gradle.kts`. The rule is codified in §VII of the constitution.
+
+**Reconsider when**: Gradle stabilises this feature and changes the syntax.
+
+---
+
+### 2026-05-20 - A2: `devMain` source set — dev-only code is excluded from the production artifact
+
+**Status**: Active
+
+**Why this is durable**
+Any future feature that needs dev-only behaviour (seed data, debug routes, verbose logging) must follow this pattern — placing dev code in `main` means it ships to production.
+
+**Constraint**
+In `server:app`:
+- `src/dev/kotlin/` — included only in the `devRun` task classpath
+- `src/dev/resources/` — `logback-dev.xml` (human-readable, coloured output)
+- `installDist` excludes this source set entirely
+
+Pattern: `devMain` source set extends `main` classpath, activated by a `devRun` task, excluded from `distributions`.
+
 ## Risks / Complexity Hotspots
 
 - Sandbox container lifecycle: timeout handling, cleanup on crash, resource limit enforcement
-- SSE stream management: terminal state detection, reconnect behavior, auth on stream
+- SSE stream management: terminal state detection, reconnect behaviour, auth on stream
 - Exam state machine enforcement: concurrent state transitions, deadline-triggered CLOSED
 
 ## Keep Here
