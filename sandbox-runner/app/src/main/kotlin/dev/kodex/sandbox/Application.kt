@@ -1,19 +1,24 @@
 package dev.kodex.sandbox
 
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import io.ktor.server.plugins.statuspages.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-
-private const val SECRET_HEADER = "X-Sandbox-Secret"
+import dev.kodex.core.env.envOrNull
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.install
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.UserIdPrincipal
+import io.ktor.server.auth.authenticate
+import io.ktor.server.auth.bearer
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
+import io.ktor.server.plugins.statuspages.StatusPages
+import io.ktor.server.response.respond
+import io.ktor.server.routing.get
+import io.ktor.server.routing.route
+import io.ktor.server.routing.routing
 
 fun main() {
-    val port = System.getenv("SANDBOX_RUNNER_PORT")?.toInt() ?: 8081
-    val host = System.getenv("SANDBOX_RUNNER_HOST") ?: "0.0.0.0"
-    val sharedSecret = requireNotNull(System.getenv("SANDBOX_SHARED_SECRET")) {
+    val port = envOrNull("SANDBOX_RUNNER_PORT")?.toInt() ?: 8081
+    val host = envOrNull("SANDBOX_RUNNER_HOST") ?: "0.0.0.0"
+    val sharedSecret = requireNotNull(envOrNull("SANDBOX_SHARED_SECRET")) {
         "Missing required env var: SANDBOX_SHARED_SECRET"
     }
 
@@ -23,6 +28,17 @@ fun main() {
                 call.respond(HttpStatusCode.InternalServerError)
             }
         }
+        install(Authentication) {
+            bearer("secret-auth") {
+                authenticate { tokenCredential ->
+                    if (tokenCredential.token == sharedSecret) {
+                        UserIdPrincipal("internal")
+                    } else {
+                        null
+                    }
+                }
+            }
+        }
 
         routing {
             get("/health") {
@@ -30,13 +46,8 @@ fun main() {
             }
 
             // All routes below require the shared secret
-            route("/") {
-                intercept(ApplicationCallPipeline.Plugins) {
-                    val header = call.request.headers[SECRET_HEADER]
-                    if (header != sharedSecret) {
-                        call.respond(HttpStatusCode.Unauthorized)
-                        finish()
-                    }
+            authenticate("secret-auth") {
+                route("/") {
                 }
             }
         }

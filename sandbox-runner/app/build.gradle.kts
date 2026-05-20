@@ -8,5 +8,6 @@ application {
 }
 
 dependencies {
+    implementation(projects.core)
     implementation(projects.sandboxRunner.executor)
 }
