@@ -56,6 +56,15 @@ they emit Intents and render State snapshots. No business logic lives in compone
 | Domain | Use cases imported from `app:shared`; no duplication |
 | Data | Ktor Client HTTP calls to `server:api`; browser LocalStorage via `kotlinx-browser` |
 
+## Gradle Conventions
+
+All inter-module dependencies MUST use **Type-Safe Project Accessors** (enabled via
+`enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")` in `settings.gradle.kts`).
+Using `project(":path:to:module")` string literals is PROHIBITED — use `projects.path.to.module` instead.
+
+**Rationale**: Type-safe accessors are compile-time checked, IDE-navigable, and refactor-safe.
+String-based `project(...)` calls fail silently at configuration time and are not refactor-aware.
+
 ## Code Style
 
 All Kotlin modules MUST use [**Detekt**](https://github.com/detekt/detekt) for static analysis.
