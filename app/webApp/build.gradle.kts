@@ -1,33 +1,67 @@
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 plugins {
     id("kotlin-kmp-convention")
+    alias(libs.plugins.compose)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kilua)
 }
 
 kotlin {
     js(IR) {
+        useEsModules()
         browser {
-            binaries.executable()
+            commonWebpackConfig {
+                cssSupport {
+                    enabled = true
+                }
+                outputFileName = "main.bundle.js"
+                sourceMaps = false
+            }
+            testTask {
+                useKarma {
+                    useChromeHeadless()
+                }
+            }
+        }
+        binaries.executable()
+        compilerOptions {
+            target.set("es2015")
         }
     }
+    @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
+        useEsModules()
         browser {
-            binaries.executable()
+            commonWebpackConfig {
+                cssSupport {
+                    enabled = true
+                }
+                outputFileName = "main.bundle.js"
+                sourceMaps = false
+            }
+            testTask {
+                useKarma {
+                    useChromeHeadless()
+                }
+            }
+        }
+        binaries.executable()
+        compilerOptions {
+            target.set("es2015")
         }
     }
 
     sourceSets {
         commonMain.dependencies {
             implementation(projects.app.shared)
-            implementation(libs.kilua)
             implementation(libs.napier)
-            implementation(libs.kotlinx.browser)
             implementation(libs.ktor.client.core)
         }
-        jsMain.dependencies {
+        webMain.dependencies {
+            implementation(libs.kilua)
             implementation(libs.ktor.client.js)
-        }
-        wasmJsMain.dependencies {
-            implementation(libs.ktor.client.js)
+            implementation(libs.kotlinx.browser)
         }
     }
 }

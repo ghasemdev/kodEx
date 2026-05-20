@@ -1,6 +1,11 @@
 package dev.kodex.core.env
 
-fun env(key: String): String =
-    System.getenv(key) ?: error("Missing required env var: $key")
+import io.github.cdimascio.dotenv.dotenv
 
-fun envOrNull(key: String): String? = System.getenv(key)
+private val dotenv = dotenv()
+
+fun env(key: String): String = System.getenv(key)
+    ?: dotenv[key]
+    ?: error("Missing required env var: $key")
+
+fun envOrNull(key: String): String? = System.getenv(key) ?: dotenv[key]

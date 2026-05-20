@@ -1,5 +1,6 @@
 plugins {
-    `ktor-service-convention`
+    id("ktor-service-convention")
+    application
 }
 
 application {

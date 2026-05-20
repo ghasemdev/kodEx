@@ -1,5 +1,5 @@
 plugins {
-    `kotlin-jvm-convention`
+    id("kotlin-jvm-convention")
 }
 
 dependencies {

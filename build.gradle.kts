@@ -3,6 +3,10 @@ plugins {
     alias(libs.plugins.detekt) apply false
 
     id("detekt-convention") apply false
+
+    alias(libs.plugins.compose) apply false
+    alias(libs.plugins.compose.compiler) apply false
+    alias(libs.plugins.kilua) apply false
 }
 
 kover {
