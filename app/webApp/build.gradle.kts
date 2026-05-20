@@ -1,5 +1,5 @@
 plugins {
-    `kotlin-kmp-convention`
+    id("kotlin-kmp-convention")
     alias(libs.plugins.kilua)
 }
 
