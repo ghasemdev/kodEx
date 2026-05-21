@@ -20,12 +20,17 @@ kotlin {
         optIn.add("kotlin.time.ExperimentalTime")
         optIn.add("kotlin.uuid.ExperimentalUuidApi")
     }
+    // Separate benchmark compilation — src/benchmark/kotlin — can see main classes but
+    // is excluded from the production JAR. kotlinx.benchmark targets this compilation.
+    val mainCompilation = target.compilations.getByName("main")
+    target.compilations.create("benchmark") {
+        associateWith(mainCompilation)
+    }
 }
 
 dependencies {
     api(libs.findLibrary("kotlinx-coroutines-core").get())
     api(libs.findLibrary("kotlinx-serialization-json").get())
-    implementation(libs.findLibrary("kotlinx-benchmark-runtime").get())
 
     "detektPlugins"("io.gitlab.arturbosch.detekt:detekt-formatting:${libs.findVersion("detekt").get()}")
 }
@@ -38,7 +43,7 @@ benchmark {
         }
     }
     targets {
-        register("main")
+        register("benchmark")
     }
 }
 

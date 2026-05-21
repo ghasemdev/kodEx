@@ -145,15 +145,15 @@ jobs:
       - name: Run JVM benchmarks
         # kotlinx.benchmark: JVM targets produce JMH JSON at
         # <module>/build/reports/benchmarks/main/<targetName>/*.json
-        # "main" target (kotlin-jvm-convention) → .../main/main/
-        # "jvm"  target (kotlin-kmp-convention) → .../main/jvm/
+        # "benchmark" target (kotlin-jvm-convention) → .../main/benchmark/
+        # "jvm"       target (kotlin-kmp-convention) → .../main/jvm/
         run: ./gradlew benchmark --no-daemon
 
       - name: Collect JVM benchmark results
         id: collect
         run: |
           FILES=$(find . \
-            -path "*/build/reports/benchmarks/main/main/*.json" \
+            -path "*/build/reports/benchmarks/main/benchmark/*.json" \
             -o -path "*/build/reports/benchmarks/main/jvm/*.json" \
             2>/dev/null | tr '\n' ' ')
           if [ -n "$FILES" ]; then
@@ -227,13 +227,11 @@ jobs:
           cache-read-only: false
 
       - name: Run OWASP Dependency Check
-        run: ./gradlew dependencyCheckAggregate --no-daemon
-        env:
-          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: ./gradlew dependencyCheckAggregate -PnvdApiKey=${{ secrets.NVD_API_KEY }} --no-daemon
 
       - name: Upload OWASP report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: dependency-check-report
-          path: build/reports/dependency-check-report.*
+          path: build/reports/dependency-check-report/
