@@ -143,18 +143,18 @@ jobs:
           cache-read-only: true
 
       - name: Run JVM benchmarks
-        # kotlinx.benchmark: JVM targets produce JMH JSON at
-        # <module>/build/reports/benchmarks/main/<targetName>/*.json
-        # "benchmark" target (kotlin-jvm-convention) → .../main/benchmark/
-        # "jvm"       target (kotlin-kmp-convention) → .../main/jvm/
+        # kotlinx.benchmark outputs JMH JSON to:
+        # <module>/build/reports/benchmarks/main/jvm/*.json
+        # Both conventions register target "jvm":
+        #   kotlin-jvm-convention → compilation "jvm", srcDir src/benchmark/kotlin
+        #   kotlin-kmp-convention → KMP jvm target, srcDir src/jvmMain/kotlin
         run: ./gradlew benchmark --no-daemon
 
       - name: Collect JVM benchmark results
         id: collect
         run: |
           FILES=$(find . \
-            -path "*/build/reports/benchmarks/main/benchmark/*.json" \
-            -o -path "*/build/reports/benchmarks/main/jvm/*.json" \
+            -path "*/build/reports/benchmarks/main/jvm/*.json" \
             2>/dev/null | tr '\n' ' ')
           if [ -n "$FILES" ]; then
             # shellcheck disable=SC2086

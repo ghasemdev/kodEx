@@ -23,8 +23,9 @@ kotlin {
     // Separate benchmark compilation — src/benchmark/kotlin — can see main classes but
     // is excluded from the production JAR. kotlinx.benchmark targets this compilation.
     val mainCompilation = target.compilations.getByName("main")
-    target.compilations.create("benchmark") {
+    target.compilations.create("jvm") {
         associateWith(mainCompilation)
+        defaultSourceSet.kotlin.setSrcDirs(listOf("src/benchmark/kotlin"))
     }
 }
 
@@ -43,7 +44,7 @@ benchmark {
         }
     }
     targets {
-        register("benchmark")
+        register("jvm")
     }
 }
 
