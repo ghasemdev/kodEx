@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.kotlin.allopen) apply false
-    alias(libs.plugins.kotlin.benchmark) apply false
+    alias(libs.plugins.kotlin.benchmark)
     alias(libs.plugins.kover)
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.dependencycheck)
@@ -66,5 +66,38 @@ kover {
                 }
             }
         }
+    }
+}
+
+tasks.register("benchmarkMerge") {
+    group = "benchmark"
+    description = "Merge all benchmark JSONs from all modules"
+
+    doLast {
+        val rootDir = project.rootDir
+
+        val jsonFiles = rootDir.walkTopDown()
+            .filter { file ->
+                file.isFile &&
+                        file.extension == "json" &&
+                        file.path.contains("build/reports/benchmarks/main")
+            }
+            .toList()
+
+        val outputFile = file("build/reports/benchmarks/benchmark-results.json")
+        outputFile.parentFile.mkdirs()
+
+        val merged = jsonFiles.joinToString(
+            prefix = "[",
+            postfix = "]",
+            separator = ","
+        ) { file ->
+            file.readText().trim().removeSurrounding("[", "]")
+        }
+
+        outputFile.writeText(merged)
+
+        println("Found ${jsonFiles.size} benchmark files")
+        jsonFiles.forEach { println(it.path) }
     }
 }

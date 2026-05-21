@@ -143,32 +143,13 @@ jobs:
           cache-read-only: true
 
       - name: Run benchmarks
-        # Output paths per convention:
-        #   kotlin-jvm-convention → .../benchmarks/main/jvm/         (target: "jvm")
-        #   kotlin-kmp-convention → .../benchmarks/main/jvmBenchmark/ (target: "jvmBenchmark")
-        #                         → .../benchmarks/main/jsBenchmark/  (target: "jsBenchmark")
-        run: ./gradlew benchmark --no-daemon
-
-      - name: Collect benchmark results
-        id: collect
-        run: |
-          FILES=$(find . \
-            -path "*/build/reports/benchmarks/main/jvm/*.json" \
-            -o -path "*/build/reports/benchmarks/main/jvmBenchmark/*.json" \
-            -o -path "*/build/reports/benchmarks/main/jsBenchmark/*.json" \
-            2>/dev/null | tr '\n' ' ')
-          if [ -n "$FILES" ]; then
-            # shellcheck disable=SC2086
-            jq -s 'add // []' $FILES > benchmark-results.json
-          else
-            echo "[]" > benchmark-results.json
-          fi
+        run: ./gradlew benchmark benchmarkMerge --no-daemon
 
       - name: Compare and comment
         uses: benchmark-action/github-action-benchmark@v1
         with:
           tool: 'jmh'
-          output-file-path: benchmark-results.json
+          output-file-path: build/reports/benchmarks/benchmark-results.json
           github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           auto-push: true
           alert-threshold: '120%'

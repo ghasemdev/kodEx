@@ -64,3 +64,12 @@ tasks.withType<Test> {
         showStandardStreams = false
     }
 }
+
+// Skip the benchmark task when there are no @Benchmark classes in src/benchmark/kotlin.
+// Without this, JMH throws "No benchmarks to run" and the task fails.
+afterEvaluate {
+    tasks.findByName("jvmBenchmark")?.onlyIf("has benchmark sources") {
+        val dir = file("src/benchmark/kotlin")
+        dir.exists() && dir.walkTopDown().any { it.isFile && it.extension == "kt" }
+    }
+}
