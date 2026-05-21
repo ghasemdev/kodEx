@@ -18,24 +18,23 @@ allOpen {
 }
 
 // ─── Benchmark configuration ───────────────────────────────────────────────
-// Source sets created by the "benchmark" compilation below:
-//   src/commonBenchmark/kotlin  ← shared benchmark utilities / base classes
-//   src/jvmBenchmark/kotlin     ← JVM-specific benchmarks
+// Source set auto-created by compilations.create("benchmark") under jvm:
+//   src/jvmBenchmark/kotlin  ← JVM benchmark classes (@State, @Benchmark)
 //
-// JS benchmark is NOT registered here because kotlinx.benchmark requires
-// nodejs() on the JS target, but this convention uses browser() for Kilua.
-// Add nodejs() + register("jsBenchmark") per-module if needed.
+// Access to jvmMain (and transitively commonMain) comes from associateWith()
+// at the compilation level — no extra dependsOn() needed or allowed
+// (explicit cross-tree dependsOn is rejected by the Kotlin hierarchy template).
 //
-// Task naming (kotlinx.benchmark appends "Benchmark" to the registered name):
-//   register("jvmBenchmark") → task: jvmBenchmarkBenchmark
-//   ./gradlew benchmark      → aggregation task
+// JS benchmark requires nodejs() on the target; add it per-module if needed.
+//
+// Task naming: register("jvmBenchmark") → task jvmBenchmarkBenchmark
+//              ./gradlew benchmark      → aggregation task
 benchmark {
     configurations {
         named("main") {
             iterationTime = 5
             iterationTimeUnit = "sec"
         }
-        // "fast" config: quick smoke-check for CI — one short iteration
         create("fast") {
             iterations = 1
             iterationTime = 500
@@ -86,20 +85,13 @@ kotlin {
             implementation(kotlin("test"))
         }
 
-        // commonBenchmark sits above all platform benchmark source sets.
-        // It depends on commonMain so benchmark code can use production types.
-        val commonBenchmark by creating {
-            dependsOn(commonMain.get())
+        // jvmBenchmark is auto-created by compilations.create("benchmark") above.
+        // Only the runtime dependency is needed here; main/commonMain visibility
+        // is handled by associateWith at the compilation level.
+        getByName("jvmBenchmark") {
             dependencies {
                 implementation(libs.findLibrary("kotlinx-benchmark-runtime").get())
             }
-        }
-
-        // Platform-specific benchmark source sets, each depending on commonBenchmark.
-        // Kotlin creates these automatically when compilations.create("benchmark") runs
-        // for the respective target — we just wire the hierarchy here.
-        getByName("jvmBenchmark") {
-            dependsOn(commonBenchmark)
         }
     }
 }

@@ -1,7 +1,15 @@
 package dev.kodex.server.api.benchmark
 
-import org.openjdk.jmh.annotations.*
-import java.util.concurrent.*
+import org.openjdk.jmh.annotations.Benchmark
+import org.openjdk.jmh.annotations.Fork
+import org.openjdk.jmh.annotations.Measurement
+import org.openjdk.jmh.annotations.Scope
+import org.openjdk.jmh.annotations.Setup
+import org.openjdk.jmh.annotations.State
+import org.openjdk.jmh.annotations.Warmup
+import java.util.concurrent.TimeUnit
+import kotlin.math.cos
+import kotlin.math.sqrt
 
 @State(Scope.Benchmark)
 @Fork(1)
@@ -17,11 +25,11 @@ class JvmTestBenchmark {
 
     @Benchmark
     fun sqrtBenchmark(): Double {
-        return Math.sqrt(data)
+        return sqrt(data)
     }
 
     @Benchmark
     fun cosBenchmark(): Double {
-        return Math.cos(data)
+        return cos(data)
     }
 }

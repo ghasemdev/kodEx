@@ -1,4 +1,4 @@
-package dev.kodex.server.api.dev.kodex.server.api.benchmark
+package dev.kodex.server.api.benchmark
 
 import org.openjdk.jmh.annotations.Benchmark
 import org.openjdk.jmh.annotations.Fork
