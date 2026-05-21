@@ -1,13 +1,17 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.jetbrains.kotlin.allopen.gradle.AllOpenExtension
+
+val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 plugins {
     kotlin("jvm")
     id("org.jetbrains.kotlin.plugin.serialization")
-    id("io.gitlab.arturbosch.detekt")
-    id("org.jetbrains.kotlinx.kover")
-}
+    id("org.jetbrains.kotlin.plugin.allopen")
 
-val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
+    id("org.jetbrains.kotlinx.benchmark")
+    id("org.jetbrains.kotlinx.kover")
+    id("io.gitlab.arturbosch.detekt")
+}
 
 kotlin {
     jvmToolchain(21)
@@ -21,8 +25,25 @@ kotlin {
 dependencies {
     api(libs.findLibrary("kotlinx-coroutines-core").get())
     api(libs.findLibrary("kotlinx-serialization-json").get())
+    implementation(libs.findLibrary("kotlinx-benchmark-runtime").get())
 
     "detektPlugins"("io.gitlab.arturbosch.detekt:detekt-formatting:${libs.findVersion("detekt").get()}")
+}
+
+benchmark {
+    configurations {
+        named("main") {
+            iterationTime = 5
+            iterationTimeUnit = "sec"
+        }
+    }
+    targets {
+        register("main")
+    }
+}
+
+configure<AllOpenExtension> {
+    annotation("org.openjdk.jmh.annotations.State")
 }
 
 tasks.withType<Test> {
