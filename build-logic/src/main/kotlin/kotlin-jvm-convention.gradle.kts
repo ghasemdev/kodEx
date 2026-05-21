@@ -26,6 +26,11 @@ kotlin {
     target.compilations.create("jvm") {
         associateWith(mainCompilation)
         defaultSourceSet.kotlin.setSrcDirs(listOf("src/benchmark/kotlin"))
+        // The runtime must be declared here so the plugin puts it on the
+        // execution classpath of the jvmBenchmark task (JvmBenchmarkRunnerKt).
+        defaultSourceSet.dependencies {
+            implementation(libs.findLibrary("kotlinx-benchmark-runtime").get())
+        }
     }
 }
 
