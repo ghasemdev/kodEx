@@ -57,8 +57,9 @@ kotlin {
                 }
             }
         }
+        val jvmMain = compilations.getByName("main")
         compilations.create("benchmark") {
-            associateWith(compilations.getByName("main"))
+            associateWith(jvmMain)
         }
     }
 
@@ -66,8 +67,9 @@ kotlin {
         browser {
             binaries.executable()
         }
+        val jsMain = compilations.getByName("main")
         compilations.create("benchmark") {
-            associateWith(compilations.getByName("main"))
+            associateWith(jsMain)
         }
     }
 
