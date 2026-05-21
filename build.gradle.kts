@@ -66,6 +66,12 @@ kover {
                 }
             }
         }
+        filters {
+            excludes {
+                // benchmarks
+                annotatedBy("org.openjdk.jmh.annotations.State",)
+            }
+        }
     }
 }
 
