@@ -78,3 +78,24 @@ written in v1; the `shared/` module must remain KMP-compatible to keep this path
 - **Build Tool**: Gradle (Kotlin DSL) for all modules.
 - **Code Quality**: Detekt (see §VII). Configuration in `config/detekt/detekt.yml`.
   CI pipeline MUST run `./gradlew detekt` and fail on violations.
+
+## CI/CD Pipeline (`.github/workflows/ci.yml`)
+
+Five parallel jobs after `assemble` (which all depend on):
+
+| Job | Trigger | Key Command |
+|---|---|---|
+| `assemble` | push + PR | `./gradlew assemble` |
+| `test` | push only | `./gradlew test jvmTest` |
+| `coverage` | PR only | `./gradlew test jvmTest koverXmlReport koverVerify` |
+| `benchmark` | PR only | `./gradlew benchmarkFast benchmarkMerge -PbenchmarkConfig=fast` |
+| `detekt` | PR only | `./gradlew detekt` |
+| `dependency-check` | PR→main + weekly schedule | `./gradlew dependencyCheckAggregate -PnvdApiKey=...` |
+
+**Benchmark fast mode**: CI uses `benchmarkFast` (not `benchmark`) — 1 iteration / 500ms / 1 JVM fork. Results compared via `benchmark-action/github-action-benchmark@v1` against `gh-pages` branch. Alert threshold: 120% regression.
+
+**OWASP scan**: Only on PRs targeting `main` and weekly Monday 06:00 UTC schedule. Requires `NVD_API_KEY` secret. `failBuildOnCVSS=7`. Results in `build/reports/dependency-check/`.
+
+**Coverage**: Kover 90% minimum aggregate threshold. Report published as PR comment via `madrapps/jacoco-report`. Artifact path: `build/reports/kover/report.xml`.
+
+**Secrets required**: `PERSONAL_ACCESS_TOKEN` (benchmark push + coverage PR comment), `NVD_API_KEY` (OWASP scan).

@@ -96,12 +96,16 @@ specs/001-project-base-setup/
 ```text
 root/
 ├── build-logic/                        # Convention plugins (shared Gradle config)
-│   ├── build.gradle.kts
+│   ├── build.gradle.kts                # Includes OWASP + kover + detekt + benchmark + kilua plugin deps
 │   └── src/main/kotlin/
-│       ├── kotlin-jvm-convention.gradle.kts
-│       ├── kotlin-kmp-convention.gradle.kts
-│       ├── ktor-service-convention.gradle.kts
-│       └── detekt-convention.gradle.kts
+│       ├── benchmark-convention.gradle.kts          # allOpen(@State) + JMH configs (main/fast) — no targets
+│       ├── benchmark-aggregation-convention.gradle.kts  # Root tasks: benchmark, benchmarkFast, benchmarkMerge
+│       ├── detekt-convention.gradle.kts             # Detekt plugin + config.yml + reports + detekt-formatting dep
+│       ├── kover-report-convention.gradle.kts       # Aggregate coverage: 90% threshold, xml+html, @State filter
+│       ├── dependency-check-convention.gradle.kts   # OWASP plugin + NVD key + failOnCVSS=7
+│       ├── kotlin-jvm-convention.gradle.kts         # Composes: benchmark-convention + detekt-convention + kover
+│       ├── kotlin-kmp-convention.gradle.kts         # Composes: benchmark-convention + detekt-convention + kover
+│       └── ktor-service-convention.gradle.kts       # Applies kotlin-jvm-convention + ktor/koin/logging bundles
 │
 ├── gradle/
 │   └── libs.versions.toml              # Central version catalog
@@ -183,12 +187,12 @@ root/
 │
 ├── .github/
 │   └── workflows/
-│       └── ci.yml                      # Build + test + detekt on push and PR
+│       └── ci.yml                      # 6 jobs: assemble → test (push) | coverage / benchmark / detekt / dependency-check (PR)
 │
 ├── .env.example                        # Required env vars with placeholder values
 ├── .gitignore                          # Includes .env
 ├── settings.gradle.kts                 # Root settings, module includes
-├── build.gradle.kts                    # Root build: detekt + kover aggregation
+├── build.gradle.kts                    # Root build: applies kover-report/dependency-check/benchmark-aggregation conventions + kover() module inclusions
 └── README.md                           # Quick-start guide (mirrors quickstart.md)
 ```
 

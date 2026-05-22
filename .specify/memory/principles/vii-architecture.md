@@ -65,12 +65,44 @@ Using `project(":path:to:module")` string literals is PROHIBITED — use `projec
 **Rationale**: Type-safe accessors are compile-time checked, IDE-navigable, and refactor-safe.
 String-based `project(...)` calls fail silently at configuration time and are not refactor-aware.
 
+### Convention Plugin Map
+
+All build config lives in `build-logic/src/main/kotlin/`. Conventions MUST be composed —
+never add plugins or config directly to module `build.gradle.kts` files if a convention covers it.
+
+```
+benchmark-convention          ← allOpen(@State) + JMH configs: main (5s) and fast (1iter/500ms/1fork)
+├── kotlin-kmp-convention     ← KMP target "jvmBenchmark", compilations, sourceSets, kover, detekt
+└── kotlin-jvm-convention     ← JVM target "jvm", toolchain 21, kover, detekt
+
+detekt-convention             ← detekt plugin + config/detekt/detekt.yml + all report formats + detekt-formatting dep
+├── kotlin-kmp-convention
+└── kotlin-jvm-convention
+
+ktor-service-convention       ← applies kotlin-jvm-convention + adds ktor-server/koin/logging bundles
+
+kover-report-convention       ← aggregate coverage report: 90% threshold, xml+html, excludes @State classes
+                                Applied to root project only.
+
+dependency-check-convention   ← OWASP plugin, NVD key via Config.get(), failBuildOnCVSS=7, autoUpdate=false
+                                Applied to root project only.
+
+benchmark-aggregation-convention ← root tasks: benchmark (all main), benchmarkFast (all fast, CI), benchmarkMerge
+                                   Applied to root project only.
+```
+
+**Key rules:**
+- `type-safe project accessors` are MANDATORY everywhere — `project(":x")` is prohibited
+- `detekt-convention` is the single source of truth for detekt; do NOT apply the detekt plugin directly in module files
+- `benchmark-convention` owns the JMH configurations (main + fast); module conventions only register their target name
+- Convention plugins that use `project(":x:y")` string paths (e.g., kover module inclusions) MUST stay in root `build.gradle.kts` — typesafe accessors (`projects.*`) are not available in `build-logic`
+
 ## Code Style
 
 All Kotlin modules MUST use [**Detekt**](https://github.com/detekt/detekt) for static analysis.
 Configuration lives in `config/detekt/detekt.yml` at the repository root. CI MUST fail on any
-Detekt rule violation. The Detekt configuration MAY integrate `detekt-formatting` (ktlint rules)
-to enforce consistent formatting without a separate ktlint pass.
+Detekt rule violation. The Detekt configuration integrates `detekt-formatting` (ktlint rules)
+via `detekt-convention`, eliminating any need for a separate ktlint pass.
 
 **Rationale**: A single language + clean layering boundary prevents the codebase from
 becoming a tangle of cross-cutting concerns as features are added. MVI aligns frontend

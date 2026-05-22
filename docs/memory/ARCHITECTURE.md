@@ -46,6 +46,24 @@ app:webApp         server:api → server:data
 
 ## Durable Constraints
 
+### 2026-05-23 - A3: Convention plugin composition — do not add build config directly to module files
+
+**Status**: Active
+
+**Why this is durable**
+The `build-logic/` convention hierarchy is the single source of truth for all build config. Bypassing it by adding plugins directly to module `build.gradle.kts` files causes silent divergence (e.g., no detekt config, wrong JMH settings, missing guards).
+
+**Constraint**
+Every capability (benchmark, detekt, kover, allOpen) has an owning convention plugin. Module build files MUST only apply the appropriate top-level convention (`kotlin-kmp-convention`, `kotlin-jvm-convention`, or `ktor-service-convention`) and declare their own inter-module `dependencies {}`. Any change to quality tooling, benchmark config, or compiler options goes into the relevant convention, not individual modules.
+
+Full hierarchy: see `§VII — Architecture & Module Conventions` → Convention Plugin Map.
+
+**Special case**: `kover(projects.*)` module inclusions cannot be inside a convention plugin because `projects.*` typesafe accessors are unavailable in `build-logic`. These stay in root `build.gradle.kts`.
+
+**Reconsider when**: Gradle stabilises typesafe accessors in composite builds.
+
+---
+
 ### 2026-05-20 - A1: Type-Safe Project Accessors are mandatory — string literals are prohibited
 
 **Status**: Active
