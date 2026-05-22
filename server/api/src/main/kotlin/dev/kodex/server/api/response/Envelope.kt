@@ -1,7 +1,7 @@
 package dev.kodex.server.api.response
 
-import kotlin.time.Clock
 import kotlinx.serialization.Serializable
+import kotlin.time.Clock
 
 @Serializable
 data class Meta(
@@ -23,16 +23,15 @@ data class ErrorEnvelope(
     val meta: Meta,
 )
 
-fun <T> buildEnvelope(data: T, requestId: String, service: String, version: String): Envelope<T> =
-    Envelope(
-        data = data,
-        meta = Meta(
-            requestId = requestId,
-            timestamp = Clock.System.now().toString(),
-            service = service,
-            serviceVersion = version,
-        ),
-    )
+fun <T> buildEnvelope(data: T, requestId: String, service: String, version: String): Envelope<T> = Envelope(
+    data = data,
+    meta = Meta(
+        requestId = requestId,
+        timestamp = Clock.System.now().toString(),
+        service = service,
+        serviceVersion = version,
+    ),
+)
 
 fun buildErrorEnvelope(message: String, requestId: String, service: String, version: String): ErrorEnvelope =
     ErrorEnvelope(

@@ -248,6 +248,37 @@ failure → `ci / test` shows red → merge blocked. US3 acceptance scenarios 1�
 
 ---
 
+## Security Technical Debt
+
+Tasks added from security review follow-up `docs/security-reviews/2026-05-20-feature-001-followup.md`.
+All HIGH/MEDIUM/LOW-immediate findings are resolved. One LOW finding is deferred pending executor implementation.
+
+### TASK-SEC-006 — Enforce sandbox resource limits in executor
+
+- **Severity**: LOW
+- **Source Finding**: SEC-006 (branch review 2026-05-20)
+- **OWASP**: A05 — Security Misconfiguration
+- **CWE**: CWE-400 (Uncontrolled Resource Consumption)
+- **Location**: `sandbox-runner/executor/` (placeholder — module not yet implemented)
+- **Status**: ⏳ Deferred — executor is a placeholder with no Docker container lifecycle code
+- **Revisit Trigger**: Before the first sandbox execution task is implemented
+- **Target Milestone**: Feature implementing code submission execution (feature 003 or 004)
+
+**Description**: The `docker run` invocation in the executor MUST include resource isolation flags to prevent sandbox breakout and denial-of-service.
+
+**Acceptance Criteria**:
+
+- [ ] `--network=none` present on every container start
+- [ ] `--cpus=<exam.cpuLimit>` applied (default: 2.0)
+- [ ] `--memory=<exam.memoryLimit>` applied (default: 512m)
+- [ ] `--stop-timeout=<exam.wallClockTimeout>` applied (default: 10s)
+- [ ] `--read-only` with explicit writable tmpfs mounts for temp output
+- [ ] Unit test asserts all flags are present in container start parameters on every invocation
+
+**References**: `docs/security-reviews/2026-05-20-feature-001-followup.md` § TASK-SEC-006
+
+---
+
 ## Dependencies & Execution Order
 
 ### Phase Dependencies
