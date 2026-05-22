@@ -143,7 +143,7 @@ jobs:
           cache-read-only: true
 
       - name: Run benchmarks (fast mode)
-        run: ./gradlew benchmarkFast benchmarkMerge -PbenchmarkConfig=fast --no-daemon
+        run: ./gradlew fastBenchmark benchmarkMerge -PbenchmarkConfig=fast --no-daemon
 
       - name: Compare and comment
         uses: benchmark-action/github-action-benchmark@v1

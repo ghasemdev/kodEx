@@ -12,4 +12,5 @@ dependencies {
 
     implementation(libs.gradle.plugin.detekt)
     implementation(libs.gradle.plugin.kover)
+    implementation(libs.gradle.plugin.dependencycheck)
 }

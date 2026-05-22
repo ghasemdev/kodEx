@@ -10,13 +10,9 @@ plugins {
 configure<DetektExtension> {
     config.setFrom(rootProject.file("config/detekt/detekt.yml"))
     buildUponDefaultConfig = true
-    source.setFrom(
-        "src/main/kotlin",
-        "src/dev/kotlin",
-    )
 }
 
-configure<Detekt> {
+tasks.withType<Detekt>().configureEach {
     reports {
         html.required.set(true)
         md.required.set(true)
@@ -24,4 +20,8 @@ configure<Detekt> {
         txt.required.set(true)
         xml.required.set(true)
     }
+}
+
+dependencies {
+    "detektPlugins"("io.gitlab.arturbosch.detekt:detekt-formatting:${libs.findVersion("detekt").get()}")
 }

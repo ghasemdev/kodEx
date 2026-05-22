@@ -1,129 +1,15 @@
 plugins {
-    alias(libs.plugins.kotlin.allopen) apply false
-    alias(libs.plugins.kotlin.benchmark)
-    alias(libs.plugins.kover)
-    alias(libs.plugins.detekt) apply false
-    alias(libs.plugins.dependencycheck)
-
+    // version-pins for plugins applied directly in module build.gradle.kts files
     alias(libs.plugins.compose) apply false
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.kilua) apply false
 
-    id("detekt-convention") apply false
-}
-
-dependencyCheck {
-    nvd {
-        val apiKey = Config.get("nvdApiKey")
-            .env("NVD_API_KEY")
-            .property("nvd.apiKey")
-            .resolve(project)
-
-        if (apiKey.isNullOrBlank()) {
-            logger.warn("⚠️ NVD API Key is missing!")
-        }
-
-        apiKey?.let {
-            this.apiKey.set(it)
-        }
-    }
-    analyzers {
-        assemblyEnabled = false
-    }
-
-    failBuildOnCVSS.set(7f)
-
-    outputDirectory.set(
-        rootProject.layout.projectDirectory
-            .dir("build/reports/dependency-check")
-    )
-
-    suppressionFile = rootProject.layout.projectDirectory
-        .file("config/dependency-check/dependency-check-suppressions.xml")
-        .asFile
-        .path
-
-    autoUpdate = false
+    id("kover-report-convention")
+    id("dependency-check-convention")
+    id("benchmark-aggregation-convention")
 }
 
 dependencies {
     kover(projects.core.models)
     kover(projects.server.api)
-}
-
-kover {
-    reports {
-        total {
-            xml {
-                onCheck = true
-            }
-            html {
-                onCheck = true
-            }
-            verify {
-                rule {
-                    minBound(90)
-                }
-            }
-        }
-        filters {
-            excludes {
-                // benchmarks
-                annotatedBy("org.openjdk.jmh.annotations.State",)
-            }
-        }
-    }
-}
-
-val benchmarkConfigName: String = providers.gradleProperty("benchmarkConfig").getOrElse("main")
-
-// Aggregation task for the 'fast' configuration — used in CI to avoid full JMH warmup.
-// Individual module tasks: jvmBenchmarkFastBenchmark (KMP) / jvmFastBenchmark (JVM).
-val benchmarkFastTask = tasks.register("benchmarkFast") {
-    group = "benchmark"
-    description = "Run all 'fast' benchmark configurations across all subprojects"
-}
-
-subprojects {
-    afterEvaluate {
-        listOf("jvmBenchmarkFastBenchmark", "jvmFastBenchmark").forEach { taskName ->
-            tasks.findByName(taskName)?.let { fastTask ->
-                benchmarkFastTask.configure { dependsOn(fastTask) }
-            }
-        }
-    }
-}
-
-tasks.register("benchmarkMerge") {
-    group = "benchmark"
-    description = "Merge all benchmark JSONs from all modules (pass -PbenchmarkConfig=fast for CI)"
-
-    doLast {
-        val configPath = benchmarkConfigName
-        val rootDir = project.rootDir
-
-        val jsonFiles = rootDir.walkTopDown()
-            .filter { file ->
-                file.isFile &&
-                        file.extension == "json" &&
-                        file.path.contains("build/reports/benchmarks/$configPath")
-            }
-            .toList()
-
-        val outputFile = file("build/reports/benchmarks/benchmark-results.json")
-        outputFile.parentFile.mkdirs()
-
-        val merged = jsonFiles.joinToString(
-            prefix = "[",
-            postfix = "]",
-            separator = ","
-        ) { file ->
-            file.readText().trim().removeSurrounding("[", "]")
-        }
-
-        outputFile.writeText(merged)
-
-        println("Found ${jsonFiles.size} benchmark files (config: $configPath)")
-        jsonFiles.forEach { println(it.path) }
-    }
 }

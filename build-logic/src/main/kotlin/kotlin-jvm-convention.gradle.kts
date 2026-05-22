@@ -1,16 +1,14 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.jetbrains.kotlin.allopen.gradle.AllOpenExtension
 
 val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 plugins {
     kotlin("jvm")
     id("org.jetbrains.kotlin.plugin.serialization")
-    id("org.jetbrains.kotlin.plugin.allopen")
 
-    id("org.jetbrains.kotlinx.benchmark")
+    id("benchmark-convention")
+    id("detekt-convention")
     id("org.jetbrains.kotlinx.kover")
-    id("io.gitlab.arturbosch.detekt")
 }
 
 kotlin {
@@ -20,14 +18,12 @@ kotlin {
         optIn.add("kotlin.time.ExperimentalTime")
         optIn.add("kotlin.uuid.ExperimentalUuidApi")
     }
-    // Separate benchmark compilation — src/benchmark/kotlin — can see main classes but
-    // is excluded from the production JAR. kotlinx.benchmark targets this compilation.
+    // Separate benchmark compilation — src/benchmark/kotlin — can see main classes
+    // but is excluded from the production JAR. kotlinx.benchmark targets this compilation.
     val mainCompilation = target.compilations.getByName("main")
     target.compilations.create("jvm") {
         associateWith(mainCompilation)
         defaultSourceSet.kotlin.setSrcDirs(listOf("src/benchmark/kotlin"))
-        // The runtime must be declared here so the plugin puts it on the
-        // execution classpath of the jvmBenchmark task (JvmBenchmarkRunnerKt).
         defaultSourceSet.dependencies {
             implementation(libs.findLibrary("kotlinx-benchmark-runtime").get())
         }
@@ -37,30 +33,14 @@ kotlin {
 dependencies {
     api(libs.findLibrary("kotlinx-coroutines-core").get())
     api(libs.findLibrary("kotlinx-serialization-json").get())
-
-    "detektPlugins"("io.gitlab.arturbosch.detekt:detekt-formatting:${libs.findVersion("detekt").get()}")
 }
 
+// Benchmark target for JVM modules — configurations (main/fast) live in benchmark-convention.
+// Task naming: register("jvm") → jvmBenchmark (main), jvmFastBenchmark (fast)
 benchmark {
-    configurations {
-        named("main") {
-            iterationTime = 5
-            iterationTimeUnit = "sec"
-        }
-        create("fast") {
-            iterations = 1
-            iterationTime = 500
-            iterationTimeUnit = "ms"
-            advanced("jvmForks", 1)
-        }
-    }
     targets {
         register("jvm")
     }
-}
-
-configure<AllOpenExtension> {
-    annotation("org.openjdk.jmh.annotations.State")
 }
 
 tasks.withType<Test> {
@@ -71,8 +51,7 @@ tasks.withType<Test> {
     }
 }
 
-// Skip benchmark tasks when there are no @Benchmark classes in src/benchmark/kotlin.
-// Without this, JMH throws "No benchmarks to run" and the task fails.
+// Skip benchmark tasks for modules with no @Benchmark classes in src/benchmark/kotlin.
 @Suppress("UnstableApiUsage")
 afterEvaluate {
     val hasSources: Spec<Task> = Spec { _ ->
