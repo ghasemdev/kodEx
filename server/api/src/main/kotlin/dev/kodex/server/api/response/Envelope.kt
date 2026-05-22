@@ -1,7 +1,7 @@
 package dev.kodex.server.api.response
 
-import kotlinx.serialization.Serializable
 import kotlin.time.Clock
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class Meta(

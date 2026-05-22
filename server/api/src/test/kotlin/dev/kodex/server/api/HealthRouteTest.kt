@@ -15,8 +15,8 @@ import io.ktor.server.application.install
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.routing.routing
 import io.ktor.server.testing.testApplication
-import kotlinx.serialization.json.Json
 import kotlin.time.Clock
+import kotlinx.serialization.json.Json
 
 class HealthRouteTest : FunSpec({
     val startedAt = Clock.System.now()

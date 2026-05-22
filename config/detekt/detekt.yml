@@ -89,6 +89,8 @@ formatting:
     maxLineLength: 120
   ImportOrdering:
     active: true
+    autoCorrect: true
+    layout: '*,android.*,androidx.*,com.*,java.*,javax.*,kotlin.*,kotlinx.*,$*'
   FinalNewline:
     active: true
   NoWildcardImports:
