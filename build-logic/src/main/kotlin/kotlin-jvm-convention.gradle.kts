@@ -47,6 +47,12 @@ benchmark {
             iterationTime = 5
             iterationTimeUnit = "sec"
         }
+        create("fast") {
+            iterations = 1
+            iterationTime = 500
+            iterationTimeUnit = "ms"
+            advanced("jvmForks", 1)
+        }
     }
     targets {
         register("jvm")
@@ -65,11 +71,14 @@ tasks.withType<Test> {
     }
 }
 
-// Skip the benchmark task when there are no @Benchmark classes in src/benchmark/kotlin.
+// Skip benchmark tasks when there are no @Benchmark classes in src/benchmark/kotlin.
 // Without this, JMH throws "No benchmarks to run" and the task fails.
+@Suppress("UnstableApiUsage")
 afterEvaluate {
-    tasks.findByName("jvmBenchmark")?.onlyIf("has benchmark sources") {
+    val hasSources: Spec<Task> = Spec { _ ->
         val dir = file("src/benchmark/kotlin")
         dir.exists() && dir.walkTopDown().any { it.isFile && it.extension == "kt" }
     }
+    tasks.findByName("jvmBenchmark")?.onlyIf("has benchmark sources", hasSources)
+    tasks.findByName("jvmFastBenchmark")?.onlyIf("has benchmark sources", hasSources)
 }

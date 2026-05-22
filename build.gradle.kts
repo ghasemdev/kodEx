@@ -75,18 +75,38 @@ kover {
     }
 }
 
+val benchmarkConfigName: String = providers.gradleProperty("benchmarkConfig").getOrElse("main")
+
+// Aggregation task for the 'fast' configuration — used in CI to avoid full JMH warmup.
+// Individual module tasks: jvmBenchmarkFastBenchmark (KMP) / jvmFastBenchmark (JVM).
+val benchmarkFastTask = tasks.register("benchmarkFast") {
+    group = "benchmark"
+    description = "Run all 'fast' benchmark configurations across all subprojects"
+}
+
+subprojects {
+    afterEvaluate {
+        listOf("jvmBenchmarkFastBenchmark", "jvmFastBenchmark").forEach { taskName ->
+            tasks.findByName(taskName)?.let { fastTask ->
+                benchmarkFastTask.configure { dependsOn(fastTask) }
+            }
+        }
+    }
+}
+
 tasks.register("benchmarkMerge") {
     group = "benchmark"
-    description = "Merge all benchmark JSONs from all modules"
+    description = "Merge all benchmark JSONs from all modules (pass -PbenchmarkConfig=fast for CI)"
 
     doLast {
+        val configPath = benchmarkConfigName
         val rootDir = project.rootDir
 
         val jsonFiles = rootDir.walkTopDown()
             .filter { file ->
                 file.isFile &&
                         file.extension == "json" &&
-                        file.path.contains("build/reports/benchmarks/main")
+                        file.path.contains("build/reports/benchmarks/$configPath")
             }
             .toList()
 
@@ -103,7 +123,7 @@ tasks.register("benchmarkMerge") {
 
         outputFile.writeText(merged)
 
-        println("Found ${jsonFiles.size} benchmark files")
+        println("Found ${jsonFiles.size} benchmark files (config: $configPath)")
         jsonFiles.forEach { println(it.path) }
     }
 }
