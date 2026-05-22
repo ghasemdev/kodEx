@@ -1,0 +1,101 @@
+# Technology Stack Requirements
+
+## Library Selection Policy
+
+Prefer Kotlin libraries in this order:
+1. Official JetBrains / Kotlin Foundation libraries (`kotlinx-*`)
+2. High-star, actively maintained Kotlin-native libraries
+3. Java/JVM libraries only when no suitable Kotlin alternative exists
+
+## Backend (`server/`)
+
+| Concern | Library |
+|---|---|
+| HTTP server | [**Ktor**](https://github.com/ktorio/ktor) (Kotlin JVM) |
+| Dependency injection | [**Koin**](https://github.com/InsertKoinIO/koin) (`koin-ktor` + `koin-logger-slf4j`) |
+| Serialization | [**kotlinx.serialization**](https://github.com/Kotlin/kotlinx.serialization) |
+| Coroutines | [**kotlinx.coroutines**](https://github.com/Kotlin/kotlinx.coroutines) |
+| Date/time | [**kotlinx-datetime**](https://github.com/Kotlin/kotlinx-datetime) |
+| ORM / SQL DSL | [**Exposed**](https://github.com/JetBrains/Exposed) (JetBrains) |
+| DB connection pool | [**HikariCP**](https://github.com/brettwooldridge/HikariCP) |
+| DB migrations | [**Flyway**](https://github.com/flyway/flyway) (SQL-file versioned migrations under `server/data/src/resources/db/migration/`) |
+| Primary database | **PostgreSQL** |
+| Cache / session store | **Redis** ([**Lettuce**](https://github.com/lettuce-io/lettuce-core) coroutine API) |
+| JWT authentication | [**ktor-server-auth-jwt**](https://ktor.io/docs/server-jwt.html) (Ktor official plugin) |
+| Password hashing | [**argon2-jvm**](https://github.com/phxql/argon2-jvm) (Argon2id — primary); [`jbcrypt`](https://github.com/mindrot/jBCrypt) only for legacy migration paths |
+| Logging | [**kotlin-logging**](https://github.com/oshai/kotlin-logging) + [**Logback**](https://github.com/qos-ch/logback) + [**logstash-logback-encoder**](https://github.com/logfellow/logstash-logback-encoder) for JSON output |
+
+All backend modules MUST be written in Kotlin JVM. Java interop is permitted only for
+libraries without a Kotlin-native equivalent (e.g., HikariCP, Logback, Flyway, argon2-jvm).
+
+## Frontend (`app/webApp/`)
+
+| Concern | Library |
+|---|---|
+| Language | Kotlin/JS |
+| UI framework | [**Kilua**](https://kilua.dev/) ([GitHub](https://github.com/rjaros/kilua)) |
+| Build / hot-reload | **Vite** via Kilua's Gradle plugin (`dev.kilua`) — HMR enabled in dev mode |
+| Dependency injection | [**Koin**](https://github.com/InsertKoinIO/koin) (`koin-core` — KMP-compatible JS target) |
+| HTTP client | [**Ktor Client**](https://github.com/ktorio/ktor) (JS/Fetch engine) |
+| Serialization | [**kotlinx.serialization**](https://github.com/Kotlin/kotlinx.serialization) |
+| Client-side logging | [**Napier**](https://github.com/AAkira/Napier) (KMP-native, browser console sink in JS) |
+| Client-side storage | [`kotlinx-browser`](https://github.com/Kotlin/kotlinx-browser) LocalStorage wrappers |
+
+## Shared Data Module (`core/models/`) — KMP
+
+`core:models` is the **cross-server-and-client KMP module**. It MUST contain all domain models
+(data classes, enums, sealed classes), validation logic, and API contract types used by
+**both the backend and any client** (web, Android, iOS, desktop).
+This module MUST NOT depend on any platform-specific library. Logging is NOT permitted here.
+
+**Dependency rule**: `server:domain` → `core:models` ← `app:shared` ← `app:webApp`
+
+## Client Shared Module (`app/shared/`) — KMP
+
+`app:shared` is the **client-side shared layer**. It re-exports `core:models` via `api()` and
+adds any client-specific shared models or logic. It MUST NOT be imported by server modules.
+It may later be split into `app:shared:ui`, `app:shared:data`, `app:shared:domain`.
+
+## Sandbox Runner (`sandbox-runner/`)
+
+| Concern | Library |
+|---|---|
+| HTTP server | [**Ktor**](https://github.com/ktorio/ktor) (Kotlin JVM) |
+| Docker client | [**docker-java**](https://github.com/docker-java/docker-java) (Java lib — no Kotlin-native alternative) |
+| Serialization | [**kotlinx.serialization**](https://github.com/Kotlin/kotlinx.serialization) |
+| Logging | [**kotlin-logging**](https://github.com/oshai/kotlin-logging) + [**Logback**](https://github.com/qos-ch/logback) JSON |
+
+## Future Client Targets (out of scope for v1)
+
+The codebase SHOULD be structured to allow future addition of Android, iOS, and desktop
+clients via Kotlin Multiplatform + Compose Multiplatform. No KMP Compose code should be
+written in v1; the `shared/` module must remain KMP-compatible to keep this path open.
+
+## Infrastructure
+
+- **Sandbox**: Docker. Dockerfile templates per exam mode MUST be versioned under `sandbox/`.
+- **Container Orchestration**: Docker Engine (single-host) for v1. Kubernetes is out of scope unless amended.
+- **Build Tool**: Gradle (Kotlin DSL) for all modules.
+- **Code Quality**: Detekt (see §VII). Configuration in `config/detekt/detekt.yml`.
+  CI pipeline MUST run `./gradlew detekt` and fail on violations.
+
+## CI/CD Pipeline (`.github/workflows/ci.yml`)
+
+Five parallel jobs after `assemble` (which all depend on):
+
+| Job | Trigger | Key Command |
+|---|---|---|
+| `assemble` | push + PR | `./gradlew assemble` |
+| `test` | push only | `./gradlew test jvmTest` |
+| `coverage` | PR only | `./gradlew test jvmTest koverXmlReport koverVerify` |
+| `benchmark` | PR only | `./gradlew benchmarkFast benchmarkMerge -PbenchmarkConfig=fast` |
+| `detekt` | PR only | `./gradlew detekt` |
+| `dependency-check` | PR→main + weekly schedule | `./gradlew dependencyCheckAggregate -PnvdApiKey=...` |
+
+**Benchmark fast mode**: CI uses `benchmarkFast` (not `benchmark`) — 1 iteration / 500ms / 1 JVM fork. Results compared via `benchmark-action/github-action-benchmark@v1` against `gh-pages` branch. Alert threshold: 120% regression.
+
+**OWASP scan**: Only on PRs targeting `main` and weekly Monday 06:00 UTC schedule. Requires `NVD_API_KEY` secret. `failBuildOnCVSS=7`. Results in `build/reports/dependency-check/`.
+
+**Coverage**: Kover 90% minimum aggregate threshold. Report published as PR comment via `madrapps/jacoco-report`. Artifact path: `build/reports/kover/report.xml`.
+
+**Secrets required**: `PERSONAL_ACCESS_TOKEN` (benchmark push + coverage PR comment), `NVD_API_KEY` (OWASP scan).

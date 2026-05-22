@@ -1,0 +1,11 @@
+# Development override — restores host port bindings for DB tools (TablePlus, Redis Insight, etc.)
+# Usage: docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml up
+# Never use this file in CI or staging environments.
+services:
+  postgres:
+    ports:
+      - "${DB_PORT:-5432}:5432"
+
+  redis:
+    ports:
+      - "${REDIS_PORT:-6379}:6379"

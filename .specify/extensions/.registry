@@ -18,6 +18,115 @@
       },
       "registered_skills": [],
       "installed_at": "2026-05-17T19:32:21.836258+00:00"
+    },
+    "preview": {
+      "version": "1.0.0",
+      "source": "local",
+      "manifest_hash": "sha256:265b443fcfcd590faadedd3d3b5072a32486d62e04021b979e8e89292f39dfb6",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "claude": [
+          "speckit.preview.html"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-05-19T18:53:38.559583+00:00"
+    },
+    "memory-md": {
+      "version": "0.9.3",
+      "source": "local",
+      "manifest_hash": "sha256:59362bf7b121a43ad16fc36bdbe3ad885a30e50da779d218a8b7480294a5a218",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "claude": [
+          "speckit.memory-md.init",
+          "speckit.memory-md.specify",
+          "speckit.memory-md.plan-with-memory",
+          "speckit.memory-md.capture",
+          "speckit.memory-md.capture-from-diff",
+          "speckit.memory-md.audit",
+          "speckit.memory-md.repair-index",
+          "speckit.memory-md.log-finding",
+          "speckit.memory-md.token-report",
+          "speckit.memory-md.prepare-context",
+          "speckit.memory-md.index-docs",
+          "speckit.memory-md.init-project",
+          "speckit.memory-md.share-lesson",
+          "speckit.memory-md.sync-shared"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-05-19T18:55:15.275343+00:00"
+    },
+    "security-review": {
+      "version": "1.5.1",
+      "source": "local",
+      "manifest_hash": "sha256:9c232042db9e4491e27bbb85b454ad8d3ea7f13d857d3a9e48ed280027c5c750",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "claude": [
+          "speckit.security-review.audit",
+          "speckit.security-review.staged",
+          "speckit.security-review.branch",
+          "speckit.security-review.plan",
+          "speckit.security-review.tasks",
+          "speckit.security-review.followup",
+          "speckit.security-review.apply",
+          "speckit.security-review.export",
+          "speckit.security-review.init"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-05-19T18:56:03.324450+00:00"
+    },
+    "qa": {
+      "version": "1.0.0",
+      "source": "local",
+      "manifest_hash": "sha256:ae004b14dc6b480ed50acf7608d14223dbd83ceba6b05582cdd742cb9301c334",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "claude": [
+          "speckit.qa.run"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-05-19T18:56:17.837827+00:00"
+    },
+    "diagram": {
+      "version": "1.0.0",
+      "source": "local",
+      "manifest_hash": "sha256:a2ab4ddf44a45c8bfd7f0a0a75e3aa2075d0135e1e288c6d70974f8b37d0621d",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "claude": [
+          "speckit.diagram.workflow",
+          "speckit.diagram.status",
+          "speckit.diagram.dependencies"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-05-19T18:56:54.863901+00:00"
+    },
+    "bugfix": {
+      "version": "1.0.0",
+      "source": "local",
+      "manifest_hash": "sha256:52d11bc3b1912949516c4cfdd730acc138c362699aa6eb1357c7343e85d37f6c",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "claude": [
+          "speckit.bugfix.report",
+          "speckit.bugfix.patch",
+          "speckit.bugfix.verify"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-05-19T18:57:03.821409+00:00"
     }
   }
 }
