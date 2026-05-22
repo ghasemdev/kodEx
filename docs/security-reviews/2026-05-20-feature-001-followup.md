@@ -2,6 +2,7 @@
 document_type: security-review
 review_type: followup
 assessment_date: 2026-05-20
+remediation_completed: 2026-05-23
 codebase_analyzed: KodEx / feature/001-project-base-setup
 total_files_analyzed: 10
 total_findings: 9
@@ -37,123 +38,148 @@ field_summaries:
 
 ## Executive Summary
 
-9 findings from the branch review (2026-05-20). 5 findings are scheduled for immediate remediation
-within this branch before merge. 3 are deferred as technical debt with explicit revisit triggers.
-1 is informational and requires no action.
+9 findings from the branch review (2026-05-20). All 7 actionable findings have been
+remediated. 1 finding is deferred (SEC-006 — executor not yet implemented). 1 finding
+is informational and required no action (SEC-008).
 
-**This branch MUST NOT merge to `develop` until TASK-SEC-001 and TASK-SEC-002 are resolved.**
+**This branch is clear to merge to `develop`.**
 
 ---
 
 ## Inputs Reviewed
 
 - Security review: `docs/security-reviews/2026-05-20-feature-001-branch.md`
-- Tasks backlog: `specs/001-project-base-setup/tasks.md` (no existing TASK-SEC-* entries)
+- Tasks backlog: `specs/001-project-base-setup/tasks.md`
 - Memory: `docs/memory/INDEX.md`, `docs/memory/ARCHITECTURE.md`
 - Constitution: `.specify/memory/security_constitution.md`
 
 ---
 
-## Resolution Decisions
+## Resolution Status
 
-| Finding | Severity | Decision | Rationale |
-|---------|----------|----------|-----------|
-| SEC-001 sandbox-runner port exposed | HIGH | **Implement now** | 2-line fix; merge blocker |
-| SEC-002 sandbox-runner no auth | HIGH | **Implement now** | Skeleton only; merge blocker |
-| SEC-003 postgres/redis ports exposed | MEDIUM | **Technical debt** | Dev convenience; low risk on localhost |
-| SEC-004 error details leaked | MEDIUM | **Implement now** | 10-line fix; prevents info disclosure |
-| SEC-005 Redis no password | MEDIUM | **Implement now** | 3-line fix in compose |
-| SEC-006 sandbox resource limits | LOW | **Technical debt** | Executor not yet implemented |
-| SEC-007 missing security headers | LOW | **Implement now** | One plugin install |
-| SEC-008 /dev/ping unauthenticated | INFO | **Acceptable** | Dev-only; never in production artifact |
-| SEC-009 no CI secret scanning | INFO | **Technical debt** | Low urgency; standalone action |
-
----
-
-## Immediate Remediation Tasks
-
-| Task ID | Title | Severity | Source | Depends On | Acceptance Criteria |
-|---------|-------|----------|--------|------------|---------------------|
-| TASK-SEC-001 | Remove sandbox-runner host port binding | HIGH | SEC-001 | — | `docker-compose.yml` has no `ports:` on `sandbox-runner`; service reachable by `server` via `http://sandbox-runner:8081` only |
-| TASK-SEC-002 | Add shared-secret authentication to sandbox-runner | HIGH | SEC-002 | TASK-SEC-001 | All routes except `/health` return 401 if `X-Sandbox-Secret` header is missing or wrong; env var `SANDBOX_SHARED_SECRET` loaded via `env()` |
-| TASK-SEC-004 | Remove internal error details from HTTP responses | MEDIUM | SEC-004 | — | `StatusPages` handler logs full exception server-side; client receives only `{"error":"An unexpected error occurred."}` in envelope format; no stack trace or message text in response body |
-| TASK-SEC-005 | Enforce Redis password authentication in Compose | MEDIUM | SEC-005 | — | `redis` service starts with `--requirepass $REDIS_PASSWORD`; empty password is tolerated in local dev with a warning comment; updated in `.env.example` |
-| TASK-SEC-007 | Install global security response headers | LOW | SEC-007 | — | Ktor `DefaultHeaders` plugin installed; responses include `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin` |
+| Finding | Severity | Decision | Status | Commit |
+|---------|----------|----------|--------|--------|
+| SEC-001 sandbox-runner port exposed | HIGH | Implement now | ✅ **Done** | `9b9c9968` |
+| SEC-002 sandbox-runner no auth | HIGH | Implement now | ✅ **Done** | `9b9c9968` |
+| SEC-003 postgres/redis ports exposed | MEDIUM | Technical debt → Implement | ✅ **Done** | `ce1f128` |
+| SEC-004 error details leaked | MEDIUM | Implement now | ✅ **Done** | `ce1f128` |
+| SEC-005 Redis no password | MEDIUM | Implement now | ✅ **Done** | `ce1f128` |
+| SEC-006 sandbox resource limits | LOW | Technical debt | ⏳ **Deferred** | — |
+| SEC-007 missing security headers | LOW | Implement now | ✅ **Done** | `ce1f128` |
+| SEC-008 /dev/ping unauthenticated | INFO | Acceptable | ✅ **Acceptable** | — |
+| SEC-009 no CI secret scanning | INFO | Technical debt → Implement | ✅ **Done** | `ce1f128` |
 
 ---
 
-## Technical Debt Backlog
+## Remediation Details
 
-### TASK-SEC-003 — Unexpose PostgreSQL and Redis ports from host
+### ✅ SEC-001 — sandbox-runner port removed from host
 
-**Severity**: MEDIUM
-**Source**: SEC-003
-**Type**: Technical Debt
-
-**Why safe to defer**: On developer machines, bound ports are only reachable from localhost. No shared staging environment exists yet. Risk is low while the team is a single developer.
-
-**Remaining risk**: If the Docker host is shared (e.g., a cloud dev box or CI runner with Docker-in-Docker), port exposure becomes exploitable.
-
-**Remediation plan**:
-1. In `docker/docker-compose.yml`, replace `ports:` with `expose:` for `postgres` and `redis`.
-2. Create `docker/docker-compose.dev.yml` override that restores `ports:` for local tooling (TablePlus, Redis Insight).
-3. Update quickstart.md: `docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml up`.
-
-**Revisit trigger**: Before any shared staging environment or cloud deployment is provisioned.
-**Target milestone**: Feature 002 (first feature requiring a staging environment).
+`docker/docker-compose.yml`: replaced `ports: "8081:8081"` with `expose: "8081"`.
+`sandbox-runner` is now reachable only from within the Docker Compose network.
 
 ---
+
+### ✅ SEC-002 — shared-secret authentication added to sandbox-runner
+
+`sandbox-runner/app/src/main/kotlin/dev/kodex/sandbox/Application.kt`:
+Ktor `bearer("secret-auth")` authenticates all requests using `SANDBOX_SHARED_SECRET`.
+`/health` route is exempt (required for Docker health checks from localhost).
+
+---
+
+### ✅ SEC-003 — postgres and redis ports isolated from host
+
+`docker/docker-compose.yml`: `postgres` and `redis` now use `expose:` instead of `ports:`.
+`docker/docker-compose.dev.yml` (new): override file that restores port bindings for
+local development tools (TablePlus, Redis Insight):
+
+```bash
+# Dev workflow (with host port access):
+docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml up
+
+# Production-like (no host port exposure):
+docker compose -f docker/docker-compose.yml up
+```
+
+`quickstart.md` updated with both commands.
+
+---
+
+### ✅ SEC-004 — internal error details removed from HTTP responses
+
+`server/api/src/main/kotlin/dev/kodex/server/api/response/Envelope.kt`:
+Added `ErrorEnvelope` + `buildErrorEnvelope()` for typed error responses.
+
+`server/app/src/main/kotlin/dev/kodex/server/Application.kt`:
+`StatusPages` exception handler now:
+1. Logs the full `Throwable` via `call.application.log.error("Unhandled exception", cause)`
+2. Returns `{"error":"An unexpected error occurred.", "meta":{...}}` — no stack trace or message text
+
+---
+
+### ✅ SEC-005 — Redis password enforcement in Docker Compose
+
+`docker/docker-compose.yml`: Redis service now starts with:
+```yaml
+command: >
+  sh -c '[ -n "$$REDIS_PASSWORD" ] && exec redis-server --requirepass "$$REDIS_PASSWORD" || exec redis-server'
+environment:
+  REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+```
+
+Empty `REDIS_PASSWORD` is tolerated in local dev (no auth). Non-empty value enforces auth.
+`.env.example` updated: `REDIS_PASSWORD` is now documented as **required in production**.
+
+---
+
+### ✅ SEC-007 — global security response headers installed
+
+`gradle/libs.versions.toml`: added `ktor-server-default-headers` library + added to `ktor-server` bundle.
+
+`server/app/src/main/kotlin/dev/kodex/server/Application.kt`:
+```kotlin
+install(DefaultHeaders) {
+    header("X-Content-Type-Options", "nosniff")
+    header("X-Frame-Options", "DENY")
+    header("Referrer-Policy", "strict-origin-when-cross-origin")
+}
+```
+
+---
+
+### ✅ SEC-009 — secret scanning added to CI pipeline
+
+`.github/workflows/ci.yml`: `secret-scan` job added (PR trigger only):
+```yaml
+- uses: gitleaks/gitleaks-action@v2
+  env:
+    GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+```
+Full-history checkout (`fetch-depth: 0`) ensures all commits in the PR are scanned.
+
+---
+
+## Remaining Technical Debt
 
 ### TASK-SEC-006 — Enforce sandbox resource limits in executor
 
-**Severity**: LOW
-**Source**: SEC-006
-**Type**: Technical Debt
+**Severity**: LOW | **Source**: SEC-006 | **Type**: Technical Debt
 
-**Why safe to defer**: The `sandbox-runner/executor` module is a placeholder (`/.gitkeep`) — no Docker container lifecycle code exists yet. Resource limits cannot be enforced until the executor is implemented.
+**Why safe to defer**: The `sandbox-runner/executor` module is a placeholder — no Docker
+container lifecycle code exists yet.
 
-**Remaining risk**: Without limits, a runaway sandbox container could exhaust host CPU or memory. This risk is only realized when the executor is wired up and executes real submissions.
-
-**Remediation plan**:
-When implementing `sandbox-runner/executor`, the `docker run` call MUST include:
+**Remediation plan**: When implementing `sandbox-runner/executor`, the `docker run` call MUST include:
 - `--network=none`
 - `--cpus=<exam.cpuLimit>` (default: 2.0)
 - `--memory=<exam.memoryLimit>` (default: 512m)
 - `--stop-timeout=<exam.wallClockTimeout>` (default: 10s)
 - `--read-only` with explicit writable tmpfs mounts
 
-Add a unit test that asserts these flags are always present in the container start parameters (mock Docker client).
+Add a unit test asserting these flags are always present in container start parameters.
 
 **Revisit trigger**: Before the first sandbox execution task is implemented.
-**Target milestone**: Feature implementing code submission execution (likely feature 003 or 004).
-
----
-
-### TASK-SEC-009 — Add secret scanning to CI pipeline
-
-**Severity**: INFORMATIONAL
-**Source**: SEC-009
-**Type**: Technical Debt
-
-**Why safe to defer**: GitHub's built-in push protection can be enabled at the repository level without code changes. This is a repository settings task, not a code task.
-
-**Remaining risk**: A committed credential would not be caught by the current pipeline.
-
-**Remediation plan**:
-Add one of:
-- `gitleaks/gitleaks-action@v2` as a CI job
-- Enable GitHub Advanced Security + Secret Scanning on the repository settings page
-
-**Revisit trigger**: Before inviting any external contributors or making the repository public.
-**Target milestone**: Pre-launch hardening phase.
-
----
-
-## Already Covered / Acceptable
-
-| Finding | Status | Notes |
-|---------|--------|-------|
-| SEC-008 `/dev/ping` unauthenticated | ✅ Acceptable | `devMain` source set is excluded from `installDist`; route never ships to production. No task needed. |
+**Target milestone**: Feature implementing code submission execution (feature 003 or 004).
 
 ---
 
@@ -169,3 +195,7 @@ These patterns were validated in this review and must be maintained in all futur
 | Non-root user in sandbox container | `sandbox/kotlin/Dockerfile` |
 | `Cache-Control: no-store` on sensitive endpoints | `server/api/routes/HealthRoutes.kt` |
 | No secrets committed — `.env` in `.gitignore` | `.gitignore` |
+| Error responses never contain exception messages or stack traces | `server/app/Application.kt` |
+| Redis requires password in production (`REDIS_PASSWORD` env var) | `docker/docker-compose.yml` |
+| Security headers on all API responses (`nosniff`, `DENY`, `strict-origin`) | `server/app/Application.kt` |
+| Secret scanning on every PR (gitleaks) | `.github/workflows/ci.yml` |

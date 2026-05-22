@@ -58,6 +58,7 @@ ktor-server-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt", version.ref = 
 ktor-server-sse = { module = "io.ktor:ktor-server-sse", version.ref = "ktor" }
 ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktor" }
 ktor-server-cors = { module = "io.ktor:ktor-server-cors", version.ref = "ktor" }
+ktor-server-default-headers = { module = "io.ktor:ktor-server-default-headers", version.ref = "ktor" }
 ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
 
 # ── Ktor Client (frontend) ────────────────────────────────────────────────────────────────────────
@@ -117,6 +118,7 @@ ktor-server = [
     "ktor-server-sse",
     "ktor-server-status-pages",
     "ktor-server-cors",
+    "ktor-server-default-headers",
 ]
 koin-server = ["koin-core", "koin-ktor", "koin-logger-slf4j"]
 logging = ["kotlin-logging-jvm", "logback-classic", "logstash-logback-encoder"]

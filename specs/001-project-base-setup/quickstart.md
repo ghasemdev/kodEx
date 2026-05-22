@@ -35,7 +35,11 @@ cp .env.example .env
 ## 2 — Start All Services (Docker)
 
 ```bash
+# Production-like (no host port exposure for DB/Redis — internal only)
 docker compose -f docker/docker-compose.yml up --build
+
+# Local development (also exposes PostgreSQL :5432 and Redis :6379 to host for DB tools)
+docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml up --build
 ```
 
 This command:
@@ -46,6 +50,9 @@ This command:
 - Starts the Vite dev server (webapp) on port **5173**
 
 All services log to stdout with structured JSON (formatted for readability in local dev).
+
+> **Note**: PostgreSQL and Redis do not bind to host ports in the base compose file (security isolation).
+> Use the `docker-compose.dev.yml` override only for local development with GUI DB tools (TablePlus, Redis Insight).
 
 ---
 

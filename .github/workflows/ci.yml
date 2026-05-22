@@ -186,6 +186,21 @@ jobs:
           name: detekt-report
           path: "**/build/reports/detekt/"
 
+  secret-scan:
+    name: Secret Scan (Gitleaks)
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
   dependency-check:
     name: OWASP Dependency Check
     # Run on PRs to main (security gate) and on weekly schedule

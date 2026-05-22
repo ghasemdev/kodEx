@@ -5,8 +5,8 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
-    ports:
-      - "${DB_PORT:-5432}:5432"
+    expose:
+      - "5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     logging:
@@ -14,8 +14,13 @@ services:
 
   redis:
     image: redis:7-alpine
-    ports:
-      - "${REDIS_PORT:-6379}:6379"
+    # SEC-005: require password when REDIS_PASSWORD is set; allow no-auth in local dev
+    command: >
+      sh -c '[ -n "$$REDIS_PASSWORD" ] && exec redis-server --requirepass "$$REDIS_PASSWORD" || exec redis-server'
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+    expose:
+      - "6379"
     logging:
       driver: json-file
 
