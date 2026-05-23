@@ -46,6 +46,33 @@ provides:
       description: "Local CI/CD pipeline configuration"
       required: false
 
+  skills:
+    - name: "speckit-cicd-setup"
+      file: "skills/speckit-cicd-setup/SKILL.md"
+      description: "Scan CI workflow files and generate local cicd-config.yaml"
+    - name: "speckit-cicd-run"
+      file: "skills/speckit-cicd-run/SKILL.md"
+      description: "Run local CI/CD pipeline step-by-step"
+    - name: "speckit-cicd-dry-run"
+      file: "skills/speckit-cicd-dry-run/SKILL.md"
+      description: "Show which CI steps would execute without running them"
+    - name: "speckit-cicd-report"
+      file: "skills/speckit-cicd-report/SKILL.md"
+      description: "Generate Markdown report of local CI/CD execution results"
+
+install:
+  script: "scripts/bash/install.sh"
+  description: "Register CICD commands as Claude Code skills in .claude/skills/"
+  creates:
+    - ".claude/skills/speckit-cicd-setup/SKILL.md"
+    - ".claude/skills/speckit-cicd-run/SKILL.md"
+    - ".claude/skills/speckit-cicd-dry-run/SKILL.md"
+    - ".claude/skills/speckit-cicd-report/SKILL.md"
+
+uninstall:
+  script: "scripts/bash/uninstall.sh"
+  description: "Remove CICD skills from .claude/skills/"
+
 hooks:
   before_push:
     command: "speckit.cicd.run"
