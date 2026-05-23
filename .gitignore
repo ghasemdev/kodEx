@@ -32,3 +32,4 @@ Thumbs.db
 docker-compose.override.yml
 
 .specify/extensions/cicd/.last-run-summary
+.specify/extensions/cicd/.last-run-log-dir

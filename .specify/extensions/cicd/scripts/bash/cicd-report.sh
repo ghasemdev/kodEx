@@ -12,8 +12,13 @@ cd "$REPO_ROOT"
 CONFIG_DIR="$REPO_ROOT/.specify/extensions/cicd"
 SUMMARY_FILE="$CONFIG_DIR/.last-run-summary"
 LOG_DIR="$CONFIG_DIR/logs"
-REPORT_DIR="$REPO_ROOT/reports/cicd"
-OUTPUT="${REPORT_DIR}/local-report.md"
+LOG_SESSION_DIR=""
+if [ -f "$CONFIG_DIR/.last-run-log-dir" ]; then
+    LOG_SESSION_DIR=$(tr -d '[:space:]' < "$CONFIG_DIR/.last-run-log-dir")
+fi
+REPORT_DIR="$REPO_ROOT/docs/cicd"
+REPORT_DATE=$(date +'%Y-%m-%d_%H-%M')
+OUTPUT="${REPORT_DIR}/cicd-report.${REPORT_DATE}.md"
 
 # Override output path
 while [[ $# -gt 0 ]]; do
@@ -105,12 +110,12 @@ $(if [ "$WARN_COUNT" -eq 0 ]; then echo "No warnings detected."; else echo "$WAR
 
 ## Logs
 
-Step logs available in: \`./.specify/extensions/cicd/logs/\`
+Step logs available in: \`${LOG_SESSION_DIR:-$LOG_DIR}\`
 
 ## Recommendations
 
 1. Review failed steps above
-2. Fix issues and re-run: \`specify.cicd.check\`
+2. Fix issues and re-run: \`/speckit-cicd-run\`
 3. Commit fix and re-push to trigger remote CI
 
 FOOTER

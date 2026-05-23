@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Specify-CICD: Run local CI/CD pipeline
 #
-# Usage: cicd-check.sh [--verbose] [--fail-fast] [--continue] [--diff-bounded] [--step <name>]
+# Usage: cicd-run.sh [--verbose] [--fail-fast] [--continue] [--diff-bounded] [--step <name>]
 
 EXTENSION_DIR="$(CDPATH="" cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(CDPATH="" cd "$EXTENSION_DIR/../../../../../" && pwd)"
@@ -121,6 +121,12 @@ skip_count = 0
 total = 0
 results = []
 
+# Create session-specific log directory with human-readable timestamp
+session_dir = os.path.join(log_dir, time.strftime('%Y-%m-%d_%H-%M-%S'))
+os.makedirs(session_dir, exist_ok=True)
+with open(summary_file.replace('.last-run-summary', '.last-run-log-dir'), 'w') as _ldf:
+    _ldf.write(session_dir + '\n')
+
 print("=== Specify-CICD: Local Pipeline Check ===")
 print()
 
@@ -166,7 +172,8 @@ for step in steps:
     
     # Execute
     start = time.time()
-    log_file = os.path.join(log_dir, f"{name}-{time.strftime('%Y%m%d-%H%M%S')}.log")
+    safe_name = re.sub(r'[^a-zA-Z0-9_-]', '-', name).strip('-')
+    log_file = os.path.join(session_dir, f"{safe_name}.log")
     
     try:
         process = subprocess.run(
@@ -276,7 +283,7 @@ print(f"Summary: {pass_count} passed, {warn_count} warn, {fail_count} fail, {ski
 print()
 
 if log_dir:
-    print(f"Logs: {log_dir}/")
+    print(f"Logs: {session_dir}/")
 
 # Write summary file
 with open(summary_file, 'w') as sf:

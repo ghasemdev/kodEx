@@ -2,97 +2,70 @@ sources:
   github_actions:
     enabled: true
     paths:
-    - .github/workflows/*.yml
-    files: []
-  gitlab_ci: {}
-  circleci: {}
-  bitbucket: {}
+      - .github/workflows/*.yml
+    files: [ ]
+  gitlab_ci: { }
+  circleci: { }
+  bitbucket: { }
 pipeline:
   steps:
-  - name: assemble
-    enabled: true
-    cmd: ./gradlew assemble --no-daemon
-    timeout_seconds: 1200
-    pass_codes:
-    - 0
-    warn_codes: []
-    diff_bounded:
+    - name: assemble
       enabled: true
-      patterns:
-      - '**/*.kt'
-      - '**/*.java'
-      - '**/*.kts'
-      - build.gradle*
-  - name: test & coverage
-    enabled: true
-    cmd: ./gradlew test jvmTest --no-daemon
-    timeout_seconds: 1200
-    pass_codes:
-    - 0
-    warn_codes: []
-    diff_bounded:
+      cmd: ./gradlew assemble --no-daemon
+      timeout_seconds: 1200
+      pass_codes:
+        - 0
+      warn_codes: [ ]
+      diff_bounded:
+        enabled: true
+        patterns:
+          - '**/*.kt'
+          - '**/*.java'
+          - '**/*.kts'
+          - build.gradle*
+    - name: lint
       enabled: true
-      patterns:
-      - '**/*.kt'
-      - '**/*.java'
-      - '**/*.kts'
-      - build.gradle*
-  - name: test & coverage
-    enabled: true
-    cmd: ./gradlew test jvmTest koverXmlReport koverVerify --no-daemon
-    timeout_seconds: 1800
-    pass_codes:
-    - 0
-    warn_codes: []
-    diff_bounded:
+      cmd: JAVA_HOME="/Volumes/ADATASD810/Library/Toolbox/Android Studio.app/Contents/jbr/Contents/Home" ./gradlew detekt --no-daemon
+      timeout_seconds: 1200
+      pass_codes:
+        - 0
+      warn_codes: [ ]
+      diff_bounded:
+        enabled: true
+        patterns:
+          - '**/*.kt'
+          - '**/*.java'
+          - '**/*.kts'
+          - build.gradle*
+    - name: test & coverage
       enabled: true
-      patterns:
-      - '**/*.kt'
-      - '**/*.java'
-      - '**/*.kts'
-      - build.gradle*
-  - name: benchmark
-    enabled: true
-    cmd: ./gradlew fastBenchmark benchmarkMerge -PbenchmarkConfig=fast --no-daemon
-    timeout_seconds: 1800
-    pass_codes:
-    - 0
-    warn_codes: []
-    diff_bounded:
+      cmd: ./gradlew test jvmTest koverXmlReport koverVerify --no-daemon
+      timeout_seconds: 1800
+      pass_codes:
+        - 0
+      warn_codes: [ ]
+      diff_bounded:
+        enabled: true
+        patterns:
+          - '**/*.kt'
+          - '**/*.java'
+          - '**/*.kts'
+          - build.gradle*
+    - name: benchmark
       enabled: true
-      patterns:
-      - '**/*.kt'
-      - '**/*.java'
-      - '**/*.kts'
-      - build.gradle*
-  - name: lint
-    enabled: true
-    cmd: ./gradlew detekt --no-daemon
-    timeout_seconds: 1200
-    pass_codes:
-    - 0
-    warn_codes: []
-    diff_bounded:
-      enabled: true
-      patterns:
-      - '**/*.kt'
-      - '**/*.java'
-      - '**/*.kts'
-      - build.gradle*
-  - name: dependency check
-    enabled: true
-    cmd: ./gradlew dependencyCheckAggregate -PnvdApiKey=${{ secrets.NVD_API_KEY }} --no-daemon
-    timeout_seconds: 3600
-    pass_codes:
-    - 0
-    warn_codes: []
-    diff_bounded:
-      enabled: true
-      patterns:
-      - '**/*.kt'
-      - '**/*.java'
-      - '**/*.kts'
-      - build.gradle*
+      cmd: ./gradlew benchmark --no-daemon
+      timeout_seconds: 1800
+      pass_codes:
+        - 0
+      warn_codes: [ ]
+      diff_bounded:
+        enabled: true
+        patterns:
+          - '**/*.kt'
+          - '**/*.java'
+          - '**/*.kts'
+          - build.gradle*
+
 execution:
   fail_fast: true
   verbose: true
@@ -102,6 +75,7 @@ execution:
   retry:
     max_attempts: 1
     delay_seconds: 0
+
 report:
   path: docs/cicd
   include_logs: true

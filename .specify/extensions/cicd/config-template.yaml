@@ -113,7 +113,6 @@ execution:
 
 # ── Report output ───────────────────────────────────────────────────────────
 report:
-‍‍
   # Include step-by-step logs
   include_logs: true
   # Include timing per step

@@ -229,8 +229,8 @@ print(f"  Steps: {len(steps)} parsed from {len(wf_files)} workflow file(s)")
 print()
 print("Next steps:")
 print("  1. Edit cicd-config.yaml to refine step order and patterns")
-print("  2. Run local CI: specify.cicd.run")
-print("  3. See results: specify.cicd.report")
+print("  2. Run local CI: /speckit-cicd-run")
+print("  3. See results: /speckit-cicd-report")
 PYEOF
 
 echo ""
