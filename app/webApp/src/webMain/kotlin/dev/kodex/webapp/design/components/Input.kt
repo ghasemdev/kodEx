@@ -50,7 +50,7 @@ fun IComponent.Input(
             onInput { onValueChange(this.value ?: "") }
         }
         when {
-            hasError -> p(className = "text-xs text-error") { +error!! }
+            hasError -> p(className = "text-xs text-error") { +error }
             !helperText.isNullOrBlank() -> p(className = "text-xs text-on-surface/60") { +helperText }
         }
     }

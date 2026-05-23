@@ -4,10 +4,11 @@ import dev.kilua.i18n.I18n
 import dev.kilua.i18n.LocaleManager
 import dev.kilua.i18n.SimpleLocale
 import dev.kilua.utils.isDom
+import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsText
 import kotlin.js.JsAny
 import kotlinx.browser.localStorage
-import kotlinx.browser.window
-import kotlinx.coroutines.await
 
 var i18n: I18n = I18n()
     private set
@@ -17,8 +18,10 @@ expect fun String.asLocaleData(): JsAny
 
 suspend fun initI18n() {
     if (!isDom) return
-    val enContent = window.fetch("/modules/i18n/messages-en.po").await().text().await()
-    val faContent = window.fetch("/modules/i18n/messages-fa.po").await().text().await()
+    val client = HttpClient()
+    val enContent = client.get("/modules/i18n/messages-en.po").bodyAsText()
+    val faContent = client.get("/modules/i18n/messages-fa.po").bodyAsText()
+    client.close()
     i18n = I18n(
         "en" to enContent.asLocaleData(),
         "fa" to faContent.asLocaleData(),

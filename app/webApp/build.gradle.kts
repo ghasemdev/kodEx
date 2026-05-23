@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kilua)
     alias(libs.plugins.gettext)
+    alias(libs.plugins.vite)
 }
 
 kotlin {
@@ -73,4 +74,12 @@ kotlin {
 gettext {
     potFile.set(File(projectDir, "src/webMain/resources/modules/i18n/messages.pot"))
     keywords.set(listOf("tr", "trn:1,2", "trc:2", "trnc:2,3", "marktr"))
+}
+
+vite {
+    plugin("@tailwindcss/vite", "tailwindcss", libs.versions.tailwindcss.get())
+
+    server {
+        proxy("/api", "http://localhost:4567")
+    }
 }
