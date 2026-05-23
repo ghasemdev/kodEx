@@ -17,14 +17,14 @@
 
 **Purpose**: Wire all new dependencies into the build system. No source code changes yet.
 
-- [ ] T001 Add `gettext = "0.7.0"` and `tailwindcss = "4.0.13"` to `[versions]` in `gradle/libs.versions.toml`
-- [ ] T002 [P] Add `kilua-tailwindcss`, `kilua-i18n`, `kilua-fontawesome` library entries to `[libraries]` in `gradle/libs.versions.toml`
-- [ ] T003 [P] Add `gettext` plugin entry `{ id = "name.kropp.kotlinx-gettext", version.ref = "gettext" }` to `[plugins]` in `gradle/libs.versions.toml`
-- [ ] T004 Add `kilua-tailwindcss`, `kilua-i18n`, `kilua-fontawesome` to `webMain.dependencies` in `app/webApp/build.gradle.kts`
-- [ ] T005 Add `alias(libs.plugins.gettext)` to `plugins {}` block in `app/webApp/build.gradle.kts`
-- [ ] T006 Add `vite { plugin("@tailwindcss/vite", "tailwindcss", libs.versions.tailwindcss.asProvider().get()) }` block to `app/webApp/build.gradle.kts`
-- [ ] T007 Add `@fontsource/inter`, `@fontsource/vazirmatn`, `@fontsource/jetbrains-mono`, `highlight.js` to `dependencies` in `app/webApp/package.json`
-- [ ] T008 Configure `gettext { potFile.set(...); keywords.set(...) }` block in `app/webApp/build.gradle.kts` (output: `src/commonMain/resources/modules/i18n/messages.pot`)
+- [x] T001 Add `gettext = "0.7.0"` and `tailwindcss = "4.0.13"` to `[versions]` in `gradle/libs.versions.toml`
+- [x] T002 [P] Add `kilua-tailwindcss`, `kilua-i18n`, `kilua-fontawesome` library entries to `[libraries]` in `gradle/libs.versions.toml`
+- [x] T003 [P] Add `gettext` plugin entry `{ id = "name.kropp.kotlinx-gettext", version.ref = "gettext" }` to `[plugins]` in `gradle/libs.versions.toml`
+- [x] T004 Add `kilua-tailwindcss`, `kilua-i18n`, `kilua-fontawesome` to `webMain.dependencies` in `app/webApp/build.gradle.kts`
+- [x] T005 Add `alias(libs.plugins.gettext)` to `plugins {}` block in `app/webApp/build.gradle.kts`
+- [x] T006 Add `vite { plugin("@tailwindcss/vite", "tailwindcss", libs.versions.tailwindcss.asProvider().get()) }` block to `app/webApp/build.gradle.kts`
+- [x] T007 Add `@fontsource/inter`, `@fontsource/vazirmatn`, `@fontsource/jetbrains-mono`, `highlight.js` to `dependencies` in `app/webApp/package.json`
+- [x] T008 Configure `gettext { potFile.set(...); keywords.set(...) }` block in `app/webApp/build.gradle.kts` (output: `src/jsMain/resources/modules/i18n/messages.pot`)
 
 **Checkpoint**: Run `./gradlew :app:webApp:dependencies` — no resolution errors. `./gradlew :app:webApp:jsBrowserDevelopmentRun` starts without crashing.
 

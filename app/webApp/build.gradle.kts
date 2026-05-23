@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.compose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kilua)
+    alias(libs.plugins.gettext)
 }
 
 kotlin {
@@ -60,8 +61,16 @@ kotlin {
         }
         webMain.dependencies {
             implementation(libs.kilua)
+            implementation(libs.kilua.tailwindcss)
+            implementation(libs.kilua.i18n)
+            implementation(libs.kilua.fontawesome)
             implementation(libs.ktor.client.js)
             implementation(libs.kotlinx.browser)
         }
     }
+}
+
+gettext {
+    potFile.set(File(projectDir, "src/jsMain/resources/modules/i18n/messages.pot"))
+    keywords.set(listOf("tr", "trn:1,2", "trc:2", "trnc:2,3", "marktr"))
 }
