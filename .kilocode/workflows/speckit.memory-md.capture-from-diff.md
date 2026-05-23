@@ -1,1 +1,1 @@
-/Users/part/Projects/Kotlin/kodEx/.specify/extensions/memory-md/commands/speckit.memory-md.capture-from-diff.md
+../../.specify/extensions/memory-md/commands/speckit.memory-md.capture-from-diff.md

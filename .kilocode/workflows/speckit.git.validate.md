@@ -1,1 +1,1 @@
-/Users/part/Projects/Kotlin/kodEx/.specify/extensions/git/commands/speckit.git.validate.md
+../../.specify/extensions/git/commands/speckit.git.validate.md

@@ -1,1 +1,1 @@
-/Users/part/Projects/Kotlin/kodEx/.specify/extensions/memory-md/commands/speckit.memory-md.index-docs.md
+../../.specify/extensions/memory-md/commands/speckit.memory-md.index-docs.md

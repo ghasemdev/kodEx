@@ -1,1 +1,1 @@
-/Users/part/Projects/Kotlin/kodEx/.specify/extensions/security-review/commands/security-review-apply.md
+../../.specify/extensions/security-review/commands/security-review-apply.md

@@ -1,1 +1,1 @@
-/Users/part/Projects/Kotlin/kodEx/.specify/extensions/security-review/commands/init.md
+../../.specify/extensions/security-review/commands/init.md

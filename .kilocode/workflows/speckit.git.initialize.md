@@ -1,1 +1,1 @@
-/Users/part/Projects/Kotlin/kodEx/.specify/extensions/git/commands/speckit.git.initialize.md
+../../.specify/extensions/git/commands/speckit.git.initialize.md
