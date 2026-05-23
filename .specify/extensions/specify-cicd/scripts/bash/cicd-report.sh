@@ -6,7 +6,7 @@
 set -e
 
 EXTENSION_DIR="$(CDPATH="" cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(CDPATH="" cd "$EXTENSION_DIR/../../../.." && pwd)"
+REPO_ROOT="$(CDPATH="" cd "$EXTENSION_DIR/../../../../../" && pwd)"
 cd "$REPO_ROOT"
 
 CONFIG_DIR="$REPO_ROOT/.specify/extensions/specify-cicd"

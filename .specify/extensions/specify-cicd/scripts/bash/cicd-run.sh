@@ -4,7 +4,7 @@
 # Usage: cicd-check.sh [--verbose] [--fail-fast] [--continue] [--diff-bounded] [--step <name>]
 
 EXTENSION_DIR="$(CDPATH="" cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(CDPATH="" cd "$EXTENSION_DIR/../../../.." && pwd)"
+REPO_ROOT="$(CDPATH="" cd "$EXTENSION_DIR/../../../../../" && pwd)"
 cd "$REPO_ROOT"
 
 CONFIG_DIR="$REPO_ROOT/.specify/extensions/specify-cicd"
