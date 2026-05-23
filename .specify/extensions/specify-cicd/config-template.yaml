@@ -1,0 +1,122 @@
+# Specify-CD / Specify Local CI/CD Configuration
+# Auto-generated or manually edited. Follows spec version schema.
+
+# ── Target CI provider source ────────────────────────────────────────────────
+# Where to parse jobs from. Supports multiple sources simultaneously.
+sources:
+  github_actions:
+    enabled: true
+    paths:
+      - ".github/workflows/*.yml"
+    parse_rules:
+      # Which workflow files to include (all by default)
+      include:
+        - "*.yml"
+      # Exclude files matching these patterns
+      exclude:
+        - "*.action.yml"
+        - "*-review.yml"
+  gitlab_ci:
+    enabled: false
+    paths:
+      - ".gitlab-ci.yml"
+  circleci:
+    enabled: false
+    paths:
+      - ".circleci/config.yml"
+  bitbucket:
+    enabled: false
+    paths:
+      - "bitbucket-pipelines.yml"
+
+# ── Pipeline execution ──────────────────────────────────────────────────────
+pipeline:
+  # Steps to execute (extracted from CI or manually defined)
+  # If empty, auto-extract from sources above
+  steps:
+    - name: "assemble"
+      enabled: true
+      cmd: "./gradlew assemble --no-daemon"
+      timeout_seconds: 600
+      # Exit codes considered as PASS (default: 0)
+      pass_codes:
+        - 0
+      # Exit codes considered as WARNING (default: none)
+      warn_codes: []
+      # Run only if changed files match these glob patterns (diff-bounded)
+      # Empty or missing = always run
+      diff_bounded:
+        enabled: true
+        patterns:
+          - "**/*.kt"
+          - "**/*.java"
+          - "**/*.kts"
+          - "build.gradle*"
+    - name: "lint"
+      enabled: true
+      cmd: "./gradlew detekt"
+      timeout_seconds: 300
+      pass_codes:
+        - 0
+      warn_codes: []
+      diff_bounded:
+        enabled: true
+        patterns:
+          - "**/*.kt"
+          - "**/*.java"
+    - name: "test"
+      enabled: true
+      cmd: "./gradlew test jvmTest --no-daemon"
+      timeout_seconds: 900
+      pass_codes:
+        - 0
+      warn_codes: []
+      diff_bounded:
+        enabled: false
+    - name: "coverage"
+      enabled: true
+      cmd: "./gradlew koverVerify koverXmlReport --no-daemon"
+      timeout_seconds: 600
+      pass_codes:
+        - 0
+      warn_codes: []
+      diff_bounded:
+        enabled: false
+    - name: "benchmark"
+      enabled: false
+      cmd: "./gradlew fastBenchmark --no-daemon"
+      timeout_seconds: 1200
+      pass_codes:
+        - 0
+      warn_codes: []
+      diff_bounded:
+        enabled: true
+        patterns:
+          - "**/*Benchmark*.kt"
+          - "**/*.jmh*"
+
+# ── Execution behavior ──────────────────────────────────────────────────────
+execution:
+  # Stop on first failure (true) or continue collecting results (false)
+  fail_fast: true
+  # Show real-time output of each step (true) or only on failure (false)
+  verbose: true
+  # Environment variables to inject into each step
+  env:
+    GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  # Working directory for all steps
+  working_dir: "."
+  # Retry configuration
+  retry:
+    max_attempts: 1
+    delay_seconds: 0
+
+# ── Report output ───────────────────────────────────────────────────────────
+report:
+‍‍
+  # Include step-by-step logs
+  include_logs: true
+  # Include timing per step
+  include_timing: true
+  # Include diff-bounded analysis
+  include_diff_analysis: true

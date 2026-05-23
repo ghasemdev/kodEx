@@ -1,0 +1,60 @@
+schema_version: "1.0"
+
+extension:
+  id: "specify-cicd"
+  name: "Specify Local CI/CD"
+  version: "1.0.0"
+  description: "Run CI/CD pipeline locally from GitHub Actions, GitLab CI, or CircleCI workflows before pushing. Parses job definitions, executes steps locally, and provides diff-bounded execution, pass/fail reporting, and pre-push gating."
+  author: "ghasemdev"
+  repository: "https://github.com/ghasemdev/kodEx"
+  license: "MIT"
+
+requires:
+  speckit_version: ">=0.2.0"
+  tools:
+    - name: bash
+      required: true
+    - name: python3
+      required: true
+    - name: gradle
+      required: false
+    - name: make
+      required: false
+    - name: cargo
+      required: false
+    - name: npm
+      required: false
+
+provides:
+  commands:
+    - name: "speckit.cicd.setup"
+      file: "commands/specify-cicd-setup.md"
+      description: "Scan CI workflow files and generate local cicd-config.yaml from detected jobs/steps"
+    - name: "speckit.cicd.run"
+      file: "commands/specify-cicd-run.md"
+      description: "Execute CI pipeline locally step-by-step with pass/fail reporting and diff-bounded filtering"
+    - name: "speckit.cicd.report"
+      file: "commands/specify-cicd-report.md"
+      description: "Generate Markdown report of local CI/CD execution results with pass/fail per step and diff-bounded summary"
+    - name: "speckit.cicd.dry-run"
+      file: "commands/specify-cicd-dry-run.md"
+      description: "Show which CI steps would execute locally without actually running them"
+
+  config:
+    - name: "cicd-config.yaml"
+      template: "config-template.yaml"
+      description: "Local CI/CD pipeline configuration"
+      required: false
+
+hooks:
+  before_push:
+    command: "speckit.cicd.check"
+    optional: true
+    prompt: "Run local CI/CD checks before pushing?"
+    description: "Gate push on local CI/CD pipeline passing"
+
+tags:
+  - "ci/cd"
+  - "local"
+  - "quality-gate"
+  - "pre-push"

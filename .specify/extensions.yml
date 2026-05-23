@@ -6,6 +6,7 @@ installed:
 - preview
 - qa
 - security-review
+- specify-cicd
 settings:
   auto_execute_hooks: true
 hooks:
@@ -70,6 +71,13 @@ hooks:
     optional: true
     prompt: Commit outstanding changes before implementation?
     description: Auto-commit before implementation
+    condition: null
+  - extension: specify-cicd
+    command: speckit.cicd.setup
+    enabled: true
+    optional: true
+    prompt: Parse CI workflows and generate local cicd-config.yaml?
+    description: Extract CI jobs and create local pipeline config
     condition: null
   before_checklist:
   - extension: git
@@ -165,6 +173,13 @@ hooks:
     optional: true
     prompt: Commit implementation changes?
     description: Auto-commit after implementation
+    condition: null
+  - extension: specify-cicd
+    command: speckit.cicd.run
+    enabled: true
+    optional: true
+    prompt: Run local CI/CD checks after implementation?
+    description: Validate implementation against local CI pipeline
     condition: null
   - extension: memory-md
     command: speckit.memory-md.capture
