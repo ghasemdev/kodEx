@@ -2,9 +2,8 @@ sources:
   github_actions:
     enabled: true
     paths:
-    - /Users/part/Projects/Kotlin/kodEx/.github/workflows/*.yml
-    files:
-    - /Users/part/Projects/Kotlin/kodEx/.github/workflows/ci.yml
+    - .github/workflows/*.yml
+    files: []
   gitlab_ci: {}
   circleci: {}
   bitbucket: {}

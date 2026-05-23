@@ -48,7 +48,7 @@ provides:
 
 hooks:
   before_push:
-    command: "speckit.cicd.check"
+    command: "speckit.cicd.run"
     optional: true
     prompt: "Run local CI/CD checks before pushing?"
     description: "Gate push on local CI/CD pipeline passing"

@@ -13,7 +13,7 @@ Produces a human-readable Markdown report summarizing local CI/CD pipeline execu
 Run the report script:
 
 ```bash
-.specify/extensions/specify-cicd/scripts/bash/cicd-report.sh [--output path/to/report.md]
+.specify/extensions/cicd/scripts/bash/cicd-report.sh [--output path/to/report.md]
 ```
 
 ## Output format
@@ -71,7 +71,7 @@ Log: [test-20260523-173045.log](../logs/test-20260523-173045.log)
 
 The report includes clickable links to per-step logs:
 ```
-.specify/extensions/specify-cicd/logs/<step_name>-<YYYYMMDDHHmmss>.log
+.specify/extensions/cicd/logs/<step_name>-<YYYYMMDDHHmmss>.log
 ```
 
 ## Graceful Degradation
@@ -79,5 +79,3 @@ The report includes clickable links to per-step logs:
 - If no previous run logs exist → generates empty report with instructions
 - If report was already generated → appends a "Second Run" section with diff comparison
 
-Base directory for this skill: file:///Users/part/Projects/Kotlin/kodEx/.claude/skills/speckit-cicd-report
-Relative paths in this skill (e.g., scripts/, reference/) are relative to this base directory.

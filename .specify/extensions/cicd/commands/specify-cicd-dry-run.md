@@ -13,7 +13,7 @@ diff-bounded based on current staged/unstaged changes.
 ## Execution
 
 ```bash
-.specify/extensions/specify-cicd/scripts/bash/cicd-dry-run.sh
+.specify/extensions/cicd/scripts/bash/cicd-dry-run.sh
 ```
 
 ## Output
@@ -38,5 +38,3 @@ Total: 5 steps, 2 would run, 3 would skip (diff-bounded)
 - `--bypass <pattern>` — exclude steps whose `diff_bounded.patterns` match
 - `--step <name>` — show only one step's simulation
 
-Base directory for this skill: file:///Users/part/Projects/Kotlin/kodEx/.claude/skills/speckit-cicd-dry-run
-Relative paths in this skill (e.g., scripts/, reference/) are relative to this base directory.

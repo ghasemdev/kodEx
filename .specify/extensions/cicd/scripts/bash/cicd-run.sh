@@ -7,7 +7,7 @@ EXTENSION_DIR="$(CDPATH="" cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(CDPATH="" cd "$EXTENSION_DIR/../../../../../" && pwd)"
 cd "$REPO_ROOT"
 
-CONFIG_DIR="$REPO_ROOT/.specify/extensions/specify-cicd"
+CONFIG_DIR="$REPO_ROOT/.specify/extensions/cicd"
 CONFIG="$CONFIG_DIR/cicd-config.yaml"
 LOG_DIR="$CONFIG_DIR/logs"
 SUMMARY_FILE="$CONFIG_DIR/.last-run-summary"
@@ -38,7 +38,7 @@ done
 if [ ! -f "$CONFIG" ]; then
     echo "❌ cicd-config.yaml not found."
     echo "Run setup first:"
-    echo "  .specify/extensions/specify-cicd/scripts/bash/cicd-setup.sh"
+    echo "  .specify/extensions/cicd/scripts/bash/cicd-setup.sh"
     exit 1
 fi
 
@@ -178,22 +178,21 @@ for step in steps:
             env=env
         )
         exit_code = process.returncode
-    except subprocess.TimeoutExpired:
+    except subprocess.TimeoutExpired as e:
         exit_code = -1
         print(f" ⏱️  TIMEOUT (>{timeout_sec}s)")
         fail_count += 1
         duration = timeout_sec
-        
+
         with open(log_file, 'wb') as f:
-            f.write(process.stdout if 'process' in dir() else b'')
-        
+            f.write(e.output or b'')
+
         results.append((name, "TIMEOUT", str(timeout_sec)))
-        
+
         if fail_fast:
             print()
             print("Pipeline FAILED. Stopped at: " + name)
             print(f"Log: {log_file}")
-            # Write summary
             with open(summary_file, 'w') as sf:
                 for r in results:
                     sf.write(f"{r[0]}|{r[1]}|{r[2]}\n")
@@ -204,23 +203,26 @@ for step in steps:
         print(f" ❌ NOT FOUND (command not found)")
         fail_count += 1
         duration = 0
-        
+
         results.append((name, "FAIL", "command not found"))
-        
+
         if fail_fast:
             print()
             print(f"Pipeline FAILED. Stopped at: {name}")
             sys.exit(1)
         continue
-    
+
     end = time.time()
     duration = int(end - start)
-    
-    # Write log
-    process = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=timeout_sec, env=env)
+
     with open(log_file, 'wb') as f:
         f.write(process.stdout)
     
+    if verbose:
+        output_text = process.stdout.decode(errors='replace')
+        for line in output_text.splitlines():
+            print(f"    {line}")
+
     # Determine status
     if exit_code in pass_codes:
         print(f" ✅ PASS ({duration}s)")

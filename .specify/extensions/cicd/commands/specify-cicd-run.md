@@ -13,7 +13,7 @@ Executes the locally extracted CI/CD pipeline step-by-step, captures output, and
 Run the script:
 
 ```bash
-.specify/extensions/specify-cicd/scripts/bash/cicd-run.sh [--verbose] [--fail-fast] [--diff-bounded]
+.specify/extensions/cicd/scripts/bash/cicd-run.sh [--verbose] [--fail-fast] [--diff-bounded]
 
 ## Flags
 
@@ -26,7 +26,7 @@ Run the script:
 
 ## Config
 
-Reads `.specify/extensions/specify-cicd/cicd-config.yaml`.
+Reads `.specify/extensions/cicd/cicd-config.yaml`.
 If the config does not exist, runs `speckit-cicd-setup` automatically.
 
 ## Output
@@ -50,7 +50,7 @@ coverage      ⏭️ SKIP   —     —             ⏭️ not run
 benchmark     ⏭️ SKIP   —     —             ⏭️ not run
 ────────────────────────────────────────────────────────
 Failure: test exited with code 1
-Log: .specify/extensions/specify-cicd/logs/test-<timestamp>.log
+Log: .specify/extensions/cicd/logs/test-<timestamp>.log
 ```
 
 ## Graceful Degradation
@@ -64,8 +64,6 @@ Log: .specify/extensions/specify-cicd/logs/test-<timestamp>.log
 
 Each step's full stdout/stderr is written to:
 ```
-.specify/extensions/specify-cicd/logs/<step_name>-<YYYYMMDD-HHMMSS>.log
+.specify/extensions/cicd/logs/<step_name>-<YYYYMMDD-HHMMSS>.log
 ```
 
-Base directory for this skill: file:///Users/part/Projects/Kotlin/kodEx/.claude/skills/speckit-cicd-run
-Relative paths in this skill (e.g., scripts/, reference/) are relative to this base directory.

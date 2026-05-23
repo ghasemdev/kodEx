@@ -9,7 +9,7 @@ EXTENSION_DIR="$(CDPATH="" cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(CDPATH="" cd "$EXTENSION_DIR/../../../../../" && pwd)"
 cd "$REPO_ROOT"
 
-CONFIG_DIR="$REPO_ROOT/.specify/extensions/specify-cicd"
+CONFIG_DIR="$REPO_ROOT/.specify/extensions/cicd"
 CONFIG="$CONFIG_DIR/cicd-config.yaml"
 
 BYPASS_ALL=false

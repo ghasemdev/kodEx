@@ -9,7 +9,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT=$(cd "$SCRIPT_DIR/../../../../../" && pwd)
 cd "$REPO_ROOT"
 
-CONFIG_DIR="$REPO_ROOT/.specify/extensions/specify-cicd"
+CONFIG_DIR="$REPO_ROOT/.specify/extensions/cicd"
 CONFIG="$CONFIG_DIR/cicd-config.yaml"
 mkdir -p "$CONFIG_DIR/logs"
 
@@ -66,19 +66,19 @@ def detect_sources(repo):
     gha_files = glob.glob(os.path.join(repo, ".github/workflows", "*.yml"))
     gha_files = [f for f in gha_files if ".action." not in os.path.basename(f)]
     if gha_files:
-        sources["github_actions"] = {"enabled": True, "paths": [os.path.join(repo, ".github/workflows", "*.yml")], "files": gha_files}
-    
+        sources["github_actions"] = {"enabled": True, "paths": [".github/workflows/*.yml"], "files": gha_files}
+
     gl_file = os.path.join(repo, ".gitlab-ci.yml")
     if os.path.exists(gl_file):
-        sources["gitlab_ci"] = {"enabled": True, "paths": [gl_file]}
-    
+        sources["gitlab_ci"] = {"enabled": True, "paths": [".gitlab-ci.yml"]}
+
     cc_file = os.path.join(repo, ".circleci", "config.yml")
     if os.path.exists(cc_file):
-        sources["circleci"] = {"enabled": True, "paths": [cc_file]}
-    
+        sources["circleci"] = {"enabled": True, "paths": [".circleci/config.yml"]}
+
     bb_file = os.path.join(repo, "bitbucket-pipelines.yml")
     if os.path.exists(bb_file):
-        sources["bitbucket"] = {"enabled": True, "paths": [bb_file]}
+        sources["bitbucket"] = {"enabled": True, "paths": ["bitbucket-pipelines.yml"]}
     
     return sources
 

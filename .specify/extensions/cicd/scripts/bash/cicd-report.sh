@@ -9,7 +9,7 @@ EXTENSION_DIR="$(CDPATH="" cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(CDPATH="" cd "$EXTENSION_DIR/../../../../../" && pwd)"
 cd "$REPO_ROOT"
 
-CONFIG_DIR="$REPO_ROOT/.specify/extensions/specify-cicd"
+CONFIG_DIR="$REPO_ROOT/.specify/extensions/cicd"
 SUMMARY_FILE="$CONFIG_DIR/.last-run-summary"
 LOG_DIR="$CONFIG_DIR/logs"
 REPORT_DIR="$REPO_ROOT/reports/cicd"
@@ -19,7 +19,7 @@ OUTPUT="${REPORT_DIR}/local-report.md"
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --output) OUTPUT="$2"; shift 2 ;;
-        *) OUTPUT="$2"; shift ;;  # positional = output path
+        *) OUTPUT="$1"; shift ;;  # positional = output path
     esac
 done
 
@@ -42,9 +42,9 @@ if [ -f "$SUMMARY_FILE" ]; then
     while IFS='|' read -r step_name pass_fail duration; do
         TOTAL=$((TOTAL + 1))
         case "$pass_fail" in
-            PASS) PASS_COUNT=$((PASS_COUNT + 1)); RESULTS+=("$step_name|✅ PASS|$duration") ;;
-            FAIL) FAIL_COUNT=$((FAIL_COUNT + 1));  RESULTS+=("$step_name|❌ FAIL|exit $?") ;;
-            WARN) WARN_COUNT=$((WARN_COUNT + 1));  RESULTS+=("$step_name|⚠️  WARN|exit $?") ;;
+            PASS) PASS_COUNT=$((PASS_COUNT + 1)); RESULTS+=("$step_name|✅ PASS|${duration}s") ;;
+            FAIL) FAIL_COUNT=$((FAIL_COUNT + 1));  RESULTS+=("$step_name|❌ FAIL|${duration}s") ;;
+            WARN) WARN_COUNT=$((WARN_COUNT + 1));  RESULTS+=("$step_name|⚠️  WARN|${duration}s") ;;
             *)    SKIP_COUNT=$((SKIP_COUNT + 1));  RESULTS+=("$step_name|⏭️  SKIP|—") ;;
         esac
     done < "$SUMMARY_FILE"
@@ -91,7 +91,7 @@ else
 
 **Exit code**: Check log below
 
-**Log**: [${sname} log](../../.specify/extensions/specify-cicd/logs/$(echo "$sname" | tr ' ' '-'))
+**Log**: [${sname} log](../../.specify/extensions/cicd/logs/$(echo "$sname" | tr ' ' '-'))
 
 FAIL_BLOCK
         fi
@@ -105,7 +105,7 @@ $(if [ "$WARN_COUNT" -eq 0 ]; then echo "No warnings detected."; else echo "$WAR
 
 ## Logs
 
-Step logs available in: \`./.specify/extensions/specify-cicd/logs/\`
+Step logs available in: \`./.specify/extensions/cicd/logs/\`
 
 ## Recommendations
 

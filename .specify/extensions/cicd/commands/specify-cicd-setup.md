@@ -14,15 +14,15 @@ Extracts jobs/steps, command lines, timeouts, and conditions. Generates `cicd-co
 Run the setup script:
 
 ```bash
-.specify/extensions/specify-cicd/scripts/bash/cicd-setup.sh
+.specify/extensions/cicd/scripts/bash/cicd-setup.sh
 ```
 
 Or specify a provider explicitly:
 
 ```bash
-.specify/extensions/specify-cicd/scripts/bash/cicd-setup.sh --provider github-actions
-.specify/extensions/specify-cicd/scripts/bash/cicd-setup.sh --provider gitlab-cli
-.specify/extensions/specify-cicd/scripts/bash/cicd-setup.sh --provider circleci-cli
+.specify/extensions/cicd/scripts/bash/cicd-setup.sh --provider github-actions
+.specify/extensions/cicd/scripts/bash/cicd-setup.sh --provider gitlab-cli
+.specify/extensions/cicd/scripts/bash/cicd-setup.sh --provider circleci-cli
 ```
 
 ## Auto-detection priority
@@ -34,7 +34,7 @@ Or specify a provider explicitly:
 
 ## Output
 
-Generates `.specify/extensions/specify-cicd/cicd-config.yaml` with:
+Generates `.specify/extensions/cicd/cicd-config.yaml` with:
 
 ```yaml
 sources:
@@ -95,5 +95,3 @@ For each job in the CI file, the parser extracts:
 - If workflow uses matrix or conditional steps → warns and includes only top-level commands
 - If `cicd-config.yaml` already exists → prompts for overwrite or append
 
-Base directory for this skill: file:///Users/part/Projects/Kotlin/kodEx/.claude/skills/speckit-cicd-setup
-Relative paths in this skill (e.g., scripts/, reference/) are relative to this base directory.
