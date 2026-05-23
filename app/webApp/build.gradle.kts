@@ -71,6 +71,6 @@ kotlin {
 }
 
 gettext {
-    potFile.set(File(projectDir, "src/jsMain/resources/modules/i18n/messages.pot"))
+    potFile.set(File(projectDir, "src/webMain/resources/modules/i18n/messages.pot"))
     keywords.set(listOf("tr", "trn:1,2", "trc:2", "trnc:2,3", "marktr"))
 }

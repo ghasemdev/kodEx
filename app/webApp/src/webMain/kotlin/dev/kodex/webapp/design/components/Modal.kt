@@ -1,0 +1,50 @@
+package dev.kodex.webapp.design.components
+
+import androidx.compose.runtime.Composable
+import dev.kilua.core.IComponent
+import dev.kilua.html.div
+import dev.kilua.html.h2
+import dev.kilua.html.span
+
+@Composable
+fun IComponent.Modal(
+    visible: Boolean,
+    onDismiss: () -> Unit,
+    title: String? = null,
+    className: String? = null,
+    content: @Composable IComponent.() -> Unit,
+) {
+    if (!visible) return
+
+    div(className = "fixed inset-0 z-50 flex items-center justify-center") {
+        // Backdrop
+        div(className = "absolute inset-0 bg-black/50 backdrop-blur-sm") {
+            onClick { onDismiss() }
+        }
+        // Dialog
+        div(
+            className = "relative z-10 w-full max-w-md mx-4 rounded-2xl bg-surface shadow-xl " +
+                    "border border-outline/20 ${className ?: ""}".trim()
+        ) {
+            role("dialog")
+            attribute("aria-modal", "true")
+            tabindex(0)
+            onKeydown { event ->
+                if (event.key == "Escape") onDismiss()
+            }
+            if (title != null) {
+                div(className = "flex items-center justify-between px-5 py-4 border-b border-outline/10") {
+                    h2(className = "text-lg font-semibold text-on-surface") { +title }
+                    span(
+                        className = "cursor-pointer w-8 h-8 flex items-center justify-center rounded-full " +
+                                "hover:bg-surface-variant text-on-surface/60 hover:text-on-surface transition-colors"
+                    ) {
+                        +"✕"
+                        onClick { onDismiss() }
+                    }
+                }
+            }
+            div(className = "p-5") { content() }
+        }
+    }
+}

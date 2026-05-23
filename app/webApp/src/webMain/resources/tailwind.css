@@ -1,0 +1,106 @@
+@config "./tailwind.config.js";
+@import "../../../node_modules/tailwindcss/dist/lib.d.mts";
+
+/* Fonts */
+@import "@fontsource/inter/variable.css";
+@import "@fontsource/vazirmatn/arabic-variable.css";
+@import "@fontsource/jetbrains-mono/variable.css";
+
+/* Dark mode via .dark class on <html> */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Force-include classes used dynamically at runtime */
+@source inline("bg-neutral-500 text-white font-bold inline-block rounded-full");
+
+/* ── Design Tokens ──────────────────────────────────────────────── */
+@theme {
+    /* Colors — Light (defaults) */
+    --color-primary:             #7F52FF;
+    --color-accent:              #F57D42;
+    --color-surface:             #FAFAFA;
+    --color-surface-container:   #F0EFF5;
+    --color-surface-variant:     #E4E2EF;
+    --color-on-surface:          #1A1625;
+    --color-on-surface-muted:    #6B6580;
+    --color-outline:             #D0CDE8;
+    --color-outline-variant:     #E8E5F5;
+    --color-error:               #E24462;
+    --color-success:             #22C55E;
+    --color-warning:             #F59E0B;
+    --color-info:                #3B82F6;
+    --color-code-bg:             #F4F3FF;
+
+    /* Typography */
+    --font-sans: "Inter", "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+    --text-xs:   clamp(0.70rem,  0.65rem + 0.25vw, 0.85rem);
+    --text-sm:   clamp(0.80rem,  0.75rem + 0.25vw, 1.00rem);
+    --text-base: clamp(0.875rem, 0.80rem + 0.38vw, 1.13rem);
+    --text-lg:   clamp(1.00rem,  0.90rem + 0.50vw, 1.38rem);
+    --text-xl:   clamp(1.13rem,  1.00rem + 0.63vw, 1.63rem);
+    --text-2xl:  clamp(1.38rem,  1.20rem + 0.88vw, 2.00rem);
+
+    /* Spacing */
+    --spacing-px: 1px;
+
+    /* Radius */
+    --radius-sm:   0.25rem;
+    --radius-md:   0.50rem;
+    --radius-lg:   0.75rem;
+    --radius-xl:   1.00rem;
+    --radius-full: 9999px;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 3px  rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.12);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.16);
+}
+
+/* ── Dark mode overrides ────────────────────────────────────────── */
+.dark {
+    --color-primary:             #9D71FF;
+    --color-accent:              #FF9060;
+    --color-surface:             #13111C;
+    --color-surface-container:   #1E1A2E;
+    --color-surface-variant:     #2A2440;
+    --color-on-surface:          #EDE9FF;
+    --color-on-surface-muted:    #9B96B8;
+    --color-outline:             #3A3457;
+    --color-outline-variant:     #2E2848;
+    --color-error:               #FF6B8A;
+    --color-success:             #4ADE80;
+    --color-warning:             #FCD34D;
+    --color-info:                #60A5FA;
+    --color-code-bg:             #0D0B18;
+}
+
+/* ── RTL: switch to Vazirmatn ───────────────────────────────────── */
+[dir="rtl"] {
+    --font-sans: "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ── Base resets ────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--color-surface);
+    color: var(--color-on-surface);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── Max-width container ─────────────────────────────────────────── */
+.container-app {
+    width: 100%;
+    max-width: 1920px;
+    margin-inline: auto;
+    padding-inline: 1rem;
+}
+
+@media (min-width: 1921px) {
+    .container-app {
+        max-width: 2400px;
+        padding-inline: 2rem;
+    }
+}
