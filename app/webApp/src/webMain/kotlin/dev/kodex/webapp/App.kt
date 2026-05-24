@@ -1,6 +1,7 @@
 package dev.kodex.webapp
 
 import dev.kilua.Application
+import dev.kilua.CoreModule
 import dev.kilua.FontAwesomeModule
 import dev.kilua.Hot
 import dev.kilua.TailwindcssModule
@@ -13,7 +14,6 @@ import dev.kilua.theme.ThemeManager
 import dev.kilua.utils.isDom
 import dev.kodex.webapp.design.i18n.initI18n
 import dev.kodex.webapp.playground.PlaygroundApp
-import kotlin.js.js
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
@@ -39,7 +39,7 @@ class App : Application() {
 
         root("root") {
             @Suppress("UNCHECKED_CAST")
-            val isDev = js("import.meta.env.DEV") as? Boolean ?: false
+            val isDev = isDev()
             if (isDev && window.location.pathname.startsWith("/playground")) {
                 PlaygroundApp()
             } else {
@@ -52,7 +52,14 @@ class App : Application() {
 }
 
 fun app() {
-    startApplication(::App, bundlerHot(), TailwindcssModule, FontAwesomeModule)
+    startApplication(
+        ::App,
+        bundlerHot(),
+        TailwindcssModule,
+        FontAwesomeModule,
+        CoreModule,
+    )
 }
 
 expect fun bundlerHot(): Hot?
+expect fun isDev(): Boolean

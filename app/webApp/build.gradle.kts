@@ -17,7 +17,6 @@ kotlin {
                 cssSupport {
                     enabled = true
                 }
-                outputFileName = "main.bundle.js"
                 sourceMaps = false
             }
             testTask {
@@ -39,7 +38,6 @@ kotlin {
                 cssSupport {
                     enabled = true
                 }
-                outputFileName = "main.bundle.js"
                 sourceMaps = false
             }
             testTask {
@@ -67,6 +65,11 @@ kotlin {
             implementation(libs.kilua.fontawesome)
             implementation(libs.ktor.client.js)
             implementation(libs.kotlinx.browser)
+
+            implementation(npm("@fontsource/inter", libs.versions.fontsource.get()))
+            implementation(npm("@fontsource/vazirmatn", libs.versions.fontsource.get()))
+            implementation(npm("@fontsource/jetbrains-mono", libs.versions.fontsource.get()))
+            implementation(npm("highlight.js", libs.versions.highlightjs.get()))
         }
     }
 }
@@ -77,9 +80,14 @@ gettext {
 }
 
 vite {
+    autoRewriteIndex.set(true)
+
     plugin("@tailwindcss/vite", "tailwindcss", libs.versions.tailwindcss.get())
 
+    build {
+        target = "es2015"
+    }
     server {
-        proxy("/api", "http://localhost:4567")
+        port = 3000
     }
 }

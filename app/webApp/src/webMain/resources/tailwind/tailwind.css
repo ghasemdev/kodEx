@@ -1,10 +1,10 @@
 @config "./tailwind.config.js";
-@import "../../../node_modules/tailwindcss/dist/lib.d.mts";
+@import "tailwindcss";
 
 /* Fonts */
-@import "@fontsource/inter/variable.css";
-@import "@fontsource/vazirmatn/arabic-variable.css";
-@import "@fontsource/jetbrains-mono/variable.css";
+@import "@fontsource/inter/index.css";
+@import "@fontsource/vazirmatn/index.css";
+@import "@fontsource/jetbrains-mono/index.css";
 
 /* Dark mode via .dark class on <html> */
 @custom-variant dark (&:where(.dark, .dark *));
