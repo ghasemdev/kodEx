@@ -1,4 +1,8 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
 
 plugins {
     id("kotlin-kmp-convention")
@@ -90,4 +94,12 @@ vite {
     server {
         port = 3000
     }
+}
+
+project.plugins.withType<NodeJsPlugin> {
+    project.the<NodeJsEnvSpec>().version = "22.12.0"
+}
+
+project.plugins.withType<WasmNodeJsPlugin> {
+    project.the<WasmNodeJsEnvSpec>().version = "22.12.0"
 }
