@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsEnvSpec
@@ -78,6 +79,14 @@ kotlin {
     }
 }
 
+composeCompiler {
+    targetKotlinPlatforms.set(
+        KotlinPlatformType.entries
+            .filterNot { it == KotlinPlatformType.jvm }
+            .asIterable()
+    )
+}
+
 gettext {
     potFile.set(File(projectDir, "src/webMain/resources/modules/i18n/messages.pot"))
     keywords.set(listOf("tr", "trn:1,2", "trc:2", "trnc:2,3", "marktr"))
@@ -97,9 +106,9 @@ vite {
 }
 
 project.plugins.withType<NodeJsPlugin> {
-    project.the<NodeJsEnvSpec>().version = "22.12.0"
+    project.the<NodeJsEnvSpec>().version = libs.versions.nodejs.get()
 }
 
 project.plugins.withType<WasmNodeJsPlugin> {
-    project.the<WasmNodeJsEnvSpec>().version = "22.12.0"
+    project.the<WasmNodeJsEnvSpec>().version = libs.versions.nodejs.get()
 }
