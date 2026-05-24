@@ -63,20 +63,20 @@
   dependencies:
     tslib "^2.4.0"
 
-"@fontsource/inter@5.1.1":
+"@fontsource-variable/inter-tight@5.1.1":
   version "5.1.1"
-  resolved "https://registry.yarnpkg.com/@fontsource/inter/-/inter-5.1.1.tgz#401803b6ac4c877f5be94088aa89147ed5a2bd85"
-  integrity sha512-weN3E+rq0Xb3Z93VHJ+Rc7WOQX9ETJPTAJ+gDcaMHtjft67L58sfS65rAjC5tZUXQ2FdZ/V1/sSzCwZ6v05kJw==
+  resolved "https://registry.yarnpkg.com/@fontsource-variable/inter-tight/-/inter-tight-5.1.1.tgz#409abf95763d68503af8182f55431daabc60d9fe"
+  integrity sha512-uPBgjWbkau/7q/IGu/offWoaQqx9dky6shbqQFsBUsoosG6rhrX7azqh0tnrENpgjoE+CwgEotQ8eZaha1ni8w==
 
-"@fontsource/jetbrains-mono@5.1.1":
+"@fontsource-variable/jetbrains-mono@5.1.1":
   version "5.1.1"
-  resolved "https://registry.yarnpkg.com/@fontsource/jetbrains-mono/-/jetbrains-mono-5.1.1.tgz#451e9a592c46582e61f28311b0dfe5a222f499bf"
-  integrity sha512-5rwvmdQQpXev4LlBX1P+7h2dguu6iwW/9Npjde4+DEq+HgpVJI/7QY8DI1NVVFdvLtXZNP+vO2L/5BQED6FUhA==
+  resolved "https://registry.yarnpkg.com/@fontsource-variable/jetbrains-mono/-/jetbrains-mono-5.1.1.tgz#d45ecec375900a89b64b8c3e260b51ad848ef11c"
+  integrity sha512-V+1aRFRvuZ66PpO30s8l/2aADKzpV9VRsO3kSZE+rTMvi4vab3cUcPHMN2z+wAvjkYJO71Yf+g3/Y6pSMmQpVQ==
 
-"@fontsource/vazirmatn@5.1.1":
+"@fontsource-variable/vazirmatn@5.1.1":
   version "5.1.1"
-  resolved "https://registry.yarnpkg.com/@fontsource/vazirmatn/-/vazirmatn-5.1.1.tgz#a48d8405d1d0529a0ae7e7056c2274b4ae9739f6"
-  integrity sha512-fGqPgHkR6JNTw3WwZgxHVoaIoQLVQCVjyBdFiGuooJq68ky/j2XbGzQl07ZUGKp0OCSlWKjmTHjWYkh/BwxSKA==
+  resolved "https://registry.yarnpkg.com/@fontsource-variable/vazirmatn/-/vazirmatn-5.1.1.tgz#494e60263eeee7506db3bbb234c3ecd640a327b2"
+  integrity sha512-Tugc1E5yFSvD/DLuCJ3qZjjLggzz1VNuAGfzU4l29IEHp9GfgRdHEiukEAWcAnQ1UnsSXfjUnhMmJiixOYR2CA==
 
 "@fortawesome/fontawesome-free@7.2.0":
   version "7.2.0"

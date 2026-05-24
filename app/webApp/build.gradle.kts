@@ -14,6 +14,7 @@ plugins {
     alias(libs.plugins.vite)
 }
 
+@OptIn(ExperimentalWasmDsl::class)
 kotlin {
     js(IR) {
         useEsModules()
@@ -35,7 +36,6 @@ kotlin {
             target.set("es2015")
         }
     }
-    @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         useEsModules()
         browser {
@@ -71,9 +71,9 @@ kotlin {
             implementation(libs.ktor.client.js)
             implementation(libs.kotlinx.browser)
 
-            implementation(npm("@fontsource/inter", libs.versions.fontsource.get()))
-            implementation(npm("@fontsource/vazirmatn", libs.versions.fontsource.get()))
-            implementation(npm("@fontsource/jetbrains-mono", libs.versions.fontsource.get()))
+            implementation(npm("@fontsource-variable/inter-tight", libs.versions.fontsource.get()))
+            implementation(npm("@fontsource-variable/vazirmatn", libs.versions.fontsource.get()))
+            implementation(npm("@fontsource-variable/jetbrains-mono", libs.versions.fontsource.get()))
             implementation(npm("highlight.js", libs.versions.highlightjs.get()))
         }
     }
@@ -98,7 +98,7 @@ vite {
     plugin("@tailwindcss/vite", "tailwindcss", libs.versions.tailwindcss.get())
 
     build {
-        target = "es2015"
+        target = "es2020"
     }
     server {
         port = 3000

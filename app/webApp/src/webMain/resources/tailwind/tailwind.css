@@ -2,9 +2,9 @@
 @import "tailwindcss";
 
 /* Fonts */
-@import "@fontsource/inter/index.css";
-@import "@fontsource/vazirmatn/index.css";
-@import "@fontsource/jetbrains-mono/index.css";
+@import "@fontsource-variable/inter-tight/index.css";
+@import "@fontsource-variable/vazirmatn/index.css";
+@import "@fontsource-variable/jetbrains-mono/index.css";
 
 /* Dark mode via .dark class on <html> */
 @custom-variant dark (&:where(.dark, .dark *));
