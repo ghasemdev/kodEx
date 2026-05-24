@@ -51,14 +51,14 @@ fun IComponent.ToastContainer() {
                 ToastLevel.Error -> "bg-error/15 border-error/30 text-error" to "✕"
             }
             div(
-                className = "flex items-start gap-3 px-4 py-3 rounded-xl border shadow-lg $bg " +
-                        "animate-in slide-in-from-bottom-2 duration-200"
+                className = "flex items-center gap-3 px-4 py-3 rounded-xl border shadow-lg $bg toast-slide-in"
             ) {
-                span(className = "text-base mt-0.5 flex-shrink-0") { +icon }
+                span(className = "text-base flex-shrink-0 w-5 text-center leading-none") { +icon }
                 span(className = "flex-1 text-sm") { +toast.message }
                 span(
-                    className = "cursor-pointer flex-shrink-0 opacity-60 hover:opacity-100 " +
-                            "transition-opacity text-sm"
+                    className = "cursor-pointer flex-shrink-0 w-6 h-6 flex items-center justify-center " +
+                            "rounded-full opacity-50 hover:opacity-100 hover:bg-black/10 " +
+                            "transition-all text-xs leading-none"
                 ) {
                     +"✕"
                     onClick { ToastStore.dismiss(toast) }

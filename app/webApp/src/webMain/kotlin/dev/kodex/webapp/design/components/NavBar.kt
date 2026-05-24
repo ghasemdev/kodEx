@@ -37,11 +37,11 @@ fun IComponent.NavBar(
                     val isSelected = item.key == selectedItem
                     div(
                         className = "flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm cursor-pointer " +
-                            "transition-colors duration-150 " +
+                            "transition-all duration-200 " +
                             if (isSelected) "bg-primary/10 text-primary font-medium"
                             else "text-on-surface/70 hover:bg-surface-variant hover:text-on-surface"
                     ) {
-                        if (item.icon != null) span(className = item.icon) {}
+                        if (item.icon != null) span(className = "${item.icon} w-4 text-center") {}
                         span { +item.label }
                         onClick { onItemSelect(item.key) }
                     }
@@ -66,7 +66,7 @@ fun IComponent.NavBar(
                             if (isSelected) "text-primary"
                             else "text-on-surface/60 hover:text-on-surface"
                     ) {
-                        if (item.icon != null) span(className = "${item.icon} text-lg") {}
+                        if (item.icon != null) span(className = "${item.icon} text-xl w-6 text-center") {}
                         span { +item.label }
                         onClick { onItemSelect(item.key) }
                     }

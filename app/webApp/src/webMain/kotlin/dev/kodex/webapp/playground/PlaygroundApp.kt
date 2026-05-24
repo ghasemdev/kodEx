@@ -12,12 +12,43 @@ import dev.kilua.html.h2
 import dev.kilua.html.span
 import dev.kodex.webapp.design.breakpoint.BreakpointTier
 import dev.kodex.webapp.design.breakpoint.rememberBreakpoint
+import dev.kodex.webapp.playground.previews.BadgePreview
 import dev.kodex.webapp.playground.previews.ButtonPreview
+import dev.kodex.webapp.playground.previews.CardPreview
+import dev.kodex.webapp.playground.previews.CodeBlockPreview
+import dev.kodex.webapp.playground.previews.InputPreview
+import dev.kodex.webapp.playground.previews.LanguageSwitcherPreview
+import dev.kodex.webapp.playground.previews.ModalPreview
+import dev.kodex.webapp.playground.previews.NavBarPreview
+import dev.kodex.webapp.playground.previews.SidebarPreview
+import dev.kodex.webapp.playground.previews.ThemeSwitcherPreview
+import dev.kodex.webapp.playground.previews.ToastPreview
+import dev.kodex.webapp.playground.previews.TypographyPreview
 
 private val playgroundEntries: List<PlaygroundEntry> by lazy {
     buildPlaygroundEntries(
         listOf(
-            PlaygroundEntry("Button", "Atoms") { ButtonPreview() },
+            // Foundation
+            PlaygroundEntry("Typography", "Foundation") { TypographyPreview() },
+
+            // Atoms
+            PlaygroundEntry("Button",    "Atoms") { ButtonPreview() },
+            PlaygroundEntry("Badge",     "Atoms") { BadgePreview() },
+            PlaygroundEntry("Input",     "Atoms") { InputPreview() },
+
+            // Molecules
+            PlaygroundEntry("Card",      "Molecules") { CardPreview() },
+            PlaygroundEntry("CodeBlock", "Molecules") { CodeBlockPreview() },
+            PlaygroundEntry("Modal",     "Molecules") { ModalPreview() },
+            PlaygroundEntry("Toast",     "Molecules") { ToastPreview() },
+
+            // Navigation
+            PlaygroundEntry("NavBar",    "Navigation") { NavBarPreview() },
+            PlaygroundEntry("Sidebar",   "Navigation") { SidebarPreview() },
+
+            // Controls
+            PlaygroundEntry("ThemeSwitcher",    "Controls") { ThemeSwitcherPreview() },
+            PlaygroundEntry("LanguageSwitcher", "Controls") { LanguageSwitcherPreview() },
         )
     )
 }

@@ -53,16 +53,16 @@ fun IComponent.Sidebar(
             div(className = "px-3 py-3 border-b border-outline/10") { header() }
         }
 
-        div(className = "flex-1 overflow-y-auto py-2") {
+        div(className = "flex-1 overflow-y-auto") {
             items.forEach { item ->
                 val isSelected = item.key == selectedItem
                 div(
-                    className = "flex items-center gap-3 mx-2 px-3 py-2 rounded-lg cursor-pointer " +
-                        "transition-colors duration-150 text-sm " +
-                        if (isSelected) "bg-primary/10 text-primary font-medium"
+                    className = "flex items-center gap-3 px-4 py-2.5 cursor-pointer " +
+                        "transition-colors duration-200 text-sm " +
+                        if (isSelected) "bg-primary/10 text-primary font-medium border-e-2 border-primary"
                         else "text-on-surface/70 hover:bg-surface-variant hover:text-on-surface"
                 ) {
-                    if (item.icon != null) span(className = "${item.icon} w-5 text-center flex-shrink-0") {}
+                    if (item.icon != null) span(className = "${item.icon} w-4 text-center flex-shrink-0") {}
                     if (!collapsed) span(className = "truncate") { +item.label }
                     onClick { onItemSelect(item.key) }
                 }

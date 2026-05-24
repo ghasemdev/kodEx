@@ -6,6 +6,10 @@
 @import "@fontsource-variable/vazirmatn/index.css";
 @import "@fontsource-variable/jetbrains-mono/index.css";
 
+/* Icons — loaded here so WASM+Vite target also gets Font Awesome (the kilua-fontawesome
+   module only injects CSS in the JS/webpack path, not in the WASM/Vite compiled output) */
+@import "@fortawesome/fontawesome-free/css/all.css";
+
 /* Dark mode via .dark class on <html> */
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -88,6 +92,25 @@ body {
     background-color: var(--color-surface);
     color: var(--color-on-surface);
     -webkit-font-smoothing: antialiased;
+}
+
+/* ── Input: suppress browser autofill white override ────────────── */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px var(--color-surface) inset;
+    -webkit-text-fill-color: var(--color-on-surface);
+    caret-color: var(--color-on-surface);
+    transition: background-color 0s 600000s;
+}
+
+/* ── Toast slide-in animation ───────────────────────────────────── */
+@keyframes toast-slide-in {
+    from { opacity: 0; transform: translateY(0.5rem) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0)      scale(1);    }
+}
+.toast-slide-in {
+    animation: toast-slide-in 0.2s ease-out both;
 }
 
 /* ── Max-width container ─────────────────────────────────────────── */
