@@ -53,6 +53,7 @@ fun IComponent.ToastContainer() {
             div(
                 className = "flex items-center gap-3 px-4 py-3 rounded-xl border shadow-lg $bg toast-slide-in"
             ) {
+                role(if (toast.level == ToastLevel.Error) "alert" else "status")
                 span(className = "text-base flex-shrink-0 w-5 text-center leading-none") { +icon }
                 span(className = "flex-1 text-sm") { +toast.message }
                 span(

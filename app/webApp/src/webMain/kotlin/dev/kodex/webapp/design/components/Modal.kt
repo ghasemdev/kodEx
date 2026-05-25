@@ -28,13 +28,14 @@ fun IComponent.Modal(
         ) {
             role("dialog")
             attribute("aria-modal", "true")
+            if (title != null) attribute("aria-labelledby", "modal-title")
             tabindex(0)
             onKeydown { event ->
                 if (event.key == "Escape") onDismiss()
             }
             if (title != null) {
                 div(className = "flex items-center justify-between px-5 py-4 border-b border-outline/10") {
-                    h2(className = "text-lg font-semibold text-on-surface") { +title }
+                    h2(className = "text-lg font-semibold text-on-surface", id = "modal-title") { +title }
                     span(
                         className = "cursor-pointer w-8 h-8 flex items-center justify-center rounded-full " +
                                 "hover:bg-surface-variant text-on-surface/60 hover:text-on-surface transition-colors"

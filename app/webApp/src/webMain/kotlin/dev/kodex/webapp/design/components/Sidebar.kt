@@ -33,15 +33,15 @@ fun IComponent.Sidebar(
 
     aside(
         className = "flex flex-col h-full bg-surface-container border-e border-outline/20 " +
-            "transition-all duration-200 " +
-            (if (collapsed) "w-14" else "w-64") +
-            " ${className ?: ""}".trim()
+                "transition-all duration-200 " +
+                (if (collapsed) "w-14" else "w-64") +
+                " ${className ?: ""}".trim()
     ) {
         if (showCollapseToggle) {
             div(className = "flex justify-end p-2 border-b border-outline/10") {
                 span(
                     className = "cursor-pointer w-8 h-8 flex items-center justify-center rounded-lg " +
-                        "hover:bg-surface-variant text-on-surface/60 transition-colors"
+                            "hover:bg-surface-variant text-on-surface/60 transition-colors"
                 ) {
                     +(if (collapsed) "›" else "‹")
                     onClick { collapsed = !collapsed }
@@ -58,13 +58,18 @@ fun IComponent.Sidebar(
                 val isSelected = item.key == selectedItem
                 div(
                     className = "flex items-center gap-3 px-4 py-2.5 cursor-pointer " +
-                        "transition-colors duration-200 text-sm " +
-                        if (isSelected) "bg-primary/10 text-primary font-medium border-e-2 border-primary"
-                        else "text-on-surface/70 hover:bg-surface-variant hover:text-on-surface"
+                            "transition-colors duration-200 text-sm " +
+                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 " +
+                            if (isSelected) "bg-primary/10 text-primary font-medium border-e-2 border-primary"
+                            else "text-on-surface/70 hover:bg-surface-variant hover:text-on-surface"
                 ) {
+                    tabindex(0)
+                    role("button")
+                    if (isSelected) attribute("aria-current", "page")
                     if (item.icon != null) span(className = "${item.icon} w-4 text-center flex-shrink-0") {}
                     if (!collapsed) span(className = "truncate") { +item.label }
                     onClick { onItemSelect(item.key) }
+                    onKeydown { e -> if (e.key == "Enter" || e.key == " ") onItemSelect(item.key) }
                 }
             }
         }

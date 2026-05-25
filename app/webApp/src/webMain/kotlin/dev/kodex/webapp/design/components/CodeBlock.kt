@@ -11,6 +11,7 @@ import dev.kilua.html.div
 import dev.kilua.html.pre
 import dev.kilua.html.span
 import dev.kilua.utils.isDom
+import dev.kodex.webapp.design.i18n.i18n
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -32,10 +33,13 @@ fun IComponent.CodeBlock(
                 span(
                     className = "cursor-pointer inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs " +
                             "bg-surface-container/80 backdrop-blur-sm border border-outline/20 " +
-                            "hover:bg-primary/10 text-on-surface transition-colors duration-150"
+                            "hover:bg-primary/10 text-on-surface transition-colors duration-150 " +
+                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
                 ) {
-                    +(if (copied) "Copied!" else "Copy")
-                    onClick {
+                    tabindex(0)
+                    role("button")
+                    +(if (copied) i18n.tr("Copied!") else i18n.tr("Copy"))
+                    val doCopy: () -> Unit = {
                         if (isDom) {
                             MainScope().launch {
                                 web.navigator.navigator.clipboard.writeText(code)
@@ -45,6 +49,8 @@ fun IComponent.CodeBlock(
                             }
                         }
                     }
+                    onClick { doCopy() }
+                    onKeydown { e -> if (e.key == "Enter" || e.key == " ") doCopy() }
                 }
             }
         }

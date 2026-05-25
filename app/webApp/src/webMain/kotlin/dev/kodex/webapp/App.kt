@@ -2,7 +2,6 @@ package dev.kodex.webapp
 
 import dev.kilua.Application
 import dev.kilua.CoreModule
-import dev.kilua.FontAwesomeModule
 import dev.kilua.Hot
 import dev.kilua.TailwindcssModule
 import dev.kilua.compose.root
@@ -56,7 +55,6 @@ fun app() {
         ::App,
         bundlerHot(),
         TailwindcssModule,
-        FontAwesomeModule,
         CoreModule,
     )
 }

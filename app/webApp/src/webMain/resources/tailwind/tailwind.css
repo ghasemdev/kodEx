@@ -6,9 +6,9 @@
 @import "@fontsource-variable/vazirmatn/index.css";
 @import "@fontsource-variable/jetbrains-mono/index.css";
 
-/* Icons — loaded here so WASM+Vite target also gets Font Awesome (the kilua-fontawesome
-   module only injects CSS in the JS/webpack path, not in the WASM/Vite compiled output) */
-@import "@fortawesome/fontawesome-free/css/all.css";
+/* Icons — minimal FA subset: only the 3 icons used by ThemeSwitcher (moon/sun/circle-half-stroke).
+   Full all.css (~109 KB) replaced to keep production CSS ≤ 20 KB gzipped. */
+@import "./fa-minimal.css";
 
 /* Dark mode via .dark class on <html> */
 @custom-variant dark (&:where(.dark, .dark *));

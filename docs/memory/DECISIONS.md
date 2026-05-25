@@ -70,6 +70,38 @@ Both `kotlin-kmp-convention` and `kotlin-jvm-convention` apply `detekt-conventio
 
 ---
 
+### 2026-05-24 - D5: Design tokens expressed as Tailwind v4 `@theme` CSS variables
+
+**Status**: Active
+
+**Why this is durable**
+Tailwind v4 uses CSS custom properties under `@theme` as the token layer — separate JS/TS token files (`theme.config.js` token extensions) are not needed. All tokens (colors, radius, spacing, font stacks) live in `tailwind.css` as `--color-*`, `--font-*`, etc., and Tailwind's engine references them directly. Keeping tokens in CSS avoids a JS/CSS split and makes them available via `var(--color-primary)` in both Tailwind utilities and custom CSS rules.
+
+**Decision**
+Express all design tokens as `@theme { --color-primary: …; }` declarations in `tailwind.css`. No separate JSON/TS/JS token file. Kotlin constants in `DesignTokens.kt` are optional aliases for compile-time safety.
+
+**Tradeoffs**
+- Gained: single source of truth, tokens usable in arbitrary CSS, Tailwind purge just works
+- Made harder: Kotlin code cannot reference tokens at compile time without a separate mirror object
+
+---
+
+### 2026-05-24 - D6: Dev playground isolated via `import.meta.env.DEV` Vite tree-shaking
+
+**Status**: Active
+
+**Why this is durable**
+The `webMain` source set is shared between JS and WASM-JS targets — there is no `webDevMain`/`devMain` equivalent for these targets. Vite's dead-code elimination on `import.meta.env.DEV` (which evaluates to `false` in production builds) is the standard mechanism to exclude dev-only code from the production bundle without a separate source set or Gradle module.
+
+**Decision**
+Guard all playground entry points with `if (js("import.meta.env.DEV"))` in Kotlin, which Vite strips in production webpack. Verified: `grep PlaygroundApp build/dist/js/productionExecutable/` returns no results after `jsBrowserProductionWebpack`.
+
+**Tradeoffs**
+- Gained: no extra Gradle module; playground code co-located with components it previews; HMR works seamlessly in dev
+- Made harder: the guard is a runtime check (not compile-time), so playground code is compiled — only excluded from the production bundle by the bundler
+
+---
+
 ### 2026-05-20 - D2: kotlin-logging version must be `8.0.03`, not `8.0.0`
 
 **Status**: Active
