@@ -32,9 +32,9 @@ fun IComponent.CodeBlock(
             div(className = "absolute top-2 end-2 z-10") {
                 span(
                     className = "cursor-pointer inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs " +
-                            "bg-surface-container/80 backdrop-blur-sm border border-outline/20 " +
-                            "hover:bg-primary/10 text-on-surface transition-colors duration-150 " +
-                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                        "bg-surface-container/80 backdrop-blur-sm border border-outline/20 " +
+                        "hover:bg-primary/10 text-on-surface transition-colors duration-150 " +
+                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
                 ) {
                     tabindex(0)
                     role("button")

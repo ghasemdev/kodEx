@@ -28,9 +28,9 @@ fun IComponent.LanguageSwitcher(className: String? = null) {
         // Toggle button
         div(
             className = "cursor-pointer flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg " +
-                    "bg-surface-container hover:bg-surface-variant text-on-surface text-sm " +
-                    "transition-colors duration-150 select-none " +
-                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                "bg-surface-container hover:bg-surface-variant text-on-surface text-sm " +
+                "transition-colors duration-150 select-none " +
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
         ) {
             tabindex(0)
             role("button")
@@ -47,17 +47,20 @@ fun IComponent.LanguageSwitcher(className: String? = null) {
         if (open) {
             div(
                 className = "absolute end-0 top-full mt-1 z-50 min-w-32 rounded-xl overflow-hidden " +
-                        "bg-surface border border-outline/20 shadow-lg py-1"
+                    "bg-surface border border-outline/20 shadow-lg py-1"
             ) {
                 role("listbox")
                 languages.forEach { lang ->
                     val isSelected = lang.code == currentLang
                     div(
                         className = "flex items-center gap-2 px-3 py-2 cursor-pointer text-sm " +
-                                "transition-colors duration-100 " +
-                                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 " +
-                                if (isSelected) "bg-primary/10 text-primary font-medium"
-                                else "text-on-surface hover:bg-surface-variant"
+                            "transition-colors duration-100 " +
+                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 " +
+                            if (isSelected) {
+                                "bg-primary/10 text-primary font-medium"
+                            } else {
+                                "text-on-surface hover:bg-surface-variant"
+                            }
                     ) {
                         tabindex(0)
                         role("option")
@@ -70,7 +73,8 @@ fun IComponent.LanguageSwitcher(className: String? = null) {
                         }
                         onKeydown { e ->
                             if (e.key == "Enter" || e.key == " ") {
-                                setLocale(lang.code); open = false
+                                setLocale(lang.code)
+                                open = false
                             }
                             if (e.key == "Escape") open = false
                         }

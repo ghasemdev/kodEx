@@ -13,16 +13,20 @@ fun IComponent.Card(
     className: String? = null,
     content: @Composable IComponent.() -> Unit,
 ) {
-    val clickableClasses = if (onClick != null)
+    val clickableClasses = if (onClick != null) {
         "cursor-pointer hover:shadow-md active:scale-[0.99] transition-all duration-150"
-    else ""
-    val selectedClasses = if (selected)
+    } else {
+        ""
+    }
+    val selectedClasses = if (selected) {
         "ring-2 ring-primary border-primary"
-    else "border-outline/20"
+    } else {
+        "border-outline/20"
+    }
 
     div(
         className = "rounded-xl border bg-surface-container shadow-sm overflow-hidden " +
-                "$clickableClasses $selectedClasses ${className ?: ""}".trim()
+            "$clickableClasses $selectedClasses ${className ?: ""}".trim()
     ) {
         if (onClick != null) onClick { onClick() }
 

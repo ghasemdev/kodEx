@@ -58,8 +58,8 @@ fun IComponent.ToastContainer() {
                 span(className = "flex-1 text-sm") { +toast.message }
                 span(
                     className = "cursor-pointer flex-shrink-0 w-6 h-6 flex items-center justify-center " +
-                            "rounded-full opacity-50 hover:opacity-100 hover:bg-black/10 " +
-                            "transition-all text-xs leading-none"
+                        "rounded-full opacity-50 hover:opacity-100 hover:bg-black/10 " +
+                        "transition-all text-xs leading-none"
                 ) {
                     +"✕"
                     onClick { ToastStore.dismiss(toast) }
