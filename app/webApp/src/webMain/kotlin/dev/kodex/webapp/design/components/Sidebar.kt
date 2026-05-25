@@ -20,8 +20,9 @@ fun IComponent.Sidebar(
     header: (@Composable IComponent.() -> Unit)? = null,
     footer: (@Composable IComponent.() -> Unit)? = null,
     className: String? = null,
+    breakpointProvider: @Composable () -> BreakpointTier = { rememberBreakpoint().value }
 ) {
-    val breakpoint by rememberBreakpoint()
+    val breakpoint = breakpointProvider()
 
     // Hidden on Mobile
     if (breakpoint == BreakpointTier.Mobile) return

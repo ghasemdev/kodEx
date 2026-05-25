@@ -32,6 +32,7 @@ fontsource = "5.1.1"
 highlightjs = "11.11.1"
 tailwindcss = "4.3.0"
 nodejs = "24.16.0"
+ksp = "2.3.8"
 
 [libraries]
 # ── Build-logic plugin artifacts (referenced as implementation() in build-logic/build.gradle.kts) ──
@@ -110,6 +111,7 @@ docker-java-transport-httpclient5 = { module = "com.github.docker-java:docker-ja
 
 # ── Testing ───────────────────────────────────────────────────────────────────────────────────────
 kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
+kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
 testcontainers-junit5 = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
@@ -152,3 +154,5 @@ compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 dependencycheck = { id = "org.owasp.dependencycheck", version.ref = "dependencycheck" }
 vite = { id = "dev.opensavvy.vite.kotlin", version.ref = "vite" }
+kotest = { id = "io.kotest", version.ref = "kotest" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

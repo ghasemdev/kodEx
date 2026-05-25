@@ -19,6 +19,8 @@ plugins {
     alias(libs.plugins.kilua)
     alias(libs.plugins.gettext)
     alias(libs.plugins.vite)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.kotest)
 }
 
 @OptIn(ExperimentalWasmDsl::class)
@@ -85,8 +87,10 @@ kotlin {
             implementation(npm("@fontsource-variable/jetbrains-mono", libs.versions.fontsource.get()))
             implementation(npm("highlight.js", libs.versions.highlightjs.get()))
         }
-        jsTest.dependencies {
-            implementation(kotlin("test"))
+        webTest.dependencies {
+            implementation(kotlin("test")) // Karma / browser-test-runner bridge
+            implementation(libs.kotest.framework.engine)
+            implementation(libs.kotest.assertions.core)
         }
     }
 }
