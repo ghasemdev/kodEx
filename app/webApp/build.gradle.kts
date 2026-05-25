@@ -5,6 +5,13 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
 
+// Read machine-local Chrome path from local.properties (gitignored).
+// Falls back to CHROME_BIN env var if the key is not set.
+val chromeBin = Config.get("chromeBin")
+    .env("CHROME_BIN")
+    .property("chrome.bin")
+    .resolve(project)
+
 plugins {
     id("kotlin-kmp-convention")
     alias(libs.plugins.compose)
@@ -29,6 +36,7 @@ kotlin {
                 useKarma {
                     useChromeHeadless()
                 }
+                if (chromeBin != null) environment("CHROME_BIN", chromeBin)
             }
         }
         binaries.executable()
@@ -49,6 +57,7 @@ kotlin {
                 useKarma {
                     useChromeHeadless()
                 }
+                if (chromeBin != null) environment("CHROME_BIN", chromeBin)
             }
         }
         binaries.executable()
@@ -75,6 +84,9 @@ kotlin {
             implementation(npm("@fontsource-variable/vazirmatn", libs.versions.fontsource.get()))
             implementation(npm("@fontsource-variable/jetbrains-mono", libs.versions.fontsource.get()))
             implementation(npm("highlight.js", libs.versions.highlightjs.get()))
+        }
+        jsTest.dependencies {
+            implementation(kotlin("test"))
         }
     }
 }
