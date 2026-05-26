@@ -89,6 +89,8 @@ kotlin {
             implementation(npm("highlight.js", libs.versions.highlightjs.get()))
         }
         webTest.dependencies {
+            implementation(npm("html2canvas", libs.versions.html2canvas.get()))
+
             implementation(kotlin("test")) // Karma / browser-test-runner bridge
             implementation(libs.kotest.framework.engine)
             implementation(libs.kotest.assertions.core)

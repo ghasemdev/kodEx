@@ -31,6 +31,7 @@ vite = "0.9.0"
 fontsource = "5.1.1"
 highlightjs = "11.11.1"
 tailwindcss = "4.3.0"
+html2canvas = "1.4.1"
 nodejs = "24.16.0"
 ksp = "2.3.8"
 
