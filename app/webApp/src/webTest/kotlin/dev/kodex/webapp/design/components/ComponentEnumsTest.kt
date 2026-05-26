@@ -9,25 +9,25 @@ class ComponentEnumsTest : FunSpec({
     context("ButtonVariant") {
         test("has five values") { ButtonVariant.entries shouldHaveSize 5 }
         test("contains all expected values") {
-            val v = ButtonVariant.entries
-            v shouldContain ButtonVariant.Primary
-            v shouldContain ButtonVariant.Secondary
-            v shouldContain ButtonVariant.Ghost
-            v shouldContain ButtonVariant.Danger
-            v shouldContain ButtonVariant.Link
+            val variants = ButtonVariant.entries
+            variants shouldContain ButtonVariant.Primary
+            variants shouldContain ButtonVariant.Secondary
+            variants shouldContain ButtonVariant.Ghost
+            variants shouldContain ButtonVariant.Danger
+            variants shouldContain ButtonVariant.Link
         }
     }
 
     context("BadgeVariant") {
         test("has six values") { BadgeVariant.entries shouldHaveSize 6 }
         test("contains all expected values") {
-            val v = BadgeVariant.entries
-            v shouldContain BadgeVariant.Default
-            v shouldContain BadgeVariant.Primary
-            v shouldContain BadgeVariant.Success
-            v shouldContain BadgeVariant.Warning
-            v shouldContain BadgeVariant.Danger
-            v shouldContain BadgeVariant.Info
+            val variants = BadgeVariant.entries
+            variants shouldContain BadgeVariant.Default
+            variants shouldContain BadgeVariant.Primary
+            variants shouldContain BadgeVariant.Success
+            variants shouldContain BadgeVariant.Warning
+            variants shouldContain BadgeVariant.Danger
+            variants shouldContain BadgeVariant.Info
         }
     }
 

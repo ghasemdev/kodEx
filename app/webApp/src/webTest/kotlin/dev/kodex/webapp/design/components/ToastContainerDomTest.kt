@@ -1,3 +1,5 @@
+@file:Suppress("LabeledExpression")
+
 package dev.kodex.webapp.design.components
 
 import dev.kodex.webapp.design.cleanupHost
@@ -14,7 +16,7 @@ class ToastContainerDomTest : FunSpec({
     test("does not render when no toasts exist") {
         if (!isJsTarget()) return@test
 
-        ToastStore.toasts.clear()
+        ToastStore.TOASTS.clear()
 
         val host = renderComponent {
             ToastContainer()
@@ -28,7 +30,7 @@ class ToastContainerDomTest : FunSpec({
     test("renders toast container when toast exists") {
         if (!isJsTarget()) return@test
 
-        ToastStore.toasts.clear()
+        ToastStore.TOASTS.clear()
         ToastStore.show("Hello Toast")
 
         val host = renderComponent {
@@ -44,7 +46,7 @@ class ToastContainerDomTest : FunSpec({
     test("renders toast message text") {
         if (!isJsTarget()) return@test
 
-        ToastStore.toasts.clear()
+        ToastStore.TOASTS.clear()
         ToastStore.show("Saved successfully")
 
         val host = renderComponent {
@@ -59,10 +61,10 @@ class ToastContainerDomTest : FunSpec({
     test("renders correct role for error toast") {
         if (!isJsTarget()) return@test
 
-        ToastStore.toasts.clear()
+        ToastStore.TOASTS.clear()
         ToastStore.show(
             message = "Something failed",
-            level = ToastLevel.Error
+            level = ToastLevel.Error,
         )
 
         val host = renderComponent {
@@ -78,10 +80,10 @@ class ToastContainerDomTest : FunSpec({
     test("renders success icon") {
         if (!isJsTarget()) return@test
 
-        ToastStore.toasts.clear()
+        ToastStore.TOASTS.clear()
         ToastStore.show(
             message = "Done",
-            level = ToastLevel.Success
+            level = ToastLevel.Success,
         )
 
         val host = renderComponent {
@@ -96,10 +98,10 @@ class ToastContainerDomTest : FunSpec({
     test("renders error icon") {
         if (!isJsTarget()) return@test
 
-        ToastStore.toasts.clear()
+        ToastStore.TOASTS.clear()
         ToastStore.show(
             message = "Failed",
-            level = ToastLevel.Error
+            level = ToastLevel.Error,
         )
 
         val host = renderComponent {
@@ -114,7 +116,7 @@ class ToastContainerDomTest : FunSpec({
     test("toast has dismiss button") {
         if (!isJsTarget()) return@test
 
-        ToastStore.toasts.clear()
+        ToastStore.TOASTS.clear()
         ToastStore.show("Dismiss me")
 
         val host = renderComponent {
@@ -133,7 +135,7 @@ class ToastContainerDomTest : FunSpec({
     test("applies correct container classes") {
         if (!isJsTarget()) return@test
 
-        ToastStore.toasts.clear()
+        ToastStore.TOASTS.clear()
         ToastStore.show("Test")
 
         val host = renderComponent {

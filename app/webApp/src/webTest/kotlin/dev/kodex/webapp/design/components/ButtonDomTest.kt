@@ -1,3 +1,5 @@
+@file:Suppress("LabeledExpression")
+
 package dev.kodex.webapp.design.components
 
 import dev.kodex.webapp.design.cleanupHost
@@ -13,14 +15,14 @@ class ButtonDomTest : FunSpec({
     test("renders a <button> element") {
         if (!isJsTarget()) return@test
         val host = renderComponent { Button(label = "Submit") }
-        host.querySelector("button").shouldNotBeNull()
+        host.querySelector(QUERY_SELECTOR).shouldNotBeNull()
         cleanupHost(host)
     }
 
     test("label appears in text content") {
         if (!isJsTarget()) return@test
         val host = renderComponent { Button(label = "Click me") }
-        val btn = host.querySelector("button").shouldNotBeNull()
+        val btn = host.querySelector(QUERY_SELECTOR).shouldNotBeNull()
         btn.textContent.shouldNotBeNull() shouldContain "Click me"
         cleanupHost(host)
     }
@@ -28,7 +30,7 @@ class ButtonDomTest : FunSpec({
     test("disabled=true sets the disabled attribute") {
         if (!isJsTarget()) return@test
         val host = renderComponent { Button(label = "Save", enabled = false) }
-        val btn = host.querySelector("button").shouldNotBeNull()
+        val btn = host.querySelector(QUERY_SELECTOR).shouldNotBeNull()
         btn.disabled.shouldBeTrue()
         cleanupHost(host)
     }
@@ -36,7 +38,7 @@ class ButtonDomTest : FunSpec({
     test("disabled=false does not set the disabled attribute") {
         if (!isJsTarget()) return@test
         val host = renderComponent { Button(label = "Save", enabled = true) }
-        val btn = host.querySelector("button").shouldNotBeNull()
+        val btn = host.querySelector(QUERY_SELECTOR).shouldNotBeNull()
         btn.disabled.shouldBeFalse()
         cleanupHost(host)
     }
@@ -44,8 +46,10 @@ class ButtonDomTest : FunSpec({
     test("custom className is present on the button element") {
         if (!isJsTarget()) return@test
         val host = renderComponent { Button(label = "X", className = "my-custom") }
-        val btn = host.querySelector("button").shouldNotBeNull()
+        val btn = host.querySelector(QUERY_SELECTOR).shouldNotBeNull()
         btn.className shouldContain "my-custom"
         cleanupHost(host)
     }
 })
+
+private const val QUERY_SELECTOR = "button"

@@ -1,9 +1,12 @@
+@file:Suppress("LabeledExpression")
+
 package dev.kodex.webapp.design.components
 
 import dev.kilua.html.div
 import dev.kodex.webapp.design.breakpoint.BreakpointTier
 import dev.kodex.webapp.design.cleanupHost
 import dev.kodex.webapp.design.isJsTarget
+import dev.kodex.webapp.design.mouseEvent
 import dev.kodex.webapp.design.renderComponent
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.ints.shouldBeGreaterThan
@@ -11,7 +14,6 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
-import kotlin.js.js
 import org.w3c.dom.get
 
 class SidebarDomTest : FunSpec({
@@ -76,7 +78,7 @@ class SidebarDomTest : FunSpec({
 
         val first = host.querySelectorAll("[role='button']")?.get(0)
 
-        first?.dispatchEvent(js("new MouseEvent('click')") as org.w3c.dom.events.Event)
+        first?.dispatchEvent(mouseEvent())
 
         selected shouldBe "home"
 

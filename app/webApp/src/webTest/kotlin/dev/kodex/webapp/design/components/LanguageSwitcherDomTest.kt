@@ -1,7 +1,10 @@
+@file:Suppress("LabeledExpression")
+
 package dev.kodex.webapp.design.components
 
 import dev.kodex.webapp.design.cleanupHost
 import dev.kodex.webapp.design.isJsTarget
+import dev.kodex.webapp.design.mouseEvent
 import dev.kodex.webapp.design.renderComponent
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.booleans.shouldBeTrue
@@ -13,6 +16,7 @@ import kotlin.js.ExperimentalWasmJsInterop
 import kotlin.js.js
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
+import org.w3c.dom.events.Event
 
 @OptIn(ExperimentalWasmJsInterop::class)
 class LanguageSwitcherDomTest : FunSpec({
@@ -23,7 +27,7 @@ class LanguageSwitcherDomTest : FunSpec({
             LanguageSwitcher()
         }
 
-        val toggle = host.querySelector("div[role='button']").shouldNotBeNull()
+        val toggle = host.querySelector(QUERY_SELECTOR).shouldNotBeNull()
         toggle.className shouldContain "cursor-pointer"
 
         cleanupHost(host)
@@ -36,7 +40,7 @@ class LanguageSwitcherDomTest : FunSpec({
             LanguageSwitcher()
         }
 
-        val toggle = host.querySelector("div[role='button']").shouldNotBeNull()
+        val toggle = host.querySelector(QUERY_SELECTOR).shouldNotBeNull()
         val text = toggle.textContent ?: ""
 
         text.isNotBlank().shouldBeTrue()
@@ -63,9 +67,8 @@ class LanguageSwitcherDomTest : FunSpec({
             LanguageSwitcher()
         }
 
-        val toggle = host.querySelector("div[role='button']").shouldNotBeNull()
-
-        toggle.dispatchEvent(js("new MouseEvent('click')") as org.w3c.dom.events.Event)
+        val toggle = host.querySelector(QUERY_SELECTOR).shouldNotBeNull()
+        toggle.dispatchEvent(mouseEvent())
         delay(10.milliseconds)
         val dropdown = host.querySelector("[role='listbox']")
         dropdown.shouldNotBeNull()
@@ -80,8 +83,8 @@ class LanguageSwitcherDomTest : FunSpec({
             LanguageSwitcher()
         }
 
-        val toggle = host.querySelector("div[role='button']").shouldNotBeNull()
-        toggle.dispatchEvent(js("new MouseEvent('click')") as org.w3c.dom.events.Event)
+        val toggle = host.querySelector(QUERY_SELECTOR).shouldNotBeNull()
+        toggle.dispatchEvent(mouseEvent())
         delay(10.milliseconds)
         val options = host.querySelectorAll("[role='option']")
         options?.length?.shouldBeGreaterThan(0)
@@ -96,7 +99,7 @@ class LanguageSwitcherDomTest : FunSpec({
             LanguageSwitcher()
         }
 
-        val toggle = host.querySelector("div[role='button']").shouldNotBeNull()
+        val toggle = host.querySelector(QUERY_SELECTOR).shouldNotBeNull()
 
         toggle.getAttribute("aria-haspopup") shouldContain "listbox"
 
@@ -116,3 +119,5 @@ class LanguageSwitcherDomTest : FunSpec({
         cleanupHost(host)
     }
 })
+
+private const val QUERY_SELECTOR = "div[role='button']"

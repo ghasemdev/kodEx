@@ -1,3 +1,5 @@
+@file:Suppress("LabeledExpression")
+
 package dev.kodex.webapp.design.components
 
 import dev.kilua.html.div

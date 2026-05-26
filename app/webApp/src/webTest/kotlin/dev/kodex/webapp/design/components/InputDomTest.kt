@@ -1,3 +1,5 @@
+@file:Suppress("LabeledExpression")
+
 package dev.kodex.webapp.design.components
 
 import dev.kodex.webapp.design.cleanupHost
@@ -16,7 +18,7 @@ class InputDomTest : FunSpec({
             Input()
         }
 
-        host.querySelector("input").shouldNotBeNull()
+        host.querySelector(QUERY_SELECTOR).shouldNotBeNull()
 
         cleanupHost(host)
     }
@@ -41,7 +43,7 @@ class InputDomTest : FunSpec({
             Input(placeholder = "Enter name")
         }
 
-        val input = host.querySelector("input").shouldNotBeNull()
+        val input = host.querySelector(QUERY_SELECTOR).shouldNotBeNull()
         input.getAttribute("placeholder") shouldContain "Enter name"
 
         cleanupHost(host)
@@ -54,7 +56,7 @@ class InputDomTest : FunSpec({
             Input(disabled = true)
         }
 
-        val input = host.querySelector("input").shouldNotBeNull()
+        val input = host.querySelector(QUERY_SELECTOR).shouldNotBeNull()
         input.hasAttribute("disabled").shouldBeTrue()
 
         cleanupHost(host)
@@ -64,11 +66,11 @@ class InputDomTest : FunSpec({
         if (!isJsTarget()) return@test
 
         val host = renderComponent {
-            Input(helperText = "Help text")
+            Input(helperText = HELP_TEXT)
         }
 
-        val p = host.querySelector("p").shouldNotBeNull()
-        p.textContent.shouldNotBeNull() shouldContain "Help text"
+        val node = host.querySelector("p").shouldNotBeNull()
+        node.textContent.shouldNotBeNull() shouldContain HELP_TEXT
 
         cleanupHost(host)
     }
@@ -78,13 +80,13 @@ class InputDomTest : FunSpec({
 
         val host = renderComponent {
             Input(
-                helperText = "Help text",
-                error = "Something went wrong"
+                helperText = HELP_TEXT,
+                error = "Something went wrong",
             )
         }
 
-        val p = host.querySelector("p").shouldNotBeNull()
-        p.textContent.shouldNotBeNull() shouldContain "Something went wrong"
+        val node = host.querySelector("p").shouldNotBeNull()
+        node.textContent.shouldNotBeNull() shouldContain "Something went wrong"
 
         cleanupHost(host)
     }
@@ -115,3 +117,6 @@ class InputDomTest : FunSpec({
         cleanupHost(host)
     }
 })
+
+private const val QUERY_SELECTOR = "input"
+private const val HELP_TEXT = "Help text"

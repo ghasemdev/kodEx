@@ -1,21 +1,23 @@
+@file:Suppress("LabeledExpression")
+
 package dev.kodex.webapp.design.components
 
 import dev.kilua.html.div
 import dev.kodex.webapp.design.cleanupHost
 import dev.kodex.webapp.design.isJsTarget
+import dev.kodex.webapp.design.mouseEvent
 import dev.kodex.webapp.design.renderComponent
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
-import kotlin.js.js
 import org.w3c.dom.get
 
 class NavBarDomTest : FunSpec({
     val items = listOf(
         NavItem(key = "home", label = "Home"),
-        NavItem(key = "profile", label = "Profile")
+        NavItem(key = "profile", label = "Profile"),
     )
 
     test("renders nav container") {
@@ -49,7 +51,7 @@ class NavBarDomTest : FunSpec({
         val host = renderComponent {
             NavBar(
                 items = items,
-                selectedItem = "home"
+                selectedItem = "home",
             )
         }
 
@@ -67,12 +69,12 @@ class NavBarDomTest : FunSpec({
         val host = renderComponent {
             NavBar(
                 items = items,
-                onItemSelect = { selected = it }
+                onItemSelect = { selected = it },
             )
         }
 
         val first = host.querySelectorAll("[role='button']")?.get(0)
-        first?.dispatchEvent(js("new MouseEvent('click')") as org.w3c.dom.events.Event)
+        first?.dispatchEvent(mouseEvent())
 
         selected shouldBe "home"
 
@@ -87,7 +89,7 @@ class NavBarDomTest : FunSpec({
                 items = items,
                 actions = {
                     div { +"Action" }
-                }
+                },
             )
         }
 
@@ -131,7 +133,7 @@ class NavBarDomTest : FunSpec({
         val host = renderComponent {
             NavBar(
                 items = items,
-                className = "my-navbar"
+                className = "my-navbar",
             )
         }
 

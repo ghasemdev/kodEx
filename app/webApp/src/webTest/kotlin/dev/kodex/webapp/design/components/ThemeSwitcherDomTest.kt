@@ -1,3 +1,5 @@
+@file:Suppress("LabeledExpression")
+
 package dev.kodex.webapp.design.components
 
 import dev.kodex.webapp.design.cleanupHost
@@ -15,8 +17,8 @@ class ThemeSwitcherDomTest : FunSpec({
             ThemeSwitcher()
         }
 
-        val el = host.querySelector("*").shouldNotBeNull()
-        el.className shouldContain "cursor-pointer"
+        val element = host.querySelector("*").shouldNotBeNull()
+        element.className shouldContain "cursor-pointer"
 
         cleanupHost(host)
     }
@@ -28,8 +30,8 @@ class ThemeSwitcherDomTest : FunSpec({
             ThemeSwitcher()
         }
 
-        val el = host.querySelector("*").shouldNotBeNull()
-        val cls = el.className
+        val element = host.querySelector("*").shouldNotBeNull()
+        val cls = element.className
 
         cls shouldContain "w-9"
         cls shouldContain "rounded-full"
@@ -46,8 +48,8 @@ class ThemeSwitcherDomTest : FunSpec({
             ThemeSwitcher(className = "my-theme")
         }
 
-        val el = host.querySelector("*").shouldNotBeNull()
-        el.className shouldContain "my-theme"
+        val element = host.querySelector("*").shouldNotBeNull()
+        element.className shouldContain "my-theme"
 
         cleanupHost(host)
     }

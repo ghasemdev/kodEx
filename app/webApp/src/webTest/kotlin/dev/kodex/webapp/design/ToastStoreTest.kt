@@ -11,8 +11,8 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 class ToastStoreTest : FunSpec({
-    beforeEach { ToastStore.toasts.clear() }
-    afterEach { ToastStore.toasts.clear() }
+    beforeEach { ToastStore.TOASTS.clear() }
+    afterEach { ToastStore.TOASTS.clear() }
 
     context("ToastMessage defaults") {
         test("level defaults to Info") {
@@ -29,27 +29,27 @@ class ToastStoreTest : FunSpec({
     context("ToastStore.show") {
         test("adds one toast") {
             ToastStore.show("Test")
-            ToastStore.toasts shouldHaveSize 1
-            ToastStore.toasts[0].message shouldBe "Test"
+            ToastStore.TOASTS shouldHaveSize 1
+            ToastStore.TOASTS[0].message shouldBe "Test"
         }
 
         test("respects custom level") {
             ToastStore.show("Boom", ToastLevel.Error)
-            ToastStore.toasts[0].level shouldBe ToastLevel.Error
+            ToastStore.TOASTS[0].level shouldBe ToastLevel.Error
         }
 
         test("respects custom duration") {
             ToastStore.show("Slow", ToastLevel.Info, 10.seconds)
-            ToastStore.toasts[0].duration shouldBe 10.seconds
+            ToastStore.TOASTS[0].duration shouldBe 10.seconds
         }
 
-        test("appends multiple toasts in insertion order") {
+        test("appends multiple TOASTS in insertion order") {
             ToastStore.show("A")
             ToastStore.show("B")
             ToastStore.show("C")
-            ToastStore.toasts shouldHaveSize 3
-            ToastStore.toasts[0].message shouldBe "A"
-            ToastStore.toasts[2].message shouldBe "C"
+            ToastStore.TOASTS shouldHaveSize 3
+            ToastStore.TOASTS[0].message shouldBe "A"
+            ToastStore.TOASTS[2].message shouldBe "C"
         }
     }
 
@@ -57,16 +57,16 @@ class ToastStoreTest : FunSpec({
         test("removes the targeted toast and keeps others") {
             ToastStore.show("A")
             ToastStore.show("B")
-            val a = ToastStore.toasts[0]
+            val a = ToastStore.TOASTS[0]
             ToastStore.dismiss(a)
-            ToastStore.toasts shouldHaveSize 1
-            ToastStore.toasts[0].message shouldBe "B"
+            ToastStore.TOASTS shouldHaveSize 1
+            ToastStore.TOASTS[0].message shouldBe "B"
         }
 
         test("is a no-op for an unknown toast") {
             ToastStore.show("A")
             ToastStore.dismiss(ToastMessage(message = "ghost"))
-            ToastStore.toasts shouldHaveSize 1
+            ToastStore.TOASTS shouldHaveSize 1
         }
     }
 

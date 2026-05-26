@@ -1,3 +1,5 @@
+@file:Suppress("LabeledExpression")
+
 package dev.kodex.webapp.design.components
 
 import dev.kodex.webapp.design.cleanupHost
@@ -17,7 +19,7 @@ class TextAreaDomTest : FunSpec({
             TextArea()
         }
 
-        host.querySelector("textarea").shouldNotBeNull()
+        host.querySelector(QUERY_SELECTOR).shouldNotBeNull()
 
         cleanupHost(host)
     }
@@ -42,8 +44,8 @@ class TextAreaDomTest : FunSpec({
             TextArea(placeholder = "Write here...")
         }
 
-        val ta = host.querySelector("textarea").shouldNotBeNull()
-        ta.getAttribute("placeholder") shouldContain "Write here..."
+        val node = host.querySelector(QUERY_SELECTOR).shouldNotBeNull()
+        node.getAttribute("placeholder") shouldContain "Write here..."
 
         cleanupHost(host)
     }
@@ -55,8 +57,8 @@ class TextAreaDomTest : FunSpec({
             TextArea(rows = 6)
         }
 
-        val ta = host.querySelector("textarea").shouldNotBeNull()
-        ta.getAttribute("rows") shouldContain "6"
+        val node = host.querySelector(QUERY_SELECTOR).shouldNotBeNull()
+        node.getAttribute("rows") shouldContain "6"
 
         cleanupHost(host)
     }
@@ -68,8 +70,8 @@ class TextAreaDomTest : FunSpec({
             TextArea(disabled = true)
         }
 
-        val ta = host.querySelector("textarea").shouldNotBeNull()
-        ta.hasAttribute("disabled").shouldBeTrue()
+        val node = host.querySelector(QUERY_SELECTOR).shouldNotBeNull()
+        node.hasAttribute("disabled").shouldBeTrue()
 
         cleanupHost(host)
     }
@@ -78,11 +80,11 @@ class TextAreaDomTest : FunSpec({
         if (!isJsTarget()) return@test
 
         val host = renderComponent {
-            TextArea(helperText = "Help text")
+            TextArea(helperText = HELP_TEXT)
         }
 
         val text = host.textContent ?: ""
-        text shouldContain "Help text"
+        text shouldContain HELP_TEXT
 
         cleanupHost(host)
     }
@@ -92,8 +94,8 @@ class TextAreaDomTest : FunSpec({
 
         val host = renderComponent {
             TextArea(
-                helperText = "Help text",
-                error = "Something went wrong"
+                helperText = HELP_TEXT,
+                error = "Something went wrong",
             )
         }
 
@@ -123,7 +125,7 @@ class TextAreaDomTest : FunSpec({
             TextArea(
                 value = "Hello",
                 maxLength = 100,
-                showCounter = true
+                showCounter = true,
             )
         }
 
@@ -140,7 +142,7 @@ class TextAreaDomTest : FunSpec({
             TextArea(
                 value = "Hello",
                 maxLength = 100,
-                showCounter = false
+                showCounter = false,
             )
         }
 
@@ -164,3 +166,6 @@ class TextAreaDomTest : FunSpec({
         cleanupHost(host)
     }
 })
+
+private const val QUERY_SELECTOR = "textarea"
+private const val HELP_TEXT = "Help text"

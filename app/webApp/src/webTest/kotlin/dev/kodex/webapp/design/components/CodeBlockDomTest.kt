@@ -1,3 +1,5 @@
+@file:Suppress("LabeledExpression")
+
 package dev.kodex.webapp.design.components
 
 import dev.kodex.webapp.design.cleanupHost
@@ -41,7 +43,7 @@ class CodeBlockDomTest : FunSpec({
         val host = renderComponent {
             CodeBlock(
                 code = "print(1)",
-                language = "python"
+                language = "python",
             )
         }
 

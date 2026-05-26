@@ -18,6 +18,7 @@ class BreakpointTierTest : FunSpec({
         values shouldContain BreakpointTier.Tv
     }
 
+    @Suppress("DestructuringDeclarationWithTooManyEntries")
     test("ordinals are in ascending screen-size order") {
         val (mobile, tablet, desktop, tv) = listOf(
             BreakpointTier.Mobile.ordinal,

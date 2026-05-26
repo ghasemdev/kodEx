@@ -1,3 +1,5 @@
+@file:Suppress("LabeledExpression")
+
 package dev.kodex.webapp.design.components
 
 import dev.kodex.webapp.design.cleanupHost
@@ -13,21 +15,21 @@ class ModalDomTest : FunSpec({
     test("visible=false renders nothing") {
         if (!isJsTarget()) return@test
         val host = renderComponent { Modal(visible = false, onDismiss = {}) { +"Content" } }
-        host.querySelector("[role='dialog']").shouldBeNull()
+        host.querySelector(QUERY_SELECTOR).shouldBeNull()
         cleanupHost(host)
     }
 
     test("visible=true renders an element with role=dialog") {
         if (!isJsTarget()) return@test
         val host = renderComponent { Modal(visible = true, onDismiss = {}) { +"Content" } }
-        host.querySelector("[role='dialog']").shouldNotBeNull()
+        host.querySelector(QUERY_SELECTOR).shouldNotBeNull()
         cleanupHost(host)
     }
 
     test("dialog has aria-modal=true") {
         if (!isJsTarget()) return@test
         val host = renderComponent { Modal(visible = true, onDismiss = {}) { +"Hi" } }
-        val dialog = host.querySelector("[role='dialog']").shouldNotBeNull()
+        val dialog = host.querySelector(QUERY_SELECTOR).shouldNotBeNull()
         dialog.getAttribute("aria-modal") shouldBe "true"
         cleanupHost(host)
     }
@@ -35,15 +37,15 @@ class ModalDomTest : FunSpec({
     test("titled modal renders h2#modal-title") {
         if (!isJsTarget()) return@test
         val host = renderComponent { Modal(visible = true, title = "Confirm Delete", onDismiss = {}) { +"Body" } }
-        val h2 = host.querySelector("h2").shouldNotBeNull()
-        h2.textContent.shouldNotBeNull() shouldContain "Confirm Delete"
+        val node = host.querySelector("h2").shouldNotBeNull()
+        node.textContent.shouldNotBeNull() shouldContain "Confirm Delete"
         cleanupHost(host)
     }
 
     test("titled modal has aria-labelledby=modal-title") {
         if (!isJsTarget()) return@test
         val host = renderComponent { Modal(visible = true, title = "Info", onDismiss = {}) { +"Body" } }
-        val dialog = host.querySelector("[role='dialog']").shouldNotBeNull()
+        val dialog = host.querySelector(QUERY_SELECTOR).shouldNotBeNull()
         dialog.getAttribute("aria-labelledby") shouldBe "modal-title"
         cleanupHost(host)
     }
@@ -62,3 +64,5 @@ class ModalDomTest : FunSpec({
         cleanupHost(host)
     }
 })
+
+private const val QUERY_SELECTOR = "[role='dialog']"
