@@ -7,8 +7,9 @@ import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
 
 // Read machine-local Chrome path from local.properties (gitignored).
 // Falls back to CHROME_BIN env var if the key is not set.
+private val chromeBinEnvKey = "CHROME_BIN"
 val chromeBin = Config.get("chromeBin")
-    .env("CHROME_BIN")
+    .env(chromeBinEnvKey)
     .property("chrome.bin")
     .resolve(project)
 
@@ -38,7 +39,7 @@ kotlin {
                 useKarma {
                     useChromeHeadless()
                 }
-                if (chromeBin != null) environment("CHROME_BIN", chromeBin)
+                if (chromeBin != null) environment(chromeBinEnvKey, chromeBin)
             }
         }
         binaries.executable()
@@ -59,7 +60,7 @@ kotlin {
                 useKarma {
                     useChromeHeadless()
                 }
-                if (chromeBin != null) environment("CHROME_BIN", chromeBin)
+                if (chromeBin != null) environment(chromeBinEnvKey, chromeBin)
             }
         }
         binaries.executable()
@@ -99,7 +100,7 @@ composeCompiler {
     targetKotlinPlatforms.set(
         KotlinPlatformType.entries
             .filterNot { it == KotlinPlatformType.jvm }
-            .asIterable()
+            .asIterable(),
     )
 }
 
@@ -126,8 +127,10 @@ vite {
 // require. Patch the generated vite.config.mjs after each configure task to add a filter
 // that skips those files entirely.
 val viteConfigureTasks = setOf(
-    "wasmJsViteConfigureDev", "wasmJsViteConfigureProd",
-    "jsViteConfigureDev", "jsViteConfigureProd",
+    "wasmJsViteConfigureDev",
+    "wasmJsViteConfigureProd",
+    "jsViteConfigureDev",
+    "jsViteConfigureProd",
 )
 tasks.configureEach {
     if (name in viteConfigureTasks) {

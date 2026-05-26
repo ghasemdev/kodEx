@@ -25,37 +25,33 @@ import dev.kodex.webapp.playground.previews.ThemeSwitcherPreview
 import dev.kodex.webapp.playground.previews.ToastPreview
 import dev.kodex.webapp.playground.previews.TypographyPreview
 
-private val playgroundEntries: List<PlaygroundEntry> by lazy {
+private val PLAYGROUND_ENTRIES: List<PlaygroundEntry> by lazy {
     buildPlaygroundEntries(
         listOf(
             // Foundation
             PlaygroundEntry("Typography", "Foundation") { TypographyPreview() },
-
             // Atoms
-            PlaygroundEntry("Button",    "Atoms") { ButtonPreview() },
-            PlaygroundEntry("Badge",     "Atoms") { BadgePreview() },
-            PlaygroundEntry("Input",     "Atoms") { InputPreview() },
-
+            PlaygroundEntry("Button", ATOMS) { ButtonPreview() },
+            PlaygroundEntry("Badge", ATOMS) { BadgePreview() },
+            PlaygroundEntry("Input", ATOMS) { InputPreview() },
             // Molecules
-            PlaygroundEntry("Card",      "Molecules") { CardPreview() },
-            PlaygroundEntry("CodeBlock", "Molecules") { CodeBlockPreview() },
-            PlaygroundEntry("Modal",     "Molecules") { ModalPreview() },
-            PlaygroundEntry("Toast",     "Molecules") { ToastPreview() },
-
+            PlaygroundEntry("Card", MOLECULES) { CardPreview() },
+            PlaygroundEntry("CodeBlock", MOLECULES) { CodeBlockPreview() },
+            PlaygroundEntry("Modal", MOLECULES) { ModalPreview() },
+            PlaygroundEntry("Toast", MOLECULES) { ToastPreview() },
             // Navigation
-            PlaygroundEntry("NavBar",    "Navigation") { NavBarPreview() },
-            PlaygroundEntry("Sidebar",   "Navigation") { SidebarPreview() },
-
+            PlaygroundEntry("NavBar", NAVIGATION) { NavBarPreview() },
+            PlaygroundEntry("Sidebar", NAVIGATION) { SidebarPreview() },
             // Controls
-            PlaygroundEntry("ThemeSwitcher",    "Controls") { ThemeSwitcherPreview() },
-            PlaygroundEntry("LanguageSwitcher", "Controls") { LanguageSwitcherPreview() },
-        )
+            PlaygroundEntry("ThemeSwitcher", CONTROLS) { ThemeSwitcherPreview() },
+            PlaygroundEntry("LanguageSwitcher", CONTROLS) { LanguageSwitcherPreview() },
+        ),
     )
 }
 
 @Composable
 fun IComponent.PlaygroundApp() {
-    val entries = playgroundEntries
+    val entries = PLAYGROUND_ENTRIES
     var selected by remember { mutableStateOf(entries.firstOrNull()?.name) }
     val breakpoint by rememberBreakpoint()
     val isMobile = breakpoint == BreakpointTier.Mobile
@@ -74,9 +70,12 @@ fun IComponent.PlaygroundApp() {
                     items.forEach { entry ->
                         div(
                             className = "flex items-center px-4 py-2 text-sm cursor-pointer rounded-lg mx-2 " +
-                                    "transition-colors duration-100 " +
-                                    if (entry.name == selected) "bg-primary/10 text-primary font-medium"
-                                    else "text-on-surface/70 hover:bg-surface-variant"
+                                "transition-colors duration-100 " +
+                                if (entry.name == selected) {
+                                    "bg-primary/10 text-primary font-medium"
+                                } else {
+                                    "text-on-surface/70 hover:bg-surface-variant"
+                                },
                         ) {
                             +entry.name
                             onClick { selected = entry.name }
@@ -105,3 +104,8 @@ fun IComponent.PlaygroundApp() {
         }
     }
 }
+
+private const val ATOMS = "Atoms"
+private const val MOLECULES = "Molecules"
+private const val NAVIGATION = "Navigation"
+private const val CONTROLS = "Controls"

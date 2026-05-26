@@ -13,6 +13,7 @@ import dev.kodex.webapp.design.breakpoint.BreakpointTier
 import dev.kodex.webapp.design.breakpoint.rememberBreakpoint
 
 @Composable
+@Suppress("CognitiveComplexMethod")
 fun IComponent.Sidebar(
     items: List<NavItem>,
     selectedItem: String? = null,
@@ -20,7 +21,7 @@ fun IComponent.Sidebar(
     header: (@Composable IComponent.() -> Unit)? = null,
     footer: (@Composable IComponent.() -> Unit)? = null,
     className: String? = null,
-    breakpointProvider: @Composable () -> BreakpointTier = { rememberBreakpoint().value }
+    breakpointProvider: @Composable () -> BreakpointTier = { rememberBreakpoint().value },
 ) {
     val breakpoint = breakpointProvider()
 
@@ -36,13 +37,13 @@ fun IComponent.Sidebar(
         className = "flex flex-col h-full bg-surface-container border-e border-outline/20 " +
             "transition-all duration-200 " +
             (if (collapsed) "w-14" else "w-64") +
-            " ${className ?: ""}".trim()
+            " ${className ?: ""}".trim(),
     ) {
         if (showCollapseToggle) {
             div(className = "flex justify-end p-2 border-b border-outline/10") {
                 span(
                     className = "cursor-pointer w-8 h-8 flex items-center justify-center rounded-lg " +
-                        "hover:bg-surface-variant text-on-surface/60 transition-colors"
+                        "hover:bg-surface-variant text-on-surface/60 transition-colors",
                 ) {
                     +(if (collapsed) "›" else "‹")
                     onClick { collapsed = !collapsed }
@@ -65,7 +66,7 @@ fun IComponent.Sidebar(
                             "bg-primary/10 text-primary font-medium border-e-2 border-primary"
                         } else {
                             "text-on-surface/70 hover:bg-surface-variant hover:text-on-surface"
-                        }
+                        },
                 ) {
                     tabindex(0)
                     role("button")

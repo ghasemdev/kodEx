@@ -13,12 +13,12 @@ import dev.kilua.html.span
 import dev.kodex.webapp.design.components.NavItem
 import dev.kodex.webapp.design.components.Sidebar
 
-private val sidebarItems = listOf(
-    NavItem("dashboard",  "Dashboard",  "fa-solid fa-gauge"),
-    NavItem("exams",      "Exams",      "fa-solid fa-file-code"),
+private val SIDEBAR_ITEMS = listOf(
+    NavItem("dashboard", "Dashboard", "fa-solid fa-gauge"),
+    NavItem("exams", "Exams", "fa-solid fa-file-code"),
     NavItem("candidates", "Candidates", "fa-solid fa-users"),
-    NavItem("results",    "Results",    "fa-solid fa-chart-line"),
-    NavItem("settings",   "Settings",   "fa-solid fa-gear"),
+    NavItem("results", "Results", "fa-solid fa-chart-line"),
+    NavItem("settings", "Settings", "fa-solid fa-gear"),
 )
 
 @Composable
@@ -26,10 +26,10 @@ fun IComponent.SidebarPreview() {
     var active by remember { mutableStateOf("dashboard") }
 
     div(className = "flex flex-col gap-6") {
-        h3(className = "text-lg font-semibold text-on-surface") { +"Sidebar (hidden on mobile)" }
+        h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"Sidebar (hidden on mobile)" }
         div(className = "h-80 rounded-xl overflow-hidden border border-outline/20 flex") {
             Sidebar(
-                items = sidebarItems,
+                items = SIDEBAR_ITEMS,
                 selectedItem = active,
                 onItemSelect = { active = it },
                 header = {

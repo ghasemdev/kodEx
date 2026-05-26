@@ -11,16 +11,16 @@ import dev.kodex.webapp.design.components.ThemeSwitcher
 @Composable
 fun IComponent.LanguageSwitcherPreview() {
     div(className = "flex flex-col gap-6") {
-        h3(className = "text-lg font-semibold text-on-surface") { +"Language Switcher" }
+        h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"Language Switcher" }
         p(className = "text-sm text-on-surface/60") {
-            +"Switches the app locale between English and Persian (فارسی). Persian activates RTL layout and loads the Vazirmatn variable font."
+            +LANGUAGE_SWITCHER_TEXT
         }
         div(className = "flex items-center gap-4") {
             LanguageSwitcher()
         }
 
-        h3(className = "text-lg font-semibold text-on-surface") { +"Together in a Toolbar" }
-        div(className = "flex items-center justify-between px-4 py-2 rounded-xl border border-outline/20 bg-surface-container") {
+        h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"Together in a Toolbar" }
+        div(className = FLEX_ITEMS_CENTER_JUSTIFY_BETWEEN) {
             p(className = "text-sm font-medium text-on-surface") { +"KodEx Admin" }
             div(className = "flex items-center gap-2") {
                 ThemeSwitcher()
@@ -29,3 +29,8 @@ fun IComponent.LanguageSwitcherPreview() {
         }
     }
 }
+
+private const val LANGUAGE_SWITCHER_TEXT = "Switches the app locale between English and Persian (فارسی). " +
+    "Persian activates RTL layout and loads the Vazirmatn variable font."
+private const val FLEX_ITEMS_CENTER_JUSTIFY_BETWEEN = "flex items-center justify-between px-4 py-2 rounded-xl " +
+    "border border-outline/20 bg-surface-container"

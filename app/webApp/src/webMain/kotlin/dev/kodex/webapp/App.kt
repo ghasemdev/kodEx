@@ -27,7 +27,7 @@ class App : Application() {
             initI18n()
         }
 
-        // RTL side-effect: update document dir on locale change
+        // RTL side effect: update document dir on locale change
         if (isDom) {
             LocaleManager.setCurrentLocale(LocaleManager.currentLocale)
             LocaleManager.registerLocaleListener { locale ->
@@ -37,7 +37,6 @@ class App : Application() {
         }
 
         root("root") {
-            @Suppress("UNCHECKED_CAST")
             val isDev = isDev()
             if (isDev && window.location.pathname.startsWith("/playground")) {
                 PlaygroundApp()

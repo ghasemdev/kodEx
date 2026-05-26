@@ -19,17 +19,17 @@ fun IComponent.ModalPreview() {
     var confirmOpen by remember { mutableStateOf(false) }
 
     div(className = "flex flex-col gap-6") {
-        h3(className = "text-lg font-semibold text-on-surface") { +"Info Modal" }
+        h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"Info Modal" }
         Button(label = "Open info modal", onClick = { infoOpen = true })
 
-        h3(className = "text-lg font-semibold text-on-surface") { +"Confirm Modal" }
+        h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"Confirm Modal" }
         Button(variant = ButtonVariant.Danger, label = "Delete exam", onClick = { confirmOpen = true })
     }
 
     Modal(visible = infoOpen, onDismiss = { infoOpen = false }, title = "About KodEx") {
         div(className = "p-4 flex flex-col gap-4") {
             p(className = "text-sm text-on-surface/70") {
-                +"KodEx is an interactive Kotlin exam platform. Candidates write real code evaluated by a test-injection engine."
+                +MODAL_TEXT
             }
             Button(label = "Got it", onClick = { infoOpen = false })
         }
@@ -47,3 +47,6 @@ fun IComponent.ModalPreview() {
         }
     }
 }
+
+private const val MODAL_TEXT = "KodEx is an interactive Kotlin exam platform. " +
+    "Candidates write real code evaluated by a test-injection engine."

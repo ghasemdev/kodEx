@@ -19,7 +19,7 @@ fun IComponent.CardPreview() {
     var selected by remember { mutableStateOf<Int?>(null) }
 
     div(className = "flex flex-col gap-6") {
-        h3(className = "text-lg font-semibold text-on-surface") { +"Basic Card" }
+        h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"Basic Card" }
         Card {
             div(className = "p-4") {
                 p(className = "text-base text-on-surface") { +"A simple surface-container card." }
@@ -27,7 +27,7 @@ fun IComponent.CardPreview() {
             }
         }
 
-        h3(className = "text-lg font-semibold text-on-surface") { +"With Header & Footer" }
+        h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"With Header & Footer" }
         Card(
             header = {
                 div(className = "flex items-center justify-between") {
@@ -49,7 +49,7 @@ fun IComponent.CardPreview() {
             }
         }
 
-        h3(className = "text-lg font-semibold text-on-surface") { +"Selectable Cards" }
+        h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"Selectable Cards" }
         div(className = "grid grid-cols-1 sm:grid-cols-2 gap-3") {
             listOf(0, 1, 2, 3).forEach { i ->
                 Card(
@@ -59,7 +59,7 @@ fun IComponent.CardPreview() {
                     div(className = "p-4 flex items-center gap-3") {
                         div(
                             className = "w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center " +
-                                    "text-primary font-bold"
+                                "text-primary font-bold",
                         ) {
                             +"${i + 1}"
                         }

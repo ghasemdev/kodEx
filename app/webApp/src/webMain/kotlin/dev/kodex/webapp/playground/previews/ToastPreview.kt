@@ -13,7 +13,7 @@ import dev.kodex.webapp.design.components.ToastStore
 @Composable
 fun IComponent.ToastPreview() {
     div(className = "flex flex-col gap-6") {
-        h3(className = "text-lg font-semibold text-on-surface") { +"Trigger Toasts" }
+        h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"Trigger Toasts" }
         div(className = "flex flex-wrap gap-3") {
             Button(
                 label = "Info",

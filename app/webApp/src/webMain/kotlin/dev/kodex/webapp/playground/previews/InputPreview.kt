@@ -18,7 +18,7 @@ fun IComponent.InputPreview() {
     var notes by remember { mutableStateOf("") }
 
     div(className = "flex flex-col gap-6 max-w-md") {
-        h3(className = "text-lg font-semibold text-on-surface") { +"Text Input" }
+        h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"Text Input" }
         Input(
             value = email,
             label = "Email",
@@ -27,7 +27,7 @@ fun IComponent.InputPreview() {
             onValueChange = { email = it },
         )
 
-        h3(className = "text-lg font-semibold text-on-surface") { +"With Error" }
+        h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"With Error" }
         Input(
             value = pass,
             label = "Password",
@@ -36,7 +36,7 @@ fun IComponent.InputPreview() {
             onValueChange = { pass = it },
         )
 
-        h3(className = "text-lg font-semibold text-on-surface") { +"Disabled" }
+        h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"Disabled" }
         Input(
             value = "read-only value",
             label = "Username",
@@ -44,7 +44,7 @@ fun IComponent.InputPreview() {
             onValueChange = {},
         )
 
-        h3(className = "text-lg font-semibold text-on-surface") { +"TextArea" }
+        h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"TextArea" }
         TextArea(
             value = notes,
             label = "Notes",
@@ -57,3 +57,5 @@ fun IComponent.InputPreview() {
         )
     }
 }
+
+internal const val TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE = "text-lg font-semibold text-on-surface"

@@ -13,7 +13,7 @@ import dev.kodex.webapp.design.i18n.setLocale
 
 private data class LangOption(val code: String, val nativeName: String, val flag: String)
 
-private val languages = listOf(
+private val LANGUAGES = listOf(
     LangOption("en", "English", "🇬🇧"),
     LangOption("fa", "فارسی", "🇮🇷"),
 )
@@ -22,7 +22,7 @@ private val languages = listOf(
 fun IComponent.LanguageSwitcher(className: String? = null) {
     val currentLang = LocaleManager.currentLocale.language.take(2)
     var open by remember { mutableStateOf(false) }
-    val current = languages.find { it.code == currentLang } ?: languages[0]
+    val current = LANGUAGES.find { it.code == currentLang } ?: LANGUAGES[0]
 
     div(className = "relative ${className ?: ""}".trim()) {
         // Toggle button
@@ -30,7 +30,7 @@ fun IComponent.LanguageSwitcher(className: String? = null) {
             className = "cursor-pointer flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg " +
                 "bg-surface-container hover:bg-surface-variant text-on-surface text-sm " +
                 "transition-colors duration-150 select-none " +
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50",
         ) {
             tabindex(0)
             role("button")
@@ -47,10 +47,10 @@ fun IComponent.LanguageSwitcher(className: String? = null) {
         if (open) {
             div(
                 className = "absolute end-0 top-full mt-1 z-50 min-w-32 rounded-xl overflow-hidden " +
-                    "bg-surface border border-outline/20 shadow-lg py-1"
+                    "bg-surface border border-outline/20 shadow-lg py-1",
             ) {
                 role("listbox")
-                languages.forEach { lang ->
+                LANGUAGES.forEach { lang ->
                     val isSelected = lang.code == currentLang
                     div(
                         className = "flex items-center gap-2 px-3 py-2 cursor-pointer text-sm " +
@@ -60,7 +60,7 @@ fun IComponent.LanguageSwitcher(className: String? = null) {
                                 "bg-primary/10 text-primary font-medium"
                             } else {
                                 "text-on-surface hover:bg-surface-variant"
-                            }
+                            },
                     ) {
                         tabindex(0)
                         role("option")

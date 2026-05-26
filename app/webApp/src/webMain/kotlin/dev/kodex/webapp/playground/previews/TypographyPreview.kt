@@ -35,7 +35,7 @@ fun IComponent.TypographyPreview() {
 
         // ── Type scale ─────────────────────────────────────────────
         section("Type Scale") {
-            div(className = "flex flex-col gap-3") {
+            div(className = FLEX_FLEX_COL_GAP_3) {
                 listOf(
                     Triple("text-4xl font-bold", "4xl / Bold", "Display heading"),
                     Triple("text-3xl font-bold", "3xl / Bold", "Page title"),
@@ -77,10 +77,10 @@ fun IComponent.TypographyPreview() {
         section("Body Text") {
             div(className = "flex flex-col gap-4 max-w-2xl") {
                 p(className = "text-base text-on-surface leading-relaxed") {
-                    +"KodEx is an interactive Kotlin exam platform designed for Android developers. Candidates write real Kotlin code in a sandboxed editor, which is then evaluated by a configurable test-injection engine running on the server."
+                    +BODY_PARAGRAPH_1
                 }
                 p(className = "text-sm text-on-surface/70 leading-relaxed") {
-                    +"Secondary paragraph — smaller, muted. This style is used for descriptions, help text, and supplementary content that supports the primary reading flow."
+                    +BODY_PARAGRAPH_2
                 }
                 p(className = "text-xs text-on-surface/50") {
                     +"Caption / label text — timestamps, metadata, fine print."
@@ -90,12 +90,18 @@ fun IComponent.TypographyPreview() {
 
         // ── Code text ──────────────────────────────────────────────
         section("Monospace / Code") {
-            div(className = "flex flex-col gap-3") {
-                div(className = "bg-surface-container rounded-lg px-4 py-3 font-mono text-sm text-on-surface border border-outline/20") {
-                    code { +"fun isDev(): Boolean = js(\"process.env.NODE_ENV === 'development'\").unsafeCast<Boolean>()" }
+            div(className = FLEX_FLEX_COL_GAP_3) {
+                div(
+                    className = "bg-surface-container rounded-lg px-4 py-3 font-mono " +
+                        "text-sm text-on-surface border border-outline/20",
+                ) {
+                    code { +CODE_TEXT_1 }
                 }
-                div(className = "bg-surface-container rounded-lg px-4 py-3 font-mono text-xs text-on-surface/70 border border-outline/20") {
-                    code { +"@Composable fun IComponent.Button(variant: ButtonVariant = ButtonVariant.Primary, ...)" }
+                div(
+                    className = "bg-surface-container rounded-lg px-4 py-3 font-mono " +
+                        "text-xs text-on-surface/70 border border-outline/20",
+                ) {
+                    code { +CODE_TEXT_2 }
                 }
             }
         }
@@ -126,7 +132,7 @@ fun IComponent.TypographyPreview() {
 
 @Composable
 private fun IComponent.section(title: String, content: @Composable IComponent.() -> Unit) {
-    div(className = "flex flex-col gap-3") {
+    div(className = FLEX_FLEX_COL_GAP_3) {
         div(className = "flex items-center gap-3") {
             h2(className = "text-xs font-semibold uppercase tracking-widest text-on-surface/40") { +title }
             div(className = "flex-1 h-px bg-outline/20") {}
@@ -147,3 +153,13 @@ private fun IComponent.fontRow(label: String, className: String, sample: String,
         }
     }
 }
+
+private const val FLEX_FLEX_COL_GAP_3 = "flex flex-col gap-3"
+private const val BODY_PARAGRAPH_1 = "KodEx is an interactive Kotlin exam platform designed for " +
+    "Android developers.  Candidates write real Kotlin code in a sandboxed editor, which is then evaluated " +
+    "by a configurable test-injection engine running on the server."
+private const val BODY_PARAGRAPH_2 = "Secondary paragraph — smaller, muted. This style is used for descriptions, " +
+    "help text, and supplementary content that supports the primary reading flow."
+private const val CODE_TEXT_1 =
+    "fun isDev(): Boolean = js(\"process.env.NODE_ENV === 'development'\").unsafeCast<Boolean>()"
+private const val CODE_TEXT_2 = "@Composable fun IComponent.Button(variant: ButtonVariant = ButtonVariant.Primary, ...)"

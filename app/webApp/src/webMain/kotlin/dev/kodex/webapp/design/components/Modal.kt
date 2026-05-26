@@ -24,7 +24,7 @@ fun IComponent.Modal(
         // Dialog
         div(
             className = "relative z-10 w-full max-w-md mx-4 rounded-2xl bg-surface shadow-xl " +
-                "border border-outline/20 ${className ?: ""}".trim()
+                "border border-outline/20 ${className ?: ""}".trim(),
         ) {
             role("dialog")
             attribute("aria-modal", "true")
@@ -38,7 +38,7 @@ fun IComponent.Modal(
                     h2(className = "text-lg font-semibold text-on-surface", id = "modal-title") { +title }
                     span(
                         className = "cursor-pointer w-8 h-8 flex items-center justify-center rounded-full " +
-                            "hover:bg-surface-variant text-on-surface/60 hover:text-on-surface transition-colors"
+                            "hover:bg-surface-variant text-on-surface/60 hover:text-on-surface transition-colors",
                     ) {
                         +"✕"
                         onClick { onDismiss() }

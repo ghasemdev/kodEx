@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import dev.kilua.core.IComponent
 import dev.kilua.html.span
 
-
 @Composable
 fun IComponent.Badge(
     variant: BadgeVariant = BadgeVariant.Default,
@@ -20,8 +19,10 @@ fun IComponent.Badge(
         BadgeVariant.Info -> "bg-info/15 text-info"
     }
     span(
-        className = ("inline-flex items-center px-2.5 py-0.5 " +
-                "rounded-full text-xs font-medium $colorClasses ${className ?: ""}").trim(),
+        className = (
+            "inline-flex items-center px-2.5 py-0.5 " +
+                "rounded-full text-xs font-medium $colorClasses ${className ?: ""}"
+            ).trim(),
     ) {
         content()
     }

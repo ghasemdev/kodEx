@@ -26,7 +26,7 @@ fun IComponent.Card(
 
     div(
         className = "rounded-xl border bg-surface-container shadow-sm overflow-hidden " +
-            "$clickableClasses $selectedClasses ${className ?: ""}".trim()
+            "$clickableClasses $selectedClasses ${className ?: ""}".trim(),
     ) {
         if (onClick != null) onClick { onClick() }
 

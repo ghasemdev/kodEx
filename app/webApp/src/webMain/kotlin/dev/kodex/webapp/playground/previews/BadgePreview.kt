@@ -17,7 +17,7 @@ fun IComponent.BadgePreview() {
             }
         }
 
-        h3(className = "text-lg font-semibold text-on-surface") { +"With Icons" }
+        h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"With Icons" }
         div(className = "flex flex-wrap gap-3 items-center") {
             Badge(variant = BadgeVariant.Success) { +"✓  Passed" }
             Badge(variant = BadgeVariant.Danger) { +"✗  Failed" }
@@ -26,7 +26,7 @@ fun IComponent.BadgePreview() {
             Badge(variant = BadgeVariant.Primary) { +"★  Featured" }
         }
 
-        h3(className = "text-lg font-semibold text-on-surface") { +"In Context" }
+        h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"In Context" }
         div(className = "flex flex-wrap gap-3 items-center text-base text-on-surface") {
             +"Score"
             Badge(variant = BadgeVariant.Success) { +"98 / 100" }

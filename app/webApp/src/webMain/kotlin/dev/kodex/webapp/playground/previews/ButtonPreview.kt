@@ -11,19 +11,19 @@ import dev.kodex.webapp.design.components.ComponentSize
 @Composable
 fun IComponent.ButtonPreview() {
     div(className = "flex flex-col gap-6") {
-        h3(className = "text-lg font-semibold text-on-surface") { +"Button Variants" }
+        h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"Button Variants" }
         div(className = "flex flex-wrap gap-3") {
             ButtonVariant.entries.forEach { variant ->
                 Button(variant = variant, label = variant.name)
             }
         }
-        h3(className = "text-lg font-semibold text-on-surface") { +"Button Sizes" }
+        h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"Button Sizes" }
         div(className = "flex flex-wrap items-center gap-3") {
             ComponentSize.entries.forEach { size ->
                 Button(size = size, label = size.name)
             }
         }
-        h3(className = "text-lg font-semibold text-on-surface") { +"Disabled" }
+        h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"Disabled" }
         div(className = "flex flex-wrap gap-3") {
             Button(label = "Disabled", enabled = false)
         }

@@ -14,9 +14,9 @@ import dev.kodex.webapp.design.components.NavBar
 import dev.kodex.webapp.design.components.NavItem
 import dev.kodex.webapp.design.components.ThemeSwitcher
 
-private val navItems = listOf(
-    NavItem("home",    "Home",    "fa-solid fa-house"),
-    NavItem("exams",   "Exams",   "fa-solid fa-file-code"),
+private val NAV_ITEMS = listOf(
+    NavItem("home", "Home", "fa-solid fa-house"),
+    NavItem("exams", "Exams", "fa-solid fa-file-code"),
     NavItem("results", "Results", "fa-solid fa-chart-bar"),
     NavItem("profile", "Profile", "fa-solid fa-circle-user"),
 )
@@ -26,11 +26,11 @@ fun IComponent.NavBarPreview() {
     var active by remember { mutableStateOf("home") }
 
     div(className = "flex flex-col gap-6") {
-        h3(className = "text-lg font-semibold text-on-surface") { +"NavBar (resize window to see mobile bottom bar)" }
+        h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"NavBar (resize window to see mobile bottom bar)" }
         // overflow-visible so LanguageSwitcher dropdown is not clipped; NavBar itself carries rounded-xl
         div(className = "rounded-xl border border-outline/20") {
             NavBar(
-                items = navItems,
+                items = NAV_ITEMS,
                 selectedItem = active,
                 onItemSelect = { active = it },
                 className = "rounded-xl",

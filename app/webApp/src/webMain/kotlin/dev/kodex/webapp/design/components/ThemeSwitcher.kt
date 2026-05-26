@@ -12,9 +12,9 @@ fun IComponent.ThemeSwitcher(className: String? = null) {
         darkIcon = "fa-solid fa-sun",
         autoIcon = "fa-solid fa-circle-half-stroke",
         className = "w-9 h-9 rounded-full flex items-center justify-center " +
-                "bg-surface-container text-on-surface " +
-                "hover:bg-primary hover:text-on-primary " +
-                "transition-colors duration-200 cursor-pointer " +
-                (className ?: ""),
+            "bg-surface-container text-on-surface " +
+            "hover:bg-primary hover:text-on-primary " +
+            "transition-colors duration-200 cursor-pointer " +
+            (className ?: ""),
     )
 }

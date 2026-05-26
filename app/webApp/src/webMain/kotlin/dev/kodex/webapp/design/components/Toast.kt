@@ -22,28 +22,28 @@ data class ToastMessage(
 )
 
 object ToastStore {
-    val toasts = mutableStateListOf<ToastMessage>()
+    val TOASTS = mutableStateListOf<ToastMessage>()
 
     fun show(message: String, level: ToastLevel = ToastLevel.Info, duration: Duration = 3500.milliseconds) {
         val toast = ToastMessage(message = message, level = level, duration = duration)
-        toasts.add(toast)
+        TOASTS.add(toast)
         MainScope().launch {
             delay(duration)
-            toasts.remove(toast)
+            TOASTS.remove(toast)
         }
     }
 
     fun dismiss(toast: ToastMessage) {
-        toasts.remove(toast)
+        TOASTS.remove(toast)
     }
 }
 
 @Composable
 fun IComponent.ToastContainer() {
-    if (ToastStore.toasts.isEmpty()) return
+    if (ToastStore.TOASTS.isEmpty()) return
 
     div(className = "fixed bottom-4 end-4 z-50 flex flex-col gap-2 max-w-sm w-full") {
-        ToastStore.toasts.forEach { toast ->
+        ToastStore.TOASTS.forEach { toast ->
             val (bg, icon) = when (toast.level) {
                 ToastLevel.Info -> "bg-surface-container border-outline/20 text-on-surface" to "ℹ"
                 ToastLevel.Success -> "bg-success/15 border-success/30 text-success" to "✓"
@@ -51,7 +51,7 @@ fun IComponent.ToastContainer() {
                 ToastLevel.Error -> "bg-error/15 border-error/30 text-error" to "✕"
             }
             div(
-                className = "flex items-center gap-3 px-4 py-3 rounded-xl border shadow-lg $bg toast-slide-in"
+                className = "flex items-center gap-3 px-4 py-3 rounded-xl border shadow-lg $bg toast-slide-in",
             ) {
                 role(if (toast.level == ToastLevel.Error) "alert" else "status")
                 span(className = "text-base flex-shrink-0 w-5 text-center leading-none") { +icon }
@@ -59,7 +59,7 @@ fun IComponent.ToastContainer() {
                 span(
                     className = "cursor-pointer flex-shrink-0 w-6 h-6 flex items-center justify-center " +
                         "rounded-full opacity-50 hover:opacity-100 hover:bg-black/10 " +
-                        "transition-all text-xs leading-none"
+                        "transition-all text-xs leading-none",
                 ) {
                     +"✕"
                     onClick { ToastStore.dismiss(toast) }

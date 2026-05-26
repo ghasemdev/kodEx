@@ -5,7 +5,8 @@ import dev.kilua.theme.Theme
 enum class ThemeMode {
     Light,
     Dark,
-    Auto;
+    Auto,
+    ;
 
     fun toKiluaTheme(): Theme = when (this) {
         Light -> Theme.Light

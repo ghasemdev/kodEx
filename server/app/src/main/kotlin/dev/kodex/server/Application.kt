@@ -69,7 +69,7 @@ fun main() {
         }
 
         install(Koin) {
-            modules(serverModule)
+            modules(SERVER_MODULE)
         }
 
         routing {
