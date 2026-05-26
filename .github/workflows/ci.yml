@@ -60,7 +60,7 @@ jobs:
           cache-read-only: false
 
       - name: Run unit tests
-        run: ./gradlew test jvmTest --no-daemon
+        run: ./gradlew test jvmTest jsTest --no-daemon
 
       - name: Upload test reports
         if: always()
@@ -91,7 +91,7 @@ jobs:
           cache-read-only: true
 
       - name: Run coverage tasks (koverXmlReport + koverVerify)
-        run: ./gradlew test jvmTest koverXmlReport koverVerify --no-daemon
+        run: ./gradlew test jvmTest jsTest koverXmlReport koverVerify --no-daemon
 
       - name: Publish Test Report in PR
         if: always()

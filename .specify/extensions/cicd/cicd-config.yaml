@@ -39,7 +39,7 @@ pipeline:
           - build.gradle*
     - name: test & coverage
       enabled: true
-      cmd: ./gradlew test jvmTest koverXmlReport koverVerify --no-daemon
+      cmd: ./gradlew test jvmTest jsTest koverXmlReport koverVerify --no-daemon
       timeout_seconds: 1800
       pass_codes:
         - 0
