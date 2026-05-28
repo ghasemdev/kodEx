@@ -123,7 +123,7 @@ jobs:
     name: Screenshot Tests
     if: github.event_name == 'pull_request'
 
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     timeout-minutes: 30
     needs: assemble
 

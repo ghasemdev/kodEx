@@ -11,7 +11,7 @@ export default defineConfig({
     webServer: {
         command: "../../gradlew jsViteRun",
         url: "http://localhost:3000",
-        reuseExistingServer: true,
+        reuseExistingServer: !process.env.CI,
         timeout: 300_000,
     }
 });
