@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1780001778221,
+  "lastUpdate": 1780003171896,
   "repoUrl": "https://github.com/ghasemdev/kodEx",
   "entries": {
     "Benchmark": [
@@ -218,6 +218,50 @@ window.BENCHMARK_DATA = {
           {
             "name": "dev.kodex.core.model.benchmark.JvmTestBenchmark.sqrtBenchmark",
             "value": 333425094.5331687,
+            "unit": "ops/s",
+            "extra": "iterations: 1\nforks: 1\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "ghasemdev",
+            "username": "ghasemdev"
+          },
+          "committer": {
+            "name": "ghasemdev",
+            "username": "ghasemdev"
+          },
+          "id": "1d0885dc042623f5202f1ffb6d585148ad7cb3c5",
+          "message": "Feature/002 design system",
+          "timestamp": "2026-05-23T19:24:13Z",
+          "url": "https://github.com/ghasemdev/kodEx/pull/44/commits/1d0885dc042623f5202f1ffb6d585148ad7cb3c5"
+        },
+        "date": 1780003170993,
+        "tool": "jmh",
+        "benches": [
+          {
+            "name": "dev.kodex.server.api.benchmark.JvmTestBenchmark.cosBenchmark",
+            "value": 119889079.1039224,
+            "unit": "ops/s",
+            "extra": "iterations: 1\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "dev.kodex.server.api.benchmark.JvmTestBenchmark.sqrtBenchmark",
+            "value": 365459938.1031997,
+            "unit": "ops/s",
+            "extra": "iterations: 1\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "dev.kodex.core.model.benchmark.JvmTestBenchmark.cosBenchmark",
+            "value": 120339120.89149138,
+            "unit": "ops/s",
+            "extra": "iterations: 1\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "dev.kodex.core.model.benchmark.JvmTestBenchmark.sqrtBenchmark",
+            "value": 365560418.00569046,
             "unit": "ops/s",
             "extra": "iterations: 1\nforks: 1\nthreads: 1"
           }
