@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "lib": [
+      "ES2017",
+      "DOM"
+    ],
+    "types": [
+      "node",
+      "@playwright/test"
+    ]
+  },
+  "include": [
+    "playwright.config.ts",
+    "./src/webTest/ts/screenshot/*.ts"
+  ]
+}

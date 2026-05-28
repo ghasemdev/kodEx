@@ -70,6 +70,69 @@ Both `kotlin-kmp-convention` and `kotlin-jvm-convention` apply `detekt-conventio
 
 ---
 
+### 2026-05-24 - D5: Design tokens expressed as Tailwind v4 `@theme` CSS variables
+
+**Status**: Active
+
+**Why this is durable**
+Tailwind v4 uses CSS custom properties under `@theme` as the token layer — separate JS/TS token files (`theme.config.js` token extensions) are not needed. All tokens (colors, radius, spacing, font stacks) live in `tailwind.css` as `--color-*`, `--font-*`, etc., and Tailwind's engine references them directly. Keeping tokens in CSS avoids a JS/CSS split and makes them available via `var(--color-primary)` in both Tailwind utilities and custom CSS rules.
+
+**Decision**
+Express all design tokens as `@theme { --color-primary: …; }` declarations in `tailwind.css`. No separate JSON/TS/JS token file. Kotlin constants in `DesignTokens.kt` are optional aliases for compile-time safety.
+
+**Tradeoffs**
+- Gained: single source of truth, tokens usable in arbitrary CSS, Tailwind purge just works
+- Made harder: Kotlin code cannot reference tokens at compile time without a separate mirror object
+
+---
+
+### 2026-05-24 - D6: Dev playground isolated via `import.meta.env.DEV` Vite tree-shaking
+
+**Status**: Active
+
+**Why this is durable**
+The `webMain` source set is shared between JS and WASM-JS targets — there is no `webDevMain`/`devMain` equivalent for these targets. Vite's dead-code elimination on `import.meta.env.DEV` (which evaluates to `false` in production builds) is the standard mechanism to exclude dev-only code from the production bundle without a separate source set or Gradle module.
+
+**Decision**
+Guard all playground entry points with `if (js("import.meta.env.DEV"))` in Kotlin, which Vite strips in production webpack. Verified: `grep PlaygroundApp build/dist/js/productionExecutable/` returns no results after `jsBrowserProductionWebpack`.
+
+**Tradeoffs**
+- Gained: no extra Gradle module; playground code co-located with components it previews; HMR works seamlessly in dev
+- Made harder: the guard is a runtime check (not compile-time), so playground code is compiled — only excluded from the production bundle by the bundler
+
+---
+
+### 2026-05-29 - D7: CSP must be in both `index.html` meta tag AND Ktor response headers
+
+**Status**: Active
+
+**Why this is durable**
+In the KodEx architecture `index.html` is served by Vite (dev) and the webapp Docker service
+(prod) — neither path goes through the Ktor API server. Ktor's `DefaultHeaders` plugin applies
+only to JSON API responses, not to the HTML shell that boots the Kilua/JS app. A CSP set only
+in Ktor is invisible to the browser when it loads `index.html`; a CSP set only in `index.html`
+leaves API responses unprotected. Both layers are required and must be kept in sync.
+
+**Decision**
+Maintain CSP in two places simultaneously:
+1. `app/webApp/src/webMain/resources/index.html` (both jsMain and wasmJsMain) —
+   `<meta http-equiv="Content-Security-Policy" content="…">` and `<meta name="referrer" …>`
+2. `server/app/src/main/kotlin/dev/kodex/server/Application.kt` — `install(DefaultHeaders)`
+   block with `Content-Security-Policy`, `X-Content-Type-Options`, `X-Frame-Options`,
+   `Referrer-Policy`, `Permissions-Policy`
+
+Current policy: `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';
+font-src 'self' data:; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none';`
+
+`'unsafe-inline'` for `style-src` is required by Tailwind v4's utility-class runtime.
+
+**Tradeoffs**
+- Gained: defence-in-depth across both HTML document and API layer; correct in all environments
+- Made harder: two declarations must stay manually in sync — if policy changes, both files update
+- Reconsider when: a reverse proxy (nginx, Caddy) serves both HTML and API responses, allowing a single header location
+
+---
+
 ### 2026-05-20 - D2: kotlin-logging version must be `8.0.03`, not `8.0.0`
 
 **Status**: Active

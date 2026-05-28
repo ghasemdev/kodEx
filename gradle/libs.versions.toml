@@ -7,6 +7,7 @@ serialization = "1.11.0"
 datetime = "0.8.0"
 ktor = "3.5.0"
 kilua = "0.0.34"
+gettext = "0.7.0"
 koin = "4.2.1"
 exposed = "1.3.0"
 hikaricp = "7.0.2"
@@ -26,6 +27,13 @@ postgresql-driver = "42.7.5"
 kotlinx-browser = "0.5.0"
 kotlin-dot-env = "6.5.1"
 dependencycheck = "12.2.2"
+vite = "0.9.0"
+fontsource = "5.1.1"
+highlightjs = "11.11.1"
+tailwindcss = "4.3.0"
+html2canvas = "1.4.1"
+nodejs = "24.16.0"
+ksp = "2.3.8"
 
 [libraries]
 # ── Build-logic plugin artifacts (referenced as implementation() in build-logic/build.gradle.kts) ──
@@ -93,6 +101,9 @@ logstash-logback-encoder = { module = "net.logstash.logback:logstash-logback-enc
 
 # ── Frontend ──────────────────────────────────────────────────────────────────────────────────────
 kilua = { module = "dev.kilua:kilua", version.ref = "kilua" }
+kilua-tailwindcss = { module = "dev.kilua:kilua-tailwindcss", version.ref = "kilua" }
+kilua-i18n = { module = "dev.kilua:kilua-i18n", version.ref = "kilua" }
+kilua-fontawesome = { module = "dev.kilua:kilua-fontawesome", version.ref = "kilua" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 
 # ── Sandbox ───────────────────────────────────────────────────────────────────────────────────────
@@ -101,6 +112,7 @@ docker-java-transport-httpclient5 = { module = "com.github.docker-java:docker-ja
 
 # ── Testing ───────────────────────────────────────────────────────────────────────────────────────
 kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
+kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
 testcontainers-junit5 = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
@@ -138,6 +150,10 @@ ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 kilua = { id = "dev.kilua", version.ref = "kilua" }
+gettext = { id = "name.kropp.kotlinx-gettext", version.ref = "gettext" }
 compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 dependencycheck = { id = "org.owasp.dependencycheck", version.ref = "dependencycheck" }
+vite = { id = "dev.opensavvy.vite.kotlin", version.ref = "vite" }
+kotest = { id = "io.kotest", version.ref = "kotest" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

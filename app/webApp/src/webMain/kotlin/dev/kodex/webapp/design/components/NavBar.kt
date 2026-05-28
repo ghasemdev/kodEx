@@ -1,0 +1,108 @@
+package dev.kodex.webapp.design.components
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import dev.kilua.core.IComponent
+import dev.kilua.html.div
+import dev.kilua.html.nav
+import dev.kilua.html.span
+import dev.kodex.webapp.design.breakpoint.BreakpointTier
+import dev.kodex.webapp.design.breakpoint.rememberBreakpoint
+
+@Composable
+@Suppress("CognitiveComplexMethod")
+fun IComponent.NavBar(
+    items: List<NavItem>,
+    selectedItem: String? = null,
+    onItemSelect: (String) -> Unit = {},
+    actions: (@Composable IComponent.() -> Unit)? = null,
+    className: String? = null,
+) {
+    val breakpoint by rememberBreakpoint()
+    val isMobile = breakpoint == BreakpointTier.Mobile
+
+    if (!isMobile) {
+        // Top bar for Tablet / Desktop / TV
+        nav(
+            id = "navbar-desktop",
+            className = "flex items-center justify-between h-14 px-4 " +
+                "bg-surface-container border-b border-outline/20 ${className ?: ""}".trim(),
+        ) {
+            div(className = "flex items-center gap-1") {
+                items.forEach { item ->
+                    val isSelected = item.key == selectedItem
+                    div(
+                        id = "navbar-item-${item.key}",
+                        className = "flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm cursor-pointer " +
+                            "transition-all duration-200 active:scale-[0.96] " +
+                            "focus-visible:outline-none focus-visible:ring-2 " +
+                            "focus-visible:ring-primary/50 " +
+                            if (isSelected) {
+                                "bg-primary/10 text-primary font-medium"
+                            } else {
+                                "text-on-surface/70 hover:bg-surface-variant hover:text-on-surface"
+                            },
+                    ) {
+                        tabindex(0)
+                        role("button")
+                        if (isSelected) attribute("aria-current", "page")
+                        if (item.icon != null) span(className = "${item.icon} w-4 text-center") {}
+                        span { +item.label }
+                        onClick { onItemSelect(item.key) }
+                        onKeydown { e -> if (e.key == "Enter" || e.key == " ") onItemSelect(item.key) }
+                    }
+                }
+            }
+            if (actions != null) {
+                div(className = "flex items-center gap-2") { actions() }
+            }
+        }
+    } else {
+        // Bottom bar on Mobile
+        nav(
+            id = "navbar-mobile",
+            className = "fixed bottom-0 start-0 end-0 z-40 " +
+                "bg-surface-container border-t border-outline/20",
+        ) {
+            div(className = "flex items-stretch w-full") {
+                items.forEach { item ->
+                    val isSelected = item.key == selectedItem
+                    div(
+                        id = "navbar-mobile-item-${item.key}",
+                        className = "flex-1 flex flex-col items-center justify-center gap-0.5 py-2 " +
+                            "cursor-pointer transition-all duration-150 active:scale-[0.93] text-xs " +
+                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 " +
+                            if (isSelected) {
+                                "text-primary"
+                            } else {
+                                "text-on-surface/60 hover:text-on-surface"
+                            },
+                    ) {
+                        tabindex(0)
+                        role("button")
+                        if (isSelected) attribute("aria-current", "page")
+                        if (item.icon != null) span(className = "${item.icon} text-xl w-6 text-center") {}
+                        span { +item.label }
+                        onClick { onItemSelect(item.key) }
+                        onKeydown { e -> if (e.key == "Enter" || e.key == " ") onItemSelect(item.key) }
+                    }
+                }
+            }
+        }
+    }
+}
+
+data class NavItem(
+    val key: String,
+    val label: String,
+    val icon: String? = null,
+) {
+    init {
+        require(key.matches(Regex("[a-zA-Z0-9_\\-]+"))) {
+            "NavItem.key must contain only alphanumeric, dash, or underscore characters"
+        }
+        require(icon == null || icon.matches(Regex("[a-zA-Z0-9_\\-: ]+"))) {
+            "NavItem.icon must be a valid CSS class string"
+        }
+    }
+}

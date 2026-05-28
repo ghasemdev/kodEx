@@ -13,6 +13,13 @@ configure<DetektExtension> {
 }
 
 tasks.withType<Detekt>().configureEach {
+    source += files(
+        "src/commonMain/kotlin",
+        "src/jvmMain/kotlin",
+        "src/jsMain/kotlin",
+        "src/wasmJsMain/kotlin",
+        "src/webMain/kotlin",
+    ).asFileTree
     reports {
         html.required.set(true)
         md.required.set(true)

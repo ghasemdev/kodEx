@@ -1,7 +1,7 @@
 package dev.kodex.core.models.health
 
-import kotlinx.serialization.Serializable
 import kotlin.time.Instant
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class HealthResponse(

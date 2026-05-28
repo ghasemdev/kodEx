@@ -39,7 +39,7 @@ pipeline:
           - build.gradle*
     - name: test & coverage
       enabled: true
-      cmd: ./gradlew test jvmTest koverXmlReport koverVerify --no-daemon
+      cmd: ./gradlew test jvmTest jsTest koverXmlReport koverVerify --no-daemon
       timeout_seconds: 1800
       pass_codes:
         - 0
@@ -51,6 +51,20 @@ pipeline:
           - '**/*.java'
           - '**/*.kts'
           - build.gradle*
+    - name: screenshot test
+      enabled: true
+      cmd: |
+        npm ci &&
+        npx playwright install --with-deps &&
+        npx playwright test
+      timeout_seconds: 1800
+      pass_codes:
+        - 0
+      warn_codes: [ ]
+      diff_bounded:
+        enabled: true
+        patterns:
+          - 'app/webApp/**'
     - name: benchmark
       enabled: true
       cmd: ./gradlew benchmark --no-daemon

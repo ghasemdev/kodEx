@@ -16,7 +16,7 @@ tasks.register("benchmarkMerge") {
         outputFile.writeText(
             jsonFiles.joinToString(prefix = "[", postfix = "]", separator = ",") { f ->
                 f.readText().trim().removeSurrounding("[", "]")
-            }
+            },
         )
 
         println("Merged ${jsonFiles.size} benchmark file(s) [config: $configPath]")

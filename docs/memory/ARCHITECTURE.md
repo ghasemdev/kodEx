@@ -97,6 +97,32 @@ In `server:app`:
 
 Pattern: `devMain` source set extends `main` classpath, activated by a `devRun` task, excluded from `distributions`.
 
+### 2026-05-29 - A4: Frontend XSS boundary — text-node-only rendering in design system components
+
+**Status**: Active
+
+**Why this is durable**
+The security model of the KodEx frontend relies on Kilua's `+` operator always producing DOM
+text nodes (via `textContent`), never raw HTML. This is the structural XSS control for the
+entire design system. Any deviation breaks the model and requires explicit security review.
+
+**Constraint**
+All design system components in `app/webApp/src/webMain/kotlin/.../design/components/` MUST
+render user-controlled content exclusively via Kilua's `+` text-node operator. Prohibited
+without explicit security review and CSP policy update:
+- `element.innerHTML` / `element.outerHTML`
+- `js("…innerHTML…")` or equivalent DOM write expressions
+- Third-party Kilua plugins that render arbitrary HTML strings
+
+API-bound data class fields that land in DOM attributes (`className`, `id`, `href`) MUST be
+validated in the data class `init` block using `require()` against an allowlist or regex.
+**Pattern**: `NavItem.key` and `NavItem.icon` in `NavBar.kt`.
+
+**Reconsider when**: A rich-text or Markdown rendering component is required — that case
+needs a sanitisation library (e.g., DOMPurify) and a CSP update to allow its hash.
+
+---
+
 ## Risks / Complexity Hotspots
 
 - Sandbox container lifecycle: timeout handling, cleanup on crash, resource limit enforcement

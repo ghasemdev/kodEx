@@ -1,5 +1,10 @@
+@file:Suppress("unused")
+
 package dev.kodex.core.model.benchmark
 
+import java.util.concurrent.TimeUnit
+import kotlin.math.cos
+import kotlin.math.sqrt
 import org.openjdk.jmh.annotations.Benchmark
 import org.openjdk.jmh.annotations.Fork
 import org.openjdk.jmh.annotations.Measurement
@@ -7,9 +12,6 @@ import org.openjdk.jmh.annotations.Scope
 import org.openjdk.jmh.annotations.Setup
 import org.openjdk.jmh.annotations.State
 import org.openjdk.jmh.annotations.Warmup
-import java.util.concurrent.TimeUnit
-import kotlin.math.cos
-import kotlin.math.sqrt
 
 @State(Scope.Benchmark)
 @Fork(1)
@@ -24,12 +26,8 @@ class JvmTestBenchmark {
     }
 
     @Benchmark
-    fun sqrtBenchmark(): Double {
-        return sqrt(data)
-    }
+    fun sqrtBenchmark(): Double = sqrt(data)
 
     @Benchmark
-    fun cosBenchmark(): Double {
-        return cos(data)
-    }
+    fun cosBenchmark(): Double = cos(data)
 }

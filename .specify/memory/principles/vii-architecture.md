@@ -56,6 +56,17 @@ they emit Intents and render State snapshots. No business logic lives in compone
 | Domain | Use cases imported from `app:shared`; no duplication |
 | Data | Ktor Client HTTP calls to `server:api`; browser LocalStorage via `kotlinx-browser` |
 
+### Frontend Security Constraints (design system)
+
+- Components MUST render all user-controlled content via Kilua's `+` operator (text nodes).
+  `innerHTML` / `outerHTML` / raw DOM writes are **prohibited** without a security review. See §A4.
+- Data class fields used in DOM attributes MUST be validated in `init` blocks (`require()` + allowlist).
+  Pattern: `NavItem.key` and `NavItem.icon` in `NavBar.kt`.
+- CSP lives in both `index.html` (meta tag) and Ktor `DefaultHeaders` (API responses). Both must
+  stay in sync. See D7.
+- Dev playground code is gated by `js("import.meta.env.DEV")` — Vite tree-shakes it from
+  the production bundle. No `devMain` source set equivalent exists for JS/WASM targets. See D6.
+
 ## Gradle Conventions
 
 All inter-module dependencies MUST use **Type-Safe Project Accessors** (enabled via

@@ -5,7 +5,7 @@ import io.ktor.server.routing.Routing
 import io.ktor.server.routing.get
 import org.koin.dsl.module
 
-val devModule = module {
+val DEV_MODULE = module {
     // dev-only bindings
 }
 

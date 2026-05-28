@@ -6,7 +6,6 @@ import io.kotest.matchers.string.shouldNotBeEmpty
 import kotlinx.serialization.json.Json
 
 class EnvelopeTest : FunSpec({
-
     test("buildErrorEnvelope sets error message") {
         val envelope = buildErrorEnvelope(
             message = "An unexpected error occurred.",

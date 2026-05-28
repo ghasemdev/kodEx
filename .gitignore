@@ -31,5 +31,9 @@ Thumbs.db
 # Docker
 docker-compose.override.yml
 
+# SDD & Agents
 .specify/extensions/cicd/.last-run-summary
 .specify/extensions/cicd/.last-run-log-dir
+
+# screenshot
+test-results

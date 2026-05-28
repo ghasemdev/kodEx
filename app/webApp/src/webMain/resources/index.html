@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta
+            http-equiv="Content-Security-Policy"
+            content="
+            default-src 'self';
+            script-src 'self' 'wasm-unsafe-eval';
+            style-src 'self' 'unsafe-inline';
+            font-src 'self' data:;
+            img-src 'self' data:;
+            connect-src 'self';">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="description" content="Code exam platform">
+    <meta name="keywords" content="Kotlin Android Exam Contest">
+    <meta name="author" content="Ghasem Shirdel">
+
+    <title>KodEx</title>
+
+    <link rel="preload" as="style" href="tailwind/tailwind.css"/>
+    <link rel="stylesheet" href="tailwind/tailwind.css"/>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon/favicon-16x16.png">
+    <link rel="manifest" href="assets/images/favicon/site.webmanifest">
+
+    <link rel="canonical" href="https://kodex.dev">
+</head>
+<body>
+<div id="root"></div>
+
+<script type="module" src="kodex-app-webApp.mjs"></script>
+</body>
+</html>
