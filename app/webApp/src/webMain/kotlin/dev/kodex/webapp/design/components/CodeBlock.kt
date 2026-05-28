@@ -23,11 +23,12 @@ fun IComponent.CodeBlock(
     code: String,
     language: String = "plaintext",
     showCopyButton: Boolean = true,
+    id: String? = null,
     className: String? = null,
 ) {
     var copied by remember { mutableStateOf(false) }
 
-    div(className = "relative rounded-xl overflow-hidden border border-outline/20 ${className ?: ""}".trim()) {
+    div(className = "relative rounded-xl overflow-hidden border border-outline/20 ${className ?: ""}".trim(), id = id) {
         if (showCopyButton) {
             div(className = "absolute top-2 end-2 z-10") {
                 span(

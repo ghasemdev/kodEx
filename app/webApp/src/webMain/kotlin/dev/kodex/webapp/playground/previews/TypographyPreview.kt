@@ -12,7 +12,10 @@ import dev.kilua.html.span
 fun IComponent.TypographyPreview() {
     div(className = "flex flex-col gap-10") {
         // ── Font families ──────────────────────────────────────────
-        section("Font Families") {
+        section(
+            title = "Font Families",
+            id = "typography-font-families",
+        ) {
             div(className = "flex flex-col gap-4") {
                 fontRow(
                     label = "Inter Tight  —  sans-serif (UI)",
@@ -34,7 +37,10 @@ fun IComponent.TypographyPreview() {
         }
 
         // ── Type scale ─────────────────────────────────────────────
-        section("Type Scale") {
+        section(
+            title = "Type Scale",
+            id = "typography-type-scale",
+        ) {
             div(className = FLEX_FLEX_COL_GAP_3) {
                 listOf(
                     Triple("text-4xl font-bold", "4xl / Bold", "Display heading"),
@@ -55,7 +61,10 @@ fun IComponent.TypographyPreview() {
         }
 
         // ── Weights ────────────────────────────────────────────────
-        section("Font Weights") {
+        section(
+            title = "Font Weights",
+            id = "typography-font-weights",
+        ) {
             div(className = "flex flex-wrap gap-6") {
                 listOf(
                     "font-light" to "Light 300",
@@ -74,7 +83,10 @@ fun IComponent.TypographyPreview() {
         }
 
         // ── Body paragraph ─────────────────────────────────────────
-        section("Body Text") {
+        section(
+            title = "Body Text",
+            id = "typography-body-text",
+        ) {
             div(className = "flex flex-col gap-4 max-w-2xl") {
                 p(className = "text-base text-on-surface leading-relaxed") {
                     +BODY_PARAGRAPH_1
@@ -89,7 +101,10 @@ fun IComponent.TypographyPreview() {
         }
 
         // ── Code text ──────────────────────────────────────────────
-        section("Monospace / Code") {
+        section(
+            title = "Monospace / Code",
+            id = "typography-code",
+        ) {
             div(className = FLEX_FLEX_COL_GAP_3) {
                 div(
                     className = "bg-surface-container rounded-lg px-4 py-3 font-mono " +
@@ -107,7 +122,10 @@ fun IComponent.TypographyPreview() {
         }
 
         // ── Color roles ────────────────────────────────────────────
-        section("Text Color Roles") {
+        section(
+            title = "Text Color Roles",
+            id = "typography-color-roles",
+        ) {
             div(className = "flex flex-col gap-2") {
                 listOf(
                     "text-on-surface" to "on-surface  — primary content",
@@ -131,8 +149,11 @@ fun IComponent.TypographyPreview() {
 }
 
 @Composable
-private fun IComponent.section(title: String, content: @Composable IComponent.() -> Unit) {
-    div(className = FLEX_FLEX_COL_GAP_3) {
+private fun IComponent.section(title: String, id: String, content: @Composable IComponent.() -> Unit) {
+    div(
+        id = id,
+        className = FLEX_FLEX_COL_GAP_3,
+    ) {
         div(className = "flex items-center gap-3") {
             h2(className = "text-xs font-semibold uppercase tracking-widest text-on-surface/40") { +title }
             div(className = "flex-1 h-px bg-outline/20") {}

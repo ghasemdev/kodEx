@@ -119,6 +119,60 @@ jobs:
             build/reports/kover/
             "**/build/test-results/"
 
+  screenshot-test:
+    name: Screenshot Tests
+    if: github.event_name == 'pull_request'
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: assemble
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect web app changes
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            webapp:
+              - 'app/webApp/**'
+
+      - name: Setup Node.js
+        if: steps.changes.outputs.webapp == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.16.0
+          cache: npm
+
+      - name: Install dependencies
+        if: steps.changes.outputs.webapp == 'true'
+        run: npm ci
+
+      - name: Install Playwright browsers
+        if: steps.changes.outputs.webapp == 'true'
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright screenshot tests
+        if: steps.changes.outputs.webapp == 'true'
+        run: npx playwright test
+
+      - name: Upload Playwright HTML Report
+        if: always() && steps.changes.outputs.webapp == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+
+      - name: Upload screenshot diffs
+        if: failure() && steps.changes.outputs.webapp == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshot-diffs
+          path: |
+            test-results/
+            **/*.png
+
   benchmark:
     name: Run Benchmark
     if: github.event_name == 'pull_request'

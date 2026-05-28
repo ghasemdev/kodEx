@@ -8,6 +8,7 @@ import dev.kilua.html.span
 fun IComponent.Badge(
     variant: BadgeVariant = BadgeVariant.Default,
     className: String? = null,
+    id: String? = null,
     content: @Composable IComponent.() -> Unit,
 ) {
     val colorClasses = when (variant) {
@@ -23,6 +24,7 @@ fun IComponent.Badge(
             "inline-flex items-center px-2.5 py-0.5 " +
                 "rounded-full text-xs font-medium $colorClasses ${className ?: ""}"
             ).trim(),
+        id = id,
     ) {
         content()
     }

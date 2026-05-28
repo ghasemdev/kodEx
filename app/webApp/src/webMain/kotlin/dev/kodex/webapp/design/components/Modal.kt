@@ -12,6 +12,7 @@ fun IComponent.Modal(
     onDismiss: () -> Unit,
     title: String? = null,
     className: String? = null,
+    id: String? = null,
     content: @Composable IComponent.() -> Unit,
 ) {
     if (!visible) return
@@ -25,6 +26,7 @@ fun IComponent.Modal(
         div(
             className = "relative z-10 w-full max-w-md mx-4 rounded-2xl bg-surface shadow-xl " +
                 "border border-outline/20 ${className ?: ""}".trim(),
+            id = id,
         ) {
             role("dialog")
             attribute("aria-modal", "true")

@@ -14,18 +14,18 @@ fun IComponent.ButtonPreview() {
         h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"Button Variants" }
         div(className = "flex flex-wrap gap-3") {
             ButtonVariant.entries.forEach { variant ->
-                Button(variant = variant, label = variant.name)
+                Button(variant = variant, label = variant.name, id = "button-${variant.name.lowercase()}")
             }
         }
         h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"Button Sizes" }
         div(className = "flex flex-wrap items-center gap-3") {
             ComponentSize.entries.forEach { size ->
-                Button(size = size, label = size.name)
+                Button(size = size, label = size.name, id = "button-${size.name.lowercase()}")
             }
         }
         h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"Disabled" }
         div(className = "flex flex-wrap gap-3") {
-            Button(label = "Disabled", enabled = false)
+            Button(label = "Disabled", enabled = false, id = "button-disabled")
         }
     }
 }

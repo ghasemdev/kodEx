@@ -13,6 +13,7 @@ fun IComponent.Button(
     label: String? = null,
     icon: String? = null,
     className: String? = null,
+    id: String? = null,
     content: @Composable IComponent.() -> Unit = {},
 ) {
     val variantClasses = when (variant) {
@@ -43,6 +44,7 @@ fun IComponent.Button(
     button(
         label = label,
         icon = icon,
+        id = id,
         disabled = if (enabled) null else true,
         className = "$baseClasses $variantClasses $sizeClasses ${className ?: ""}".trim(),
     ) {

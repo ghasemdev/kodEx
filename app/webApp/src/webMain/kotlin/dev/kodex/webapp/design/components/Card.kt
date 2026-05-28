@@ -11,6 +11,7 @@ fun IComponent.Card(
     onClick: (() -> Unit)? = null,
     selected: Boolean = false,
     className: String? = null,
+    id: String? = null,
     content: @Composable IComponent.() -> Unit,
 ) {
     val clickableClasses = if (onClick != null) {
@@ -27,6 +28,7 @@ fun IComponent.Card(
     div(
         className = "rounded-xl border bg-surface-container shadow-sm overflow-hidden " +
             "$clickableClasses $selectedClasses ${className ?: ""}".trim(),
+        id = id,
     ) {
         if (onClick != null) onClick { onClick() }
 
