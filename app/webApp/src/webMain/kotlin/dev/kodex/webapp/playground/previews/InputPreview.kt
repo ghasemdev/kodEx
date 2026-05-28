@@ -22,6 +22,7 @@ fun IComponent.InputPreview() {
         Input(
             value = email,
             label = "Email",
+            id = "input-email",
             placeholder = "you@example.com",
             helperText = "We'll never share your email.",
             onValueChange = { email = it },
@@ -31,6 +32,7 @@ fun IComponent.InputPreview() {
         Input(
             value = pass,
             label = "Password",
+            id = "input-password",
             placeholder = "••••••••",
             error = if (pass.length in 1..7) "At least 8 characters required" else null,
             onValueChange = { pass = it },
@@ -40,6 +42,7 @@ fun IComponent.InputPreview() {
         Input(
             value = "read-only value",
             label = "Username",
+            id = "input-disabled",
             disabled = true,
             onValueChange = {},
         )
@@ -48,6 +51,7 @@ fun IComponent.InputPreview() {
         TextArea(
             value = notes,
             label = "Notes",
+            id = "textarea-notes",
             placeholder = "Write something…",
             helperText = "Markdown supported.",
             maxLength = 200,

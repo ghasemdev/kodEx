@@ -34,12 +34,25 @@ private val JSON_SAMPLE = """
 fun IComponent.CodeBlockPreview() {
     div(className = "flex flex-col gap-6") {
         h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"Kotlin" }
-        CodeBlock(code = KOTLIN_SAMPLE, language = "kotlin")
+        CodeBlock(
+            code = KOTLIN_SAMPLE,
+            language = "kotlin",
+            id = "codeblock-kotlin",
+        )
 
         h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"JSON" }
-        CodeBlock(code = JSON_SAMPLE, language = "json")
+        CodeBlock(
+            code = JSON_SAMPLE,
+            language = "json",
+            id = "codeblock-json",
+        )
 
         h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"No Copy Button" }
-        CodeBlock(code = "val answer = 42", language = "kotlin", showCopyButton = false)
+        CodeBlock(
+            code = "val answer = 42",
+            language = "kotlin",
+            showCopyButton = false,
+            id = "codeblock-no-copy",
+        )
     }
 }

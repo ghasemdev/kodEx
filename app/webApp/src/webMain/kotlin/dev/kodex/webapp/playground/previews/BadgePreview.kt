@@ -13,7 +13,7 @@ fun IComponent.BadgePreview() {
         h3(className = "text-lg font-semibold text-on-surface") { +"Badge Variants" }
         div(className = "flex flex-wrap gap-3 items-center") {
             BadgeVariant.entries.forEach { variant ->
-                Badge(variant = variant) { +variant.name }
+                Badge(variant = variant, id = "badge-${variant.name.lowercase()}") { +variant.name }
             }
         }
 

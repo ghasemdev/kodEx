@@ -21,7 +21,10 @@ fun IComponent.CardPreview() {
     div(className = "flex flex-col gap-6") {
         h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"Basic Card" }
         Card {
-            div(className = "p-4") {
+            div(
+                className = "p-4",
+                id = "card-basic",
+            ) {
                 p(className = "text-base text-on-surface") { +"A simple surface-container card." }
                 p(className = "text-sm text-on-surface/60 mt-1") { +"No header or footer." }
             }
@@ -41,6 +44,7 @@ fun IComponent.CardPreview() {
                     span { +"45 minutes" }
                 }
             },
+            id = "card-header-footer",
         ) {
             div(className = "p-4") {
                 p(className = "text-sm text-on-surface/70") {
@@ -55,6 +59,7 @@ fun IComponent.CardPreview() {
                 Card(
                     selected = selected == i,
                     onClick = { selected = if (selected == i) null else i },
+                    id = "card-selectable-$i",
                 ) {
                     div(className = "p-4 flex items-center gap-3") {
                         div(
