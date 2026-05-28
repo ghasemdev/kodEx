@@ -15,14 +15,18 @@ fun IComponent.ThemeSwitcherPreview() {
             +"Click the button to toggle between light and dark mode. The entire playground updates immediately."
         }
         div(className = "flex items-center gap-4") {
-            ThemeSwitcher()
+            ThemeSwitcher(
+                id = "theme-switcher-main",
+            )
             p(className = "text-sm text-on-surface/50") { +"← click to toggle" }
         }
 
         h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"In a Toolbar" }
         div(className = FLEX_ITEMS_CENTER_JUSTIFY_BETWEEN) {
             p(className = "text-sm font-medium text-on-surface") { +"KodEx Admin" }
-            ThemeSwitcher()
+            ThemeSwitcher(
+                id = "theme-switcher-toolbar",
+            )
         }
     }
 }

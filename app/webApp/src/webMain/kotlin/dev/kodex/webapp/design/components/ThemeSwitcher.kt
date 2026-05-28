@@ -5,7 +5,7 @@ import dev.kilua.core.IComponent
 import dev.kilua.theme.themeSwitcher
 
 @Composable
-fun IComponent.ThemeSwitcher(className: String? = null) {
+fun IComponent.ThemeSwitcher(className: String? = null, id: String? = null) {
     themeSwitcher(
         round = true,
         lightIcon = "fa-solid fa-moon",
@@ -16,5 +16,6 @@ fun IComponent.ThemeSwitcher(className: String? = null) {
             "hover:bg-primary hover:text-on-primary " +
             "transition-colors duration-200 cursor-pointer " +
             (className ?: ""),
+        id = id,
     )
 }

@@ -35,6 +35,7 @@ fun IComponent.Sidebar(
     val showCollapseToggle = breakpoint == BreakpointTier.Tablet
 
     aside(
+        id = "sidebar",
         className = "flex flex-col h-full bg-surface-container border-e border-outline/20 " +
             "transition-all duration-300 ease-in-out " +
             (if (collapsed) "w-14" else "w-64") +
@@ -43,6 +44,7 @@ fun IComponent.Sidebar(
         if (showCollapseToggle) {
             div(className = "flex justify-end p-2 border-b border-outline/10") {
                 span(
+                    id = "sidebar-collapse-button",
                     className = "cursor-pointer w-8 h-8 flex items-center justify-center rounded-lg " +
                         "hover:bg-surface-variant text-on-surface/60 transition-colors",
                 ) {
@@ -60,6 +62,7 @@ fun IComponent.Sidebar(
             items.forEach { item ->
                 val isSelected = item.key == selectedItem
                 div(
+                    id = "sidebar-item-${item.key}",
                     className = "flex items-center gap-3 px-4 py-2.5 cursor-pointer " +
                         "transition-all duration-200 active:scale-[0.98] text-sm " +
                         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 " +

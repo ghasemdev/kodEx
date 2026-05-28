@@ -24,6 +24,7 @@ fun IComponent.NavBar(
     if (!isMobile) {
         // Top bar for Tablet / Desktop / TV
         nav(
+            id = "navbar-desktop",
             className = "flex items-center justify-between h-14 px-4 " +
                 "bg-surface-container border-b border-outline/20 ${className ?: ""}".trim(),
         ) {
@@ -31,6 +32,7 @@ fun IComponent.NavBar(
                 items.forEach { item ->
                     val isSelected = item.key == selectedItem
                     div(
+                        id = "navbar-item-${item.key}",
                         className = "flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm cursor-pointer " +
                             "transition-all duration-200 active:scale-[0.96] " +
                             "focus-visible:outline-none focus-visible:ring-2 " +
@@ -58,6 +60,7 @@ fun IComponent.NavBar(
     } else {
         // Bottom bar on Mobile
         nav(
+            id = "navbar-mobile",
             className = "fixed bottom-0 start-0 end-0 z-40 " +
                 "bg-surface-container border-t border-outline/20",
         ) {
@@ -65,6 +68,7 @@ fun IComponent.NavBar(
                 items.forEach { item ->
                     val isSelected = item.key == selectedItem
                     div(
+                        id = "navbar-mobile-item-${item.key}",
                         className = "flex-1 flex flex-col items-center justify-center gap-0.5 py-2 " +
                             "cursor-pointer transition-all duration-150 active:scale-[0.93] text-xs " +
                             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 " +

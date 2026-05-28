@@ -16,7 +16,7 @@ fun IComponent.LanguageSwitcherPreview() {
             +LANGUAGE_SWITCHER_TEXT
         }
         div(className = "flex items-center gap-4") {
-            LanguageSwitcher()
+            LanguageSwitcher(id = "language-switcher-main")
         }
 
         h3(className = TEXT_LG_FONT_SEMIBOLD_TEXT_ON_SURFACE) { +"Together in a Toolbar" }
@@ -24,7 +24,7 @@ fun IComponent.LanguageSwitcherPreview() {
             p(className = "text-sm font-medium text-on-surface") { +"KodEx Admin" }
             div(className = "flex items-center gap-2") {
                 ThemeSwitcher()
-                LanguageSwitcher()
+                LanguageSwitcher(id = "language-switcher-toolbar")
             }
         }
     }
