@@ -22,7 +22,7 @@ fun IComponent.Badge(
     span(
         className = (
             "inline-flex items-center px-2.5 py-0.5 " +
-                "rounded-full text-xs font-medium $colorClasses ${className ?: ""}"
+                "rounded-full text-xs font-medium transition-colors duration-150 $colorClasses ${className ?: ""}"
             ).trim(),
         id = id,
     ) {

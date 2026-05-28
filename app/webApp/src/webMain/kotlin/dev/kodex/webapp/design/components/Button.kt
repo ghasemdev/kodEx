@@ -38,8 +38,9 @@ fun IComponent.Button(
         ComponentSize.Md -> "px-4 py-2 text-base rounded-lg"
         ComponentSize.Lg -> "px-6 py-3 text-lg rounded-xl"
     }
-    val baseClasses = "inline-flex items-center gap-2 font-medium transition-colors duration-150 " +
-        "focus:outline-none disabled:opacity-50 disabled:pointer-events-none"
+    val baseClasses = "inline-flex items-center gap-2 font-medium transition-all duration-150 " +
+        "focus:outline-none disabled:opacity-50 disabled:pointer-events-none " +
+        "active:scale-[0.97]"
 
     button(
         label = label,

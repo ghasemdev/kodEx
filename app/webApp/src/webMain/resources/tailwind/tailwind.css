@@ -113,6 +113,31 @@ input:-webkit-autofill:focus {
     animation: toast-slide-in 0.2s ease-out both;
 }
 
+/* ── Modal enter animations ──────────────────────────────────────── */
+@keyframes modal-backdrop-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+@keyframes modal-dialog-in {
+    from { opacity: 0; transform: scale(0.95) translateY(-0.5rem); }
+    to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+.modal-backdrop-in {
+    animation: modal-backdrop-in 0.2s ease-out both;
+}
+.modal-dialog-in {
+    animation: modal-dialog-in 0.25s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+}
+
+/* ── Fade-in for general entrance ────────────────────────────────── */
+@keyframes fade-in {
+    from { opacity: 0; transform: translateY(0.25rem); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in {
+    animation: fade-in 0.2s ease-out both;
+}
+
 /* ── Max-width container ─────────────────────────────────────────── */
 .container-app {
     width: 100%;

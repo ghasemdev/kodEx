@@ -41,7 +41,7 @@ fun IComponent.Input(
             disabled = if (disabled) true else null,
             required = if (required) true else null,
             className = "w-full px-3 py-2 rounded-lg border text-sm bg-surface text-on-surface " +
-                "placeholder:text-on-surface/40 transition-colors duration-150 " +
+                "placeholder:text-on-surface/40 transition-all duration-200 " +
                 "focus:outline-none focus:ring-2 " +
                 if (hasError) {
                     "border-error focus:ring-error/40"

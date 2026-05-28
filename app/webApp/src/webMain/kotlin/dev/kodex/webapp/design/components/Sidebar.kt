@@ -35,7 +35,7 @@ fun IComponent.Sidebar(
 
     aside(
         className = "flex flex-col h-full bg-surface-container border-e border-outline/20 " +
-            "transition-all duration-200 " +
+            "transition-all duration-300 ease-in-out " +
             (if (collapsed) "w-14" else "w-64") +
             " ${className ?: ""}".trim(),
     ) {
@@ -60,7 +60,7 @@ fun IComponent.Sidebar(
                 val isSelected = item.key == selectedItem
                 div(
                     className = "flex items-center gap-3 px-4 py-2.5 cursor-pointer " +
-                        "transition-colors duration-200 text-sm " +
+                        "transition-all duration-200 active:scale-[0.98] text-sm " +
                         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 " +
                         if (isSelected) {
                             "bg-primary/10 text-primary font-medium border-e-2 border-primary"

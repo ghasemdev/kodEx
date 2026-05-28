@@ -46,14 +46,14 @@ fun IComponent.Modal(
 
     div(className = "fixed inset-0 z-50 flex items-center justify-center") {
         // Backdrop
-        div(className = "absolute inset-0 bg-black/50 backdrop-blur-sm") {
+        div(className = "absolute inset-0 bg-black/50 backdrop-blur-sm modal-backdrop-in") {
             onClick { onDismiss() }
         }
 
         // Dialog
         div(
             className = "relative z-10 w-full max-w-md mx-4 rounded-2xl bg-surface shadow-xl " +
-                "border border-outline/20 ${className ?: ""}".trim(),
+                "border border-outline/20 modal-dialog-in ${className ?: ""}".trim(),
             id = id,
         ) {
             role("dialog")

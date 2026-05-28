@@ -32,7 +32,8 @@ fun IComponent.NavBar(
                     val isSelected = item.key == selectedItem
                     div(
                         className = "flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm cursor-pointer " +
-                            "transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 " +
+                            "transition-all duration-200 active:scale-[0.96] " +
+                            "focus-visible:outline-none focus-visible:ring-2 " +
                             "focus-visible:ring-primary/50 " +
                             if (isSelected) {
                                 "bg-primary/10 text-primary font-medium"
@@ -65,7 +66,7 @@ fun IComponent.NavBar(
                     val isSelected = item.key == selectedItem
                     div(
                         className = "flex-1 flex flex-col items-center justify-center gap-0.5 py-2 " +
-                            "cursor-pointer transition-colors duration-150 text-xs " +
+                            "cursor-pointer transition-all duration-150 active:scale-[0.93] text-xs " +
                             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 " +
                             if (isSelected) {
                                 "text-primary"
