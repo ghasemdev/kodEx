@@ -30,7 +30,8 @@ fun IComponent.Sidebar(
 
     // Icon-only rail on Tablet; full panel on Desktop/TV
     val isRail = breakpoint == BreakpointTier.Tablet
-    var collapsed by remember { mutableStateOf(isRail) }
+    // remember(breakpoint) re-initializes when breakpoint changes so collapsed resets correctly
+    var collapsed by remember(breakpoint) { mutableStateOf(isRail) }
     val showCollapseToggle = breakpoint == BreakpointTier.Tablet
 
     aside(

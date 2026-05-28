@@ -6,18 +6,14 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import dev.kilua.utils.isDom
-import web.cssom.MediaQuery
-import web.cssom.matchMedia
-import web.events.Event
-import web.events.EventType
-import web.events.addEventListener
-import web.events.removeEventListener
+import kotlinx.browser.window
+import org.w3c.dom.events.Event
 
 private fun currentBreakpoint(): BreakpointTier = when {
     !isDom -> BreakpointTier.Desktop
-    matchMedia(MediaQuery("(min-width: 1920px)")).matches -> BreakpointTier.Tv
-    matchMedia(MediaQuery("(min-width: 1024px)")).matches -> BreakpointTier.Desktop
-    matchMedia(MediaQuery("(min-width: 640px)")).matches -> BreakpointTier.Tablet
+    window.innerWidth >= 1920 -> BreakpointTier.Tv
+    window.innerWidth >= 1024 -> BreakpointTier.Desktop
+    window.innerWidth >= 640 -> BreakpointTier.Tablet
     else -> BreakpointTier.Mobile
 }
 
@@ -27,17 +23,9 @@ fun rememberBreakpoint(): State<BreakpointTier> {
 
     DisposableEffect(Unit) {
         val handler: (Event) -> Unit = { state.value = currentBreakpoint() }
-        val mq640 = matchMedia(MediaQuery("(min-width: 640px)"))
-        val mq1024 = matchMedia(MediaQuery("(min-width: 1024px)"))
-        val mq1920 = matchMedia(MediaQuery("(min-width: 1920px)"))
-        val type = EventType<Event>("change")
-        mq640.addEventListener(type, handler)
-        mq1024.addEventListener(type, handler)
-        mq1920.addEventListener(type, handler)
+        window.addEventListener("resize", handler)
         onDispose {
-            mq640.removeEventListener(type, handler)
-            mq1024.removeEventListener(type, handler)
-            mq1920.removeEventListener(type, handler)
+            window.removeEventListener("resize", handler)
         }
     }
 
