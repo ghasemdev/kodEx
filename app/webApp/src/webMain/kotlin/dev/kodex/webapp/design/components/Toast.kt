@@ -42,15 +42,19 @@ object ToastStore {
 fun IComponent.ToastContainer() {
     if (ToastStore.TOASTS.isEmpty()) return
 
-    div(className = "fixed bottom-4 end-4 z-50 flex flex-col gap-2 max-w-sm w-full") {
+    div(
+        id = "toast-container",
+        className = "fixed bottom-4 end-4 z-50 flex flex-col gap-2 max-w-sm w-full",
+    ) {
         ToastStore.TOASTS.forEach { toast ->
             val (bg, icon) = when (toast.level) {
                 ToastLevel.Info -> "bg-surface-container border-outline/20 text-on-surface" to "ℹ"
                 ToastLevel.Success -> "bg-success/15 border-success/30 text-success" to "✓"
                 ToastLevel.Warning -> "bg-warning/15 border-warning/30 text-warning" to "⚠"
-                ToastLevel.Error -> "bg-error/15 border-error/30 text-error" to "✕"
+                ToastLevel.Error -> "bg-error/15 border-error/30 text-error" to "X"
             }
             div(
+                id = "toast-${toast.id}",
                 className = "flex items-center gap-3 px-4 py-3 rounded-xl border shadow-lg $bg toast-slide-in",
             ) {
                 role(if (toast.level == ToastLevel.Error) "alert" else "status")

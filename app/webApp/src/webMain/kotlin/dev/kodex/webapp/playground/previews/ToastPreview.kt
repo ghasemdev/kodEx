@@ -17,21 +17,25 @@ fun IComponent.ToastPreview() {
         div(className = "flex flex-wrap gap-3") {
             Button(
                 label = "Info",
+                id = "toast-info-button",
                 variant = ButtonVariant.Secondary,
                 onClick = { ToastStore.show("Exam submitted successfully.", ToastLevel.Info) },
             )
             Button(
                 label = "Success",
+                id = "toast-success-button",
                 variant = ButtonVariant.Secondary,
                 onClick = { ToastStore.show("Score saved: 98 / 100", ToastLevel.Success) },
             )
             Button(
                 label = "Warning",
+                id = "toast-warning-button",
                 variant = ButtonVariant.Secondary,
                 onClick = { ToastStore.show("Time is running low — 2 minutes left.", ToastLevel.Warning) },
             )
             Button(
                 label = "Error",
+                id = "toast-error-button",
                 variant = ButtonVariant.Danger,
                 onClick = { ToastStore.show("Compilation failed: syntax error on line 12.", ToastLevel.Error) },
             )
