@@ -34,9 +34,9 @@ fun IComponent.Button(
             "bg-transparent text-primary underline hover:text-primary/80 focus:ring-0 p-0"
     }
     val sizeClasses = when (size) {
-        ComponentSize.Sm -> "px-3 py-1.5 text-sm rounded-md"
+        ComponentSize.Sm -> "px-4 py-2 text-base rounded-lg"
         ComponentSize.Md -> "px-4 py-2 text-base rounded-lg"
-        ComponentSize.Lg -> "px-6 py-3 text-lg rounded-xl"
+        ComponentSize.Lg -> "px-4 py-2 text-base rounded-lg"
     }
     val baseClasses = "inline-flex items-center gap-2 font-medium transition-all duration-150 " +
         "focus:outline-none disabled:opacity-50 disabled:pointer-events-none " +
