@@ -1,15 +1,11 @@
-import org.gradle.api.Project
 import java.util.Properties
+import org.gradle.api.Project
 
 class Config private constructor(
-    private val key: String
+    private val key: String,
 ) {
     private var envKey: String? = null
     private var propertyKey: String? = null
-
-    companion object {
-        fun get(key: String) = Config(key)
-    }
 
     fun env(envKey: String) = apply {
         this.envKey = envKey
@@ -46,5 +42,9 @@ class Config private constructor(
         }
 
         return null
+    }
+
+    companion object {
+        fun get(key: String) = Config(key)
     }
 }

@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 test("button screenshots", async ({ page }) => {
-    await page.goto("/playground");
+    await page.goto("http://localhost:3000/playground");
 
     // disable animations
     await page.addStyleTag({

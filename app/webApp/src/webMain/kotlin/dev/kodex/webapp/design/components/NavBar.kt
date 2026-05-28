@@ -96,4 +96,13 @@ data class NavItem(
     val key: String,
     val label: String,
     val icon: String? = null,
-)
+) {
+    init {
+        require(key.matches(Regex("[a-zA-Z0-9_\\-]+"))) {
+            "NavItem.key must contain only alphanumeric, dash, or underscore characters"
+        }
+        require(icon == null || icon.matches(Regex("[a-zA-Z0-9_\\-: ]+"))) {
+            "NavItem.icon must be a valid CSS class string"
+        }
+    }
+}

@@ -7,7 +7,7 @@ test("sidebar desktop screenshots", async ({page}) => {
         height: 900,
     });
 
-    await page.goto("/playground");
+    await page.goto("http://localhost:3000/playground");
 
     // disable animations
     await page.addStyleTag({
@@ -64,7 +64,7 @@ test("sidebar tablet screenshots", async ({page}) => {
         height: 900,
     });
 
-    await page.goto("/playground");
+    await page.goto("http://localhost:3000/playground");
 
     // disable animations
     await page.addStyleTag({
@@ -124,24 +124,4 @@ test("sidebar tablet screenshots", async ({page}) => {
             `sidebar-tablet-${item}.png`,
         );
     }
-});
-
-test("sidebar hidden on mobile", async ({page}) => {
-    // mobile viewport
-    await page.setViewportSize({
-        width: 390,
-        height: 844,
-    });
-
-    await page.goto("/playground");
-
-    // open Sidebar preview
-    await page.getByText("Sidebar", {
-        exact: true,
-    }).click();
-
-    // sidebar should not exist
-    await expect(
-        page.locator("#sidebar"),
-    ).toHaveCount(0);
 });

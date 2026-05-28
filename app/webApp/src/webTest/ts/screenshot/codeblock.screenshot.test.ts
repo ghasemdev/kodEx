@@ -6,7 +6,7 @@ test("codeblock screenshots", async ({page, context}) => {
         "clipboard-write",
     ]);
 
-    await page.goto("/playground");
+    await page.goto("http://localhost:3000/playground");
 
     // disable animations
     await page.addStyleTag({

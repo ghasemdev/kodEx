@@ -10,6 +10,7 @@ plugins {
     id("kover-report-convention")
     id("dependency-check-convention")
     id("benchmark-aggregation-convention")
+    id("screenshot-task-convention")
 }
 
 dependencies {

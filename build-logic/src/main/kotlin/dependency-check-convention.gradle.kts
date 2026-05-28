@@ -26,7 +26,7 @@ dependencyCheck {
 
     outputDirectory.set(
         rootProject.layout.projectDirectory
-            .dir("build/reports/dependency-check")
+            .dir("build/reports/dependency-check"),
     )
 
     suppressionFile = rootProject.layout.projectDirectory

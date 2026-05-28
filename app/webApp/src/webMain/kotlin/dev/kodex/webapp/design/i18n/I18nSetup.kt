@@ -13,6 +13,8 @@ import kotlinx.browser.localStorage
 var i18n: I18n = I18n()
     private set
 
+private val ALLOWED_LOCALES = setOf("en", "fa")
+
 /** Convert a Kotlin String to JsAny for passing into I18n constructor. */
 expect fun String.asLocaleData(): JsAny
 
@@ -26,11 +28,14 @@ suspend fun initI18n() {
         "en" to enContent.asLocaleData(),
         "fa" to faContent.asLocaleData(),
     )
-    val savedLocale = localStorage.getItem("kodex-locale") ?: "en"
+    val savedLocale = localStorage.getItem("kodex-locale")
+        ?.takeIf { it in ALLOWED_LOCALES }
+        ?: "en"
     LocaleManager.setCurrentLocale(SimpleLocale(language = savedLocale))
 }
 
 fun setLocale(code: String) {
+    require(code in ALLOWED_LOCALES) { "Unsupported locale: $code" }
     localStorage.setItem("kodex-locale", code)
     LocaleManager.setCurrentLocale(SimpleLocale(language = code))
 }

@@ -7,7 +7,7 @@ test("navbar desktop screenshots", async ({page}) => {
         height: 900,
     });
 
-    await page.goto("/playground");
+    await page.goto("http://localhost:3000/playground");
 
     // disable animations
     await page.addStyleTag({

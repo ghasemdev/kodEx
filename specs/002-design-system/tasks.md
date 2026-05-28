@@ -145,6 +145,19 @@
 
 ---
 
+## Phase 8-SEC: Security Remediation (Pre-Merge)
+
+**Purpose**: Fix the 3 actionable findings from the branch security review before merging into `develop`.
+**Source**: `docs/security-reviews/2026-05-28-feature-002-design-system-followup.md`
+
+- [x] TASK-SEC-001 Add CSP + security headers: add `<meta http-equiv="Content-Security-Policy">` and `<meta name="referrer">` to both `webMain` and `wasmJsMain` `index.html`; add `X-Content-Type-Options`, `X-Frame-Options`, `Permissions-Policy`, and `Content-Security-Policy` to Ktor `Headers` plugin in `server/app/src/main/kotlin/dev/kodex/server/Application.kt`
+- [x] TASK-SEC-002 Validate locale code: add `private val ALLOWED_LOCALES = setOf("en", "fa")` in `I18nSetup.kt`; use `.takeIf { it in ALLOWED_LOCALES }` in `initI18n()`; add `require(code in ALLOWED_LOCALES)` in `setLocale()`
+- [x] TASK-SEC-003 [P] Validate `NavItem` fields: add `init` block to `NavItem` data class in `NavBar.kt` enforcing alphanumeric/dash/underscore for `key` and valid CSS-class chars for `icon`
+
+**Checkpoint**: No CSP violations in browser console; `setLocale("xx")` throws `IllegalArgumentException`; `NavItem(..., icon="<script>")` throws at construction.
+
+---
+
 ## Phase 8: Polish & Cross-Cutting
 
 **Purpose**: Bundle validation, accessibility, and final integration check.
