@@ -13,6 +13,7 @@ Compact routing map for durable project memory (`docs/memory/`). Keep it short.
 | A1 | Type-safe project accessors mandatory — `project(":x")` string literals prohibited | [ARCHITECTURE.md](ARCHITECTURE.md) | Active |
 | A2 | `devMain` source set — dev-only code excluded from production `installDist` | [ARCHITECTURE.md](ARCHITECTURE.md) | Active |
 | A3 | Convention plugin composition — never add build config directly to module files | [ARCHITECTURE.md](ARCHITECTURE.md) | Active |
+| A4 | Frontend XSS boundary — text-node-only rendering; `innerHTML` banned in design system components | [ARCHITECTURE.md](ARCHITECTURE.md) | Active |
 
 ## Bugs
 
@@ -28,6 +29,7 @@ Compact routing map for durable project memory (`docs/memory/`). Keep it short.
 | D2 | kotlin-logging version must be `8.0.03`, not `8.0.0` (unpublished) | [DECISIONS.md](DECISIONS.md) | Active |
 | D3 | CI benchmarks use `benchmarkFast` + `-PbenchmarkConfig=fast` — never `benchmark` in CI | [DECISIONS.md](DECISIONS.md) | Active |
 | D4 | `detekt-convention` is the only correct way to wire Detekt — direct plugin application prohibited | [DECISIONS.md](DECISIONS.md) | Active |
+| D7 | CSP must live in both `index.html` meta tag AND Ktor `DefaultHeaders` — Vite bypasses Ktor | [DECISIONS.md](DECISIONS.md) | Active |
 
 ## Security Reviews
 
@@ -35,10 +37,12 @@ Compact routing map for durable project memory (`docs/memory/`). Keep it short.
 |------|------|------|------|--------|-------|
 | [docs/security-reviews/2026-05-28-feature-002-design-system-branch.md](../security-reviews/2026-05-28-feature-002-design-system-branch.md) | branch | 2026-05-28 | MODERATE | C:0 H:0 M:1 L:2 | A03,A05,A06 |
 | [docs/security-reviews/2026-05-28-feature-002-design-system-followup.md](../security-reviews/2026-05-28-feature-002-design-system-followup.md) | followup | 2026-05-28 | MODERATE | C:0 H:0 M:1 L:2 | A03,A05,A06 |
+| [docs/security-reviews/2026-05-29-feature-002-design-system-whitebox.md](../security-reviews/2026-05-29-feature-002-design-system-whitebox.md) | whitebox | 2026-05-29 | LOW | C:0 H:0 M:1 L:2 I:2 resolved:3 deferred:2 | A03,A05,A06 |
 
 ## Workflow
 
 | ID | Title | File | Status |
 |----|-------|------|--------|
+| W3 | Feature 002 complete — design system, i18n, screenshot tests, security hardening | [WORKLOG.md](WORKLOG.md) | Active |
 | W1 | Feature 001 complete — KodEx project foundation | [WORKLOG.md](WORKLOG.md) | Active |
 | W2 | Build system & CI/CD refactor — convention composition + benchmark fast mode | [WORKLOG.md](WORKLOG.md) | Active |

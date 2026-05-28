@@ -41,8 +41,13 @@ fun main() {
             header("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
             header(
                 "Content-Security-Policy",
-                "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; " +
-                    "font-src 'self' data:; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none';",
+                "default-src 'self'; " +
+                    "script-src 'self' 'wasm-unsafe-eval'; " +
+                    "style-src 'self' 'unsafe-inline'; " +
+                    "font-src 'self' data:; " +
+                    "img-src 'self' data:; " +
+                    "connect-src 'self'; " +
+                    "frame-ancestors 'none';",
             )
         }
 

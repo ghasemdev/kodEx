@@ -5,6 +5,35 @@ Only record durable lessons — what future work should know, not what was done.
 
 ---
 
+### 2026-05-29 - W3: Feature 002 complete — Client-side design system
+
+**Branch**: `feature/002-design-system` (security commit `a7e4a9c2`)
+
+**What future work needs to know**:
+
+**Text-node rendering is the XSS boundary** — All design system components use Kilua's `+`
+operator exclusively (text nodes, not innerHTML). This is the primary XSS control for the
+frontend. Any new component or plugin that uses `innerHTML`, `outerHTML`, or `js("…innerHTML")`
+must trigger a security review.
+
+**CSP lives in two places** — `index.html` meta tag (Vite dev path) AND Ktor `DefaultHeaders`
+plugin (production API path). They must stay in sync. See D7.
+
+**Screenshot tests run on macos-latest via Playwright** — CI job is `screenshot-test`, scoped
+to `app/webApp/**` changes via `dorny/paths-filter`. Browser binary: Playwright auto-installs.
+Local run requires `CHROME_BIN` set in `local.properties`.
+
+**`import.meta.env.DEV` guards the playground** — Vite tree-shakes playground code from
+the production bundle. Verified: `grep PlaygroundApp build/dist/js/productionExecutable/`
+returns nothing after `jsBrowserProductionWebpack`. (See D6.)
+
+**API-bound component fields need `init` block validation** — Any component field that will
+be populated from API responses must be validated in the data class `init` block using
+`require()` before it touches any DOM attribute. `NavItem.key` and `NavItem.icon` set the
+pattern (see A4).
+
+---
+
 ### 2026-05-23 - W2: Build system & CI/CD refactor — convention composition + benchmark fast mode
 
 **Branch**: `feature/001-project-base-setup` (commit `9b9c9968`)

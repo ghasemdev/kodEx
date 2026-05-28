@@ -102,6 +102,37 @@ Guard all playground entry points with `if (js("import.meta.env.DEV"))` in Kotli
 
 ---
 
+### 2026-05-29 - D7: CSP must be in both `index.html` meta tag AND Ktor response headers
+
+**Status**: Active
+
+**Why this is durable**
+In the KodEx architecture `index.html` is served by Vite (dev) and the webapp Docker service
+(prod) — neither path goes through the Ktor API server. Ktor's `DefaultHeaders` plugin applies
+only to JSON API responses, not to the HTML shell that boots the Kilua/JS app. A CSP set only
+in Ktor is invisible to the browser when it loads `index.html`; a CSP set only in `index.html`
+leaves API responses unprotected. Both layers are required and must be kept in sync.
+
+**Decision**
+Maintain CSP in two places simultaneously:
+1. `app/webApp/src/webMain/resources/index.html` (both jsMain and wasmJsMain) —
+   `<meta http-equiv="Content-Security-Policy" content="…">` and `<meta name="referrer" …>`
+2. `server/app/src/main/kotlin/dev/kodex/server/Application.kt` — `install(DefaultHeaders)`
+   block with `Content-Security-Policy`, `X-Content-Type-Options`, `X-Frame-Options`,
+   `Referrer-Policy`, `Permissions-Policy`
+
+Current policy: `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';
+font-src 'self' data:; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none';`
+
+`'unsafe-inline'` for `style-src` is required by Tailwind v4's utility-class runtime.
+
+**Tradeoffs**
+- Gained: defence-in-depth across both HTML document and API layer; correct in all environments
+- Made harder: two declarations must stay manually in sync — if policy changes, both files update
+- Reconsider when: a reverse proxy (nginx, Caddy) serves both HTML and API responses, allowing a single header location
+
+---
+
 ### 2026-05-20 - D2: kotlin-logging version must be `8.0.03`, not `8.0.0`
 
 **Status**: Active

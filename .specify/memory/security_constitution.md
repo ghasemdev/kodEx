@@ -1,6 +1,6 @@
 # KodEx Security Constitution
 
-**Version**: 1.0.0 | **Ratified**: 2026-05-19 | **Source**: Compiled from §III, §V, §VI, §VIII, §IX
+**Version**: 1.1.0 | **Ratified**: 2026-05-19 | **Last Amended**: 2026-05-29 | **Source**: Compiled from §III, §V, §VI, §VII, §VIII, §IX
 
 > This file is the single source of truth for all security audits.
 > All rules are actionable: specific enough for an AI auditor to verify against code.
@@ -113,6 +113,20 @@ Refresh token:  7 days     | stored server-side in Redis (revocable)
   - Be **destroyed immediately** after execution (no container reuse)
 - Sandbox image MUST be rebuilt and re-audited whenever the base JDK or Android build tools version changes.
 
+### Frontend XSS Controls
+
+- All design system components in `app/webApp/` MUST render user-controlled content via Kilua's
+  `+` operator (text nodes — equivalent to `textContent`). Using `innerHTML`, `outerHTML`, or
+  `js("…innerHTML…")` in any component is **prohibited** without an explicit security review and
+  CSP hash update.
+- Data class fields used in DOM attributes (`className`, `id`, `href`, `src`) MUST be validated
+  in the class `init` block via `require()` against an allowlist or regex before any instance is
+  constructed. **Pattern**: `NavItem.key` (alphanumeric/dash/underscore) and `NavItem.icon`
+  (valid CSS class chars) in `NavBar.kt`.
+- `localStorage` values used as locale codes or other control inputs MUST be filtered through a
+  hardcoded `ALLOWED_*` set before being passed to any API or library. **Pattern**: `ALLOWED_LOCALES`
+  in `I18nSetup.kt`.
+
 ### Database Security
 - All database queries MUST use **Exposed ORM's type-safe DSL** or parameterized queries. Raw string interpolation in SQL is forbidden.
 - Database migrations are managed exclusively via Flyway (`server/data/src/resources/db/migration/`). No ad-hoc schema changes.
@@ -141,6 +155,16 @@ Refresh token:  7 days     | stored server-side in Redis (revocable)
 
 ### Response Security Headers
 - `Cache-Control: no-store` MUST be set on all auth and sensitive endpoints (e.g., `/api/v1/health`, all auth routes).
+- The following headers MUST be set globally via Ktor `DefaultHeaders` in `server/app/Application.kt`:
+  `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`,
+  `Permissions-Policy: camera=(), microphone=(), geolocation=()`, and `Content-Security-Policy`.
+- CSP MUST be declared in **two places** (see §5 Frontend XSS Controls):
+  1. `<meta http-equiv="Content-Security-Policy">` in every `index.html` (jsMain + wasmJsMain)
+  2. `Content-Security-Policy` header in Ktor `DefaultHeaders` for all API responses
+  Both declarations MUST stay in sync. Rationale: `index.html` is served by Vite/webapp container,
+  not by the Ktor API — Ktor headers do not protect the HTML shell.
+- `X-Request-Id` header values supplied by clients MUST be validated as UUID format before being
+  reflected into response bodies or logs. Non-UUID values MUST be replaced with a fresh `Uuid.random()`.
 
 ### Internal Service Authentication
 - All requests from `server/app` to `sandbox-runner` MUST include the `SANDBOX_SHARED_SECRET` in a dedicated header.
@@ -192,3 +216,7 @@ Refresh token:  7 days     | stored server-side in Redis (revocable)
 | CORS restricted to known origin | A05 — Security Misconfiguration |
 | Sandbox network isolation | A10 — Server-Side Request Forgery (SSRF) |
 | Sandbox destroyed after execution | A05 — Security Misconfiguration |
+| Kilua `+` text-node rendering (no innerHTML) | A03 — Injection (XSS) |
+| CSP meta tag in index.html + Ktor response headers | A05 — Security Misconfiguration |
+| Component field allowlist validation in `init` block | A03 — Injection |
+| localStorage values filtered through ALLOWED_* set | A03 — Injection |
