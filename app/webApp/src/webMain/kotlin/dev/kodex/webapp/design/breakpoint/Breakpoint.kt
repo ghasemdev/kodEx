@@ -9,11 +9,15 @@ import dev.kilua.utils.isDom
 import kotlinx.browser.window
 import org.w3c.dom.events.Event
 
+private const val TV_WIDTH = 1920
+private const val DESKTOP_WIDTH = 1024
+private const val MOBILE_WIDTH = 640
+
 private fun currentBreakpoint(): BreakpointTier = when {
     !isDom -> BreakpointTier.Desktop
-    window.innerWidth >= 1920 -> BreakpointTier.Tv
-    window.innerWidth >= 1024 -> BreakpointTier.Desktop
-    window.innerWidth >= 640 -> BreakpointTier.Tablet
+    window.innerWidth >= TV_WIDTH -> BreakpointTier.Tv
+    window.innerWidth >= DESKTOP_WIDTH -> BreakpointTier.Desktop
+    window.innerWidth >= MOBILE_WIDTH -> BreakpointTier.Tablet
     else -> BreakpointTier.Mobile
 }
 
