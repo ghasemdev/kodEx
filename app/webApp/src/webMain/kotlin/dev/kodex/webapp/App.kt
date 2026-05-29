@@ -1,33 +1,42 @@
 package dev.kodex.webapp
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import dev.kilua.Application
 import dev.kilua.CoreModule
 import dev.kilua.Hot
 import dev.kilua.TailwindcssModule
 import dev.kilua.compose.root
-import dev.kilua.html.div
 import dev.kilua.i18n.LocaleManager
 import dev.kilua.startApplication
 import dev.kilua.theme.Theme
 import dev.kilua.theme.ThemeManager
 import dev.kilua.utils.isDom
 import dev.kodex.webapp.design.i18n.initI18n
+import dev.kodex.webapp.di.appModule
+import dev.kodex.webapp.gsap.Gsap
+import dev.kodex.webapp.gsap.ScrollTrigger
+//import dev.kodex.webapp.pages.NotFoundPage
+//import dev.kodex.webapp.pages.landing.LandingPage
 import dev.kodex.webapp.playground.PlaygroundApp
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import org.koin.core.context.startKoin
 
 class App : Application() {
     override fun start() {
+        startKoin { modules(appModule) }
+
+        Gsap.registerPlugin(ScrollTrigger)
+
         ThemeManager.init(initialTheme = Theme.Auto, remember = true)
 
-        // Initialize i18n async — RTL dir applied when locale loads
-        MainScope().launch {
-            initI18n()
-        }
+        MainScope().launch { initI18n() }
 
-        // RTL side effect: update document dir on locale change
         if (isDom) {
             LocaleManager.setCurrentLocale(LocaleManager.currentLocale)
             LocaleManager.registerLocaleListener { locale ->
@@ -38,12 +47,23 @@ class App : Application() {
 
         root("root") {
             val isDev = isDev()
+
             if (isDev && window.location.pathname.startsWith("/playground")) {
                 PlaygroundApp()
-            } else {
-                div {
-                    +"Hello KodEx"
+                return@root
+            }
+
+            var currentPath by remember { mutableStateOf(window.location.pathname) }
+
+            if (isDom) {
+                window.addEventListener("popstate") {
+                    currentPath = window.location.pathname
                 }
+            }
+
+            when {
+//                currentPath == "/" || currentPath.isEmpty() -> LandingPage()
+//                else -> NotFoundPage()
             }
         }
     }

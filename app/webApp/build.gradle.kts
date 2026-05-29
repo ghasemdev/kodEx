@@ -89,6 +89,7 @@ kotlin {
             implementation(npm("@fontsource-variable/vazirmatn", libs.versions.fontsource.get()))
             implementation(npm("@fontsource-variable/jetbrains-mono", libs.versions.fontsource.get()))
             implementation(npm("highlight.js", libs.versions.highlightjs.get()))
+            implementation(npm("gsap", libs.versions.gsap.get()))
         }
         webTest.dependencies {
             implementation(npm("html2canvas", libs.versions.html2canvas.get()))
