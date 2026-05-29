@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.kilua) apply false
     alias(libs.plugins.vite) apply false
+    alias(libs.plugins.koin.compiler) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.kotest) apply false
 

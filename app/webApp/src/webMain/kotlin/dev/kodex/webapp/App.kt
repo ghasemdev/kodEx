@@ -16,10 +16,8 @@ import dev.kilua.theme.ThemeManager
 import dev.kilua.utils.isDom
 import dev.kodex.webapp.design.i18n.initI18n
 import dev.kodex.webapp.di.appModule
-import dev.kodex.webapp.gsap.Gsap
 import dev.kodex.webapp.gsap.ScrollTrigger
-//import dev.kodex.webapp.pages.NotFoundPage
-//import dev.kodex.webapp.pages.landing.LandingPage
+import dev.kodex.webapp.gsap.gsap
 import dev.kodex.webapp.playground.PlaygroundApp
 import kotlinx.browser.document
 import kotlinx.browser.window
@@ -27,11 +25,15 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.koin.core.context.startKoin
 
+// import dev.kodex.webapp.pages.NotFoundPage
+// import dev.kodex.webapp.pages.landing.LandingPage
+
+@Suppress("LabeledExpression")
 class App : Application() {
     override fun start() {
         startKoin { modules(appModule) }
 
-        Gsap.registerPlugin(ScrollTrigger)
+        gsap.registerPlugin(ScrollTrigger)
 
         ThemeManager.init(initialTheme = Theme.Auto, remember = true)
 
@@ -61,10 +63,10 @@ class App : Application() {
                 }
             }
 
-            when {
-//                currentPath == "/" || currentPath.isEmpty() -> LandingPage()
-//                else -> NotFoundPage()
-            }
+            /*when {
+                currentPath == "/" || currentPath.isEmpty() -> LandingPage()
+                else -> NotFoundPage()
+            }*/
         }
     }
 }

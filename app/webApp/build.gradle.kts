@@ -22,6 +22,7 @@ plugins {
     alias(libs.plugins.kilua)
     alias(libs.plugins.gettext)
     alias(libs.plugins.vite)
+    alias(libs.plugins.koin.compiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotest)
 }
@@ -76,6 +77,9 @@ kotlin {
             implementation(projects.app.shared)
             implementation(libs.napier)
             implementation(libs.ktor.client.core)
+            implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.koin.core)
         }
         webMain.dependencies {
             implementation(libs.kilua)

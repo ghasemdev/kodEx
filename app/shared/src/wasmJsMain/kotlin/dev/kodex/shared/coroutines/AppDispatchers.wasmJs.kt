@@ -1,6 +1,7 @@
 package dev.kodex.shared.coroutines
 
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 
 @Suppress("PropertyName", "RedundantSuppression")
-expect val ioDispatcher: CoroutineDispatcher
+actual val ioDispatcher: CoroutineDispatcher = Dispatchers.Default

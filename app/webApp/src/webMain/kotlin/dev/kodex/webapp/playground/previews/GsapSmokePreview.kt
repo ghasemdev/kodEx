@@ -1,3 +1,5 @@
+@file:Suppress("KotlinUnreachableCode", "LabeledExpression")
+
 package dev.kodex.webapp.playground.previews
 
 import androidx.compose.runtime.Composable
@@ -7,9 +9,9 @@ import androidx.compose.runtime.remember
 import dev.kilua.core.IComponent
 import dev.kilua.html.div
 import dev.kilua.html.span
-import dev.kodex.webapp.gsap.Gsap
+import dev.kodex.webapp.gsap.gsap
+import js.objects.unsafeJso
 import kotlinx.browser.document
-import kotlin.js.js
 
 @Composable
 fun IComponent.GsapSmokePreview() {
@@ -36,10 +38,23 @@ fun IComponent.GsapSmokePreview() {
 
     LaunchedEffect(Unit) {
         val el = document.getElementById(boxId) ?: return@LaunchedEffect
-        Gsap.from(
-            el.asDynamic().unsafeCast<kotlin.js.JsAny>(),
-            js("""{ x: -100, opacity: 0, duration: 1, ease: "power2.out" }"""),
+
+        gsap.fromTo(
+            el,
+            unsafeJso {
+                x = -100
+                opacity = 0
+                ease = "power2.out"
+            },
+            unsafeJso {
+                x = 0
+                opacity = 1
+                duration = 1
+                ease = "power2.out"
+                onComplete = {
+                    ready.value = true
+                }
+            },
         )
-        ready.value = true
     }
 }

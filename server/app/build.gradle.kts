@@ -1,6 +1,8 @@
 plugins {
     id("ktor-service-convention")
     application
+
+    alias(libs.plugins.koin.compiler)
 }
 
 application {
