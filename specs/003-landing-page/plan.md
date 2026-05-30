@@ -124,26 +124,46 @@ same structure — this is the reference implementation.
 ┌──────────────────────────────────────────────────────────────────┐
 │  Repository  (data layer — Dependency Inversion)                  │
 │                                                                   │
+│  // dev.kodex.shared.landing                                      │
 │  interface LandingStatsRepository {          // app:shared        │
 │    suspend fun fetchStats(): LandingStats    // domain model      │
 │  }                                                                │
 │                                                                   │
-│  class LandingStatsRepositoryImpl(           // webApp            │
-│    private val client: HttpClient                                 │
-│  ) : LandingStatsRepository {                                     │
-│    override suspend fun fetchStats(): LandingStats =              │
-│      client                                                       │
-│        .get("/api/v1/stats/landing")                              │
-│        .body<ApiEnvelope<LandingStatsResponse>>()                 │
-│        .data                                                      │
-│        .toDomainModel()    // ← API response → domain model       │
+│  // Three-layer data stack (D12):                                 │
+│  //                                                               │
+│  // LandingStatsRemoteDataSource (interface, webApp)              │
+│  //   ↑ implemented by                                           │
+│  // LandingStatsRemoteDataSourceImpl — Ktor transport only,       │
+│  //   uses ApiRoutes.LANDING_STATS (D14), returns raw response   │
+│  //   ↑ used by                                                  │
+│  // LandingStatsRepositoryImpl — selects source, maps domain     │
+│                                                                   │
+│  // dev.kodex.webapp.pages.landing.data                          │
+│  interface LandingStatsRemoteDataSource {                         │
+│    suspend fun fetchStats(): LandingStatsResponse                 │
 │  }                                                                │
 │                                                                   │
-│  // Extension in core:models (or app:shared):                    │
-│  fun LandingStatsResponse.toDomainModel() = LandingStats(         │
-│    totalProblems = totalProblems,                                 │
-│    totalUsers    = totalUsers,                                    │
-│    totalContests = totalContests,                                 │
+│  @Single(binds=[LandingStatsRemoteDataSource::class])            │
+│  class LandingStatsRemoteDataSourceImpl(client: HttpClient) {    │
+│    override suspend fun fetchStats(): LandingStatsResponse =      │
+│      withContext(ioDispatcher) {                                  │
+│        client.get(ApiRoutes.LANDING_STATS)                        │
+│          .body<ApiEnvelope<LandingStatsResponse>>().data          │
+│      }                                                            │
+│  }                                                                │
+│                                                                   │
+│  @Single(binds=[LandingStatsRepository::class])                  │
+│  class LandingStatsRepositoryImpl(                                │
+│    private val remoteDataSource: LandingStatsRemoteDataSource     │
+│  ) : LandingStatsRepository {                                     │
+│    override suspend fun fetchStats(): LandingStats =              │
+│      remoteDataSource.fetchStats().toDomainModel()                │
+│    // Future: inject LocalDataSource; cache-or-remote logic here  │
+│  }                                                                │
+│                                                                   │
+│  // private extension inside LandingStatsRepositoryImpl.kt:      │
+│  private fun LandingStatsResponse.toDomainModel() = LandingStats(│
+│    totalProblems = totalProblems, totalUsers = totalUsers, …      │
 │  )                                                                │
 └──────────────┬───────────────────────────────────────────────────┘
                │ injected by Koin
@@ -321,29 +341,31 @@ class LandingViewModel(
 ## Koin Module
 
 ```kotlin
-// app/webApp/src/webMain/kotlin/dev/kodex/webapp/di/AppModule.kt
-val appModule = module {
+// DI uses Koin Annotations (D11) — no manual DSL wiring. The compiler plugin
+// (`io.insert-koin.compiler.plugin:1.0.0`) processes annotations at compile time.
 
-    // Ktor Client — one shared instance for the whole app
-    single<HttpClient> {
-        HttpClient(Js) {
-            install(ContentNegotiation) { json() }
-            defaultRequest {
-                // In dev: Vite proxies /api/* → http://localhost:8080
-                // In prod: same-origin — no base URL override needed
-                contentType(ContentType.Application.Json)
-            }
-        }
+// NetworkKoinModule.kt — provides HttpClient (third-party, needs a @Module provider fn)
+@Module
+class NetworkKoinModule {
+    @Single
+    fun httpClient(): HttpClient = HttpClient(Js) {
+        install(ContentNegotiation) { json(Json { ignoreUnknownKeys = true }) }
+        expectSuccess = false
     }
-
-    // Repository — single: one instance, reused across page navigations
-    single<LandingStatsRepository> {
-        LandingStatsRepositoryImpl(client = get())
-    }
-
-    // ViewModel — factory: fresh instance every time a page mounts
-    factory { LandingViewModel(repository = get()) }
 }
+
+// AppModule.kt — root module; @ComponentScan discovers all @Single/@Factory in the package tree
+@Module(includes = [NetworkKoinModule::class])
+@ComponentScan("dev.kodex.webapp")
+class AppKoinModule
+
+// Annotated classes (auto-discovered by ComponentScan):
+// @Single(binds=[LandingStatsRemoteDataSource::class]) LandingStatsRemoteDataSourceImpl
+// @Single(binds=[LandingStatsRepository::class])       LandingStatsRepositoryImpl
+// @Factory                                              LandingViewModel
+
+// App.kt entry point:
+// startKoin { modules(AppKoinModule().module) }  // .module generated by compiler plugin
 ```
 
 ```kotlin
@@ -392,13 +414,16 @@ specs/003-landing-page/
 
 ```text
 app/webApp/src/webMain/kotlin/dev/kodex/webapp/
-├── App.kt                                    ← UPDATE: startKoin + routing DSL
+├── App.kt                                    ← UPDATE: startKoin { AppKoinModule().module }
+├── network/
+│   └── ApiRoutes.kt                          ← NEW: object ApiRoutes { const val LANDING_STATS }
 ├── core/
 │   └── ViewModel.kt                      ← NEW: abstract class, SupervisorJob + Main.immediate
 ├── gsap/
 │   └── GsapInterop.kt                        ← NEW: @JsModule Gsap + ScrollTrigger wrappers
 ├── di/
-│   └── AppModule.kt                          ← NEW: Koin module (HttpClient, repositories, VMs)
+│   ├── AppModule.kt       ← NEW: @Module(includes=[NetworkKoinModule]) @ComponentScan root
+│   └── NetworkKoinModule.kt ← NEW: @Module @Single fun httpClient(): HttpClient
 ├── layout/
 │   ├── GlobalNavBar.kt                       ← NEW: logo, nav links, theme/lang toggles,
 │   │                                                 guest buttons OR avatar+dropdown+plan badge
@@ -416,24 +441,33 @@ app/webApp/src/webMain/kotlin/dev/kodex/webapp/
 │   │   │   ├── LeaderboardSection.kt         ← NEW: top-3 rows + score roll-up
 │   │   │   └── CreateExamSection.kt          ← NEW: checklist CTA
 │   │   └── model/
-│   │       ├── LandingStats.kt               ← NEW: domain model (≠ API response)
-│   │       ├── LandingUiState.kt             ← NEW: data class + StatsState sealed class
+│   │       ├── LandingUiState.kt             ← NEW: data class wrapping UiState<LandingStats>
 │   │       ├── BadgeDefinition.kt            ← NEW: static catalogue, init-block validation
 │   │       └── PlaceholderData.kt            ← NEW: PlaceholderProblems + PlaceholderLeaderboard
+│   │   └── data/
+│   │       ├── LandingStatsRemoteDataSource.kt     ← NEW: interface (returns API response type)
+│   │       ├── LandingStatsRemoteDataSourceImpl.kt ← NEW: Ktor transport; ApiRoutes constant
+│   │       └── LandingStatsRepositoryImpl.kt       ← NEW: source selector + toDomainModel()
 │   └── NotFoundPage.kt                       ← NEW: 404 fallback route
-└── session/
-    └── SessionState.kt                       ← NEW: sealed class (Guest / Authenticated)
 
-app/shared/src/commonMain/kotlin/dev/kodex/app/shared/
+app/shared/src/commonMain/kotlin/dev/kodex/shared/
 └── landing/
+    ├── LandingStats.kt                       ← NEW: domain model (lives in app:shared, not webApp)
     └── LandingStatsRepository.kt             ← NEW: interface (domain model return type)
+└── session/
+    └── SessionState.kt                       ← NEW: sealed class + Plan + UserRole enums
 
 app/webApp/src/webMain/resources/modules/i18n/
 └── messages.pot                              ← UPDATE: add landing page string keys
 
 core/models/src/commonMain/kotlin/dev/kodex/core/models/
-└── landing/
-    └── LandingStatsResponse.kt               ← NEW: @Serializable API response
+├── api/
+│   └── ApiEnvelope.kt                        ← NEW: @Serializable{data:T} — frontend deserializer
+├── landing/
+│   └── LandingStatsResponse.kt               ← NEW: @Serializable API response
+├── DifficultyTier.kt                         ← NEW: enum + computeDifficulty()
+├── ExamType.kt                               ← NEW: enum (QUIZ / IO / INJECTION)
+└── Tier.kt                                   ← NEW: enum (JUNIOR / SENIOR / MASTER / GRANDMASTER)
 
 server/api/src/main/kotlin/dev/kodex/server/api/routes/
 └── LandingRoutes.kt                          ← NEW: GET /api/v1/stats/landing + rate limit
@@ -469,9 +503,13 @@ All findings documented in [research.md](research.md).
 
 ### R-001 — GSAP 3.15.0 Kotlin/JS Interop
 
-**Decision**: Use `@JsModule("gsap")` and `@JsModule("gsap/ScrollTrigger")` external object
-declarations. All GSAP calls go through typed Kotlin wrapper functions — no raw `js("gsap…")`
-in component code.
+**Decision**: `@JsModule("gsap") external val gsap: Gsap` (named val) + `external interface Gsap`
++ `external interface GsapVars : JsAny`. Callsites use `unsafeJso<GsapVars> { ... }` from
+`js.objects.unsafeJso` — no raw `js("gsap…")` strings anywhere in component code.
+
+> **Note**: The Kotlin/JS IR compiler requires `@JsModule` on a `val` declaration, not on an
+> `external object`. The `@JsNonModule` annotation is NOT used with the IR compiler. The legacy
+> `external object Gsap` pattern worked only with the old JS backend and does not compile with IR.
 
 **GSAP 3.15.0 key facts**:
 - npm package: `gsap` (same for all 3.x versions)
@@ -480,15 +518,53 @@ in component code.
 - `gsap.matchMedia()` → used for `prefers-reduced-motion` handling
 - Timeline sequencing: `.to()`, `.from()`, `.fromTo()`, `.call()`, `.add()`, `"-=0.5"` position
 
+**`GsapInterop.kt` canonical shape** (implemented in Phase 1):
+```kotlin
+@JsModule("gsap")
+external val gsap: Gsap
+
+external interface Gsap {
+    fun to(targets: Element, vars: GsapVars): JsAny
+    fun from(targets: Element, vars: GsapVars): JsAny
+    fun fromTo(targets: Element, fromVars: GsapVars, toVars: GsapVars): JsAny
+    fun timeline(vars: GsapVars = definedExternally): JsAny
+    fun set(targets: Element, vars: GsapVars)
+    fun registerPlugin(vararg plugins: JsAny)
+    fun matchMedia(): JsAny
+}
+
+// All numeric vars use Double; only repeat uses Int (-1 = infinite loop)
+external interface GsapVars : JsAny {
+    var x: Double; var y: Double; var opacity: Double
+    var scale: Double; var scaleX: Double; var scaleY: Double
+    var duration: Double; var stagger: Double
+    var repeat: Int; var yoyo: Boolean
+    var ease: String; var transformOrigin: String; var width: String
+    var onComplete: () -> Unit; var onUpdate: () -> Unit
+}
+
+@JsModule("gsap/ScrollTrigger")
+external val ScrollTrigger: JsAny
+```
+
+**Callsite pattern**:
+```kotlin
+gsap.fromTo(
+    el,
+    unsafeJso { x = -100.0; opacity = 0.0 },
+    unsafeJso { x = 0.0; opacity = 1.0; duration = 1.0; ease = "power2.out" },
+)
+```
+
 **Reduced motion pattern** (GSAP 3.15.0 native):
 ```kotlin
-// GsapInterop.kt
-val mm = Gsap.matchMedia()
+val mm = gsap.matchMedia().asDynamic()
 mm.add("(prefers-reduced-motion: reduce)") {
-    // skip all animations — sections appear instantly
+    // no-op context: sections are pre-shown via CSS
 }
 mm.add("(prefers-reduced-motion: no-preference)") {
-    // set up all timelines and ScrollTriggers
+    setupScrollTriggers()
+    setupHeroTimeline()
 }
 ```
 

@@ -1,5 +1,6 @@
 package dev.kodex.server.api.response
 
+import dev.kodex.core.models.api.ApiErrorEnvelope
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldNotBeEmpty
@@ -47,15 +48,15 @@ class EnvelopeTest : FunSpec({
         envelope.meta.timestamp.shouldNotBeEmpty()
     }
 
-    test("ErrorEnvelope serialization roundtrip") {
+    test("ApiErrorEnvelope serialization roundtrip") {
         val original = buildErrorEnvelope(
             message = "An unexpected error occurred.",
             requestId = "req-roundtrip",
             service = "kodex-api",
             version = "0.1.0",
         )
-        val json = Json.encodeToString(ErrorEnvelope.serializer(), original)
-        val decoded = Json.decodeFromString<ErrorEnvelope>(json)
+        val json = Json.encodeToString(ApiErrorEnvelope.serializer(), original)
+        val decoded = Json.decodeFromString<ApiErrorEnvelope>(json)
         decoded.error shouldBe original.error
         decoded.meta.requestId shouldBe original.meta.requestId
         decoded.meta.service shouldBe original.meta.service

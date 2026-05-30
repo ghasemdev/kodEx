@@ -133,6 +133,111 @@ font-src 'self' data:; img-src 'self' data:; connect-src 'self'; frame-ancestors
 
 ---
 
+### 2026-05-31 - D10: Unified `ApiEnvelope` in `core:models` — single source of truth for server+client
+
+**Status**: Active
+
+**Why this is durable**
+Two `Envelope<T>` classes existed in parallel: one in `server/api/response/Envelope.kt` (JVM-only),
+one in `core/models/api/ApiEnvelope.kt` (KMP). Any schema change (adding a meta field, renaming)
+would require updating both. The KMP module is the correct single home.
+
+**Decision**
+`core/models` owns `ApiEnvelope<T>`, `ApiMeta`, `ApiErrorEnvelope` — all `@Serializable` KMP types.
+`server/api/response/Envelope.kt` keeps only the two builder functions (`buildEnvelope`, `buildErrorEnvelope`)
+that construct these types from server-side params (service name, version). No data class definitions
+remain in the server module.
+
+**Tradeoffs**
+- Gained: one schema definition, both server and client use the same type; frontend can declare `ApiEnvelope<T>` without duplication
+- Made harder: server now has a runtime dependency on `core:models` (already existed; no new dep added)
+- Note: `ignoreUnknownKeys = true` on the client JSON config is still recommended as a defensive measure
+
+---
+
+### 2026-05-31 - D11: Koin Annotations (`@Single`, `@Factory`) + Compiler Plugin for DI
+
+**Status**: Active
+
+**Why this is durable**
+DSL-based `module { single<X> { X() } }` requires manual wiring and has no compile-time validation.
+The Koin Compiler Plugin (`io.insert-koin.compiler.plugin`) generates verified Koin module code from
+annotations at compile time — missing bindings are caught before runtime.
+
+**Decision**
+- Library: `io.insert-koin:koin-annotations:2.3.1` (`koin-annotations` in catalog)
+- Plugin: `io.insert-koin.compiler.plugin:1.0.0` (already applied to `server/app` and `app/webApp`)
+- Annotate classes with `@Single(binds = [Interface::class])` / `@Factory`
+- Provide third-party types (e.g., `HttpClient`) via `@Module` class with `@Single fun providerFn()` methods
+- Root module uses `@Module(includes = [...]) @ComponentScan("dev.kodex.X")` — compiler auto-discovers all annotated classes
+- App entry-point calls `startKoin { modules(AppKoinModule().module) }` (generated `.module` extension)
+
+**Tradeoffs**
+- Gained: compile-time binding validation, less boilerplate, consistent style across server and client
+- Made harder: `@ComponentScan` scans only the current compilation unit's sources — cross-module classes must be included via `@Module(includes=[OtherModule::class])`
+
+---
+
+### 2026-05-31 - D12: Repository → RemoteDataSource separation for data layer
+
+**Status**: Active
+
+**Why this is durable**
+Putting HTTP calls directly in `LandingStatsRepositoryImpl` conflates two concerns: "where do I get data"
+(data source selection) and "how do I get it from the network" (HTTP transport). When a local cache is
+added the repository would need to grow HTTP-awareness instead of delegating.
+
+**Decision**
+Three-layer data stack per feature:
+1. `LandingStatsRemoteDataSource` (interface, webApp) — raw network contract, returns API response type
+2. `LandingStatsRemoteDataSourceImpl` — Ktor Client impl, returns `LandingStatsResponse`
+3. `LandingStatsRepositoryImpl` — selects source (remote only for v1), maps to domain model via `toDomainModel()`
+
+The repository is the only layer visible to the ViewModel. The `toDomainModel()` mapping is a **private extension** inside `LandingStatsRepositoryImpl.kt` — not in `core:models` or `app:shared`, since mapping is an implementation detail of this specific repository.
+
+**Tradeoffs**
+- Gained: adding a `LandingStatsLocalDataSource` for caching only touches the repository; the remote impl and ViewModel are unaffected
+- Made harder: one extra file per feature; acceptable given the payoff at cache-introduction time
+
+---
+
+### 2026-05-31 - D13: `_field` / `val field` StateFlow pattern is correct in Kotlin 2.3.21
+
+**Status**: Active
+
+**Why this is durable**
+Kotlin 2.2 introduced "Explicit Backing Fields" (KEEP-0068) as an experimental feature. It is NOT stable
+in 2.3.21. More importantly, it does NOT solve the private-mutable / public-immutable StateFlow split
+cleanly, because the backing field is only accessible inside the property's getter/setter scope — not
+from `init` blocks or other class methods where `update {}` calls live.
+
+**Decision**
+Keep the `_uiState` / `uiState` double-property pattern in all ViewModels:
+```kotlin
+private val _uiState = MutableStateFlow(SomeUiState())
+val uiState: StateFlow<SomeUiState> = _uiState.asStateFlow()
+```
+Do NOT use experimental backing field syntax. This is the idiomatic Kotlin approach for 2.3.21 and remains
+so until KEEP-0068 reaches stable status and covers this use case.
+
+---
+
+### 2026-05-31 - D14: API route constants in `ApiRoutes` object
+
+**Status**: Active
+
+**Why this is durable**
+Inline string literals for paths like `"/api/v1/stats/landing"` create a maintenance hazard: renaming
+or versioning a route requires finding all string occurrences. Tests, data sources, and mocks should all
+reference the same constant.
+
+**Decision**
+`app/webApp/src/webMain/kotlin/dev/kodex/webapp/network/ApiRoutes.kt` — a singleton `object ApiRoutes`
+with a `const val` per endpoint. All Ktor Client call sites use `ApiRoutes.LANDING_STATS` etc.
+Naming convention: `SNAKE_CASE` matching the resource name.
+
+---
+
 ### 2026-05-20 - D2: kotlin-logging version must be `8.0.03`, not `8.0.0`
 
 **Status**: Active

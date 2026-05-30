@@ -17,14 +17,27 @@ external interface Gsap {
     fun timeline(vars: GsapVars = definedExternally): JsAny
     fun set(targets: Element, vars: GsapVars)
     fun registerPlugin(vararg plugins: JsAny)
+    fun matchMedia(): JsAny
 }
 
+// Build GSAP vars with unsafeJso<GsapVars> { ... } at callsites.
+// All numeric properties use Double; only repeat uses Int (-1 = infinite).
 external interface GsapVars : JsAny {
-    var x: Int
-    var opacity: Int
-    var duration: Int
+    var x: Double
+    var y: Double
+    var opacity: Double
+    var scale: Double
+    var scaleX: Double
+    var scaleY: Double
+    var duration: Double
+    var stagger: Double
+    var repeat: Int
+    var yoyo: Boolean
     var ease: String
+    var transformOrigin: String
+    var width: String
     var onComplete: () -> Unit
+    var onUpdate: () -> Unit
 }
 
 @JsModule("gsap/ScrollTrigger")

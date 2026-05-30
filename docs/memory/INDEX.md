@@ -30,6 +30,11 @@ Compact routing map for durable project memory (`docs/memory/`). Keep it short.
 | D3 | CI benchmarks use `benchmarkFast` + `-PbenchmarkConfig=fast` — never `benchmark` in CI | [DECISIONS.md](DECISIONS.md) | Active |
 | D4 | `detekt-convention` is the only correct way to wire Detekt — direct plugin application prohibited | [DECISIONS.md](DECISIONS.md) | Active |
 | D7 | CSP must live in both `index.html` meta tag AND Ktor `DefaultHeaders` — Vite bypasses Ktor | [DECISIONS.md](DECISIONS.md) | Active |
+| D10 | `ApiEnvelope<T>` / `ApiMeta` / `ApiErrorEnvelope` live in `core:models` — server keeps only builders | [DECISIONS.md](DECISIONS.md) | Active |
+| D11 | Koin Annotations `@Single`/`@Factory` + Compiler Plugin (`io.insert-koin.compiler.plugin:1.0.0`) for all DI | [DECISIONS.md](DECISIONS.md) | Active |
+| D12 | Repository → RemoteDataSource separation: repo selects source + maps domain; DS handles transport | [DECISIONS.md](DECISIONS.md) | Active |
+| D13 | `_field`/`val field` StateFlow double-property is idiomatic in Kotlin 2.3.21; KEEP-0068 not stable | [DECISIONS.md](DECISIONS.md) | Active |
+| D14 | API route constants in `object ApiRoutes` — no inline path strings in call sites | [DECISIONS.md](DECISIONS.md) | Active |
 
 ## Security Reviews
 

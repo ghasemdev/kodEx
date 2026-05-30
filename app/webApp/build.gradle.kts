@@ -80,6 +80,7 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.koin.core)
+            implementation(libs.koin.annotations)
         }
         webMain.dependencies {
             implementation(libs.kilua)

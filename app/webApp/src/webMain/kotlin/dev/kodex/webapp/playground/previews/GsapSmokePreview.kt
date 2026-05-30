@@ -1,4 +1,4 @@
-@file:Suppress("KotlinUnreachableCode", "LabeledExpression")
+@file:Suppress("KotlinUnreachableCode", "LabeledExpression", "MagicNumber")
 
 package dev.kodex.webapp.playground.previews
 
@@ -37,19 +37,19 @@ fun IComponent.GsapSmokePreview() {
     }
 
     LaunchedEffect(Unit) {
-        val el = document.getElementById(boxId) ?: return@LaunchedEffect
+        val element = document.getElementById(boxId) ?: return@LaunchedEffect
 
         gsap.fromTo(
-            el,
-            unsafeJso {
-                x = -100
-                opacity = 0
+            targets = element,
+            fromVars = unsafeJso {
+                x = -100.0
+                opacity = 0.0
                 ease = "power2.out"
             },
-            unsafeJso {
-                x = 0
-                opacity = 1
-                duration = 1
+            toVars = unsafeJso {
+                x = 0.0
+                opacity = 1.0
+                duration = 1.0
                 ease = "power2.out"
                 onComplete = {
                     ready.value = true

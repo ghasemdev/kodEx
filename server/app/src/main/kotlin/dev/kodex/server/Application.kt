@@ -4,6 +4,7 @@ import dev.kodex.core.env.env
 import dev.kodex.core.env.envOrNull
 import dev.kodex.server.api.response.buildErrorEnvelope
 import dev.kodex.server.api.routes.healthRoutes
+import dev.kodex.server.di.KoinServerApplication
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
@@ -21,6 +22,8 @@ import io.ktor.server.routing.routing
 import kotlin.time.Clock
 import kotlin.uuid.Uuid
 import org.koin.ktor.plugin.Koin
+import org.koin.logger.slf4jLogger
+import org.koin.plugin.module.dsl.withConfiguration
 
 private const val PORT = 8080
 
@@ -80,7 +83,8 @@ fun main() {
         }
 
         install(Koin) {
-            modules(SERVER_MODULE)
+            slf4jLogger()
+            withConfiguration<KoinServerApplication>()
         }
 
         routing {

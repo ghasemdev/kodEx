@@ -34,6 +34,7 @@ dependencies {
     implementation(projects.server.domain)
     implementation(projects.server.data)
     implementation(projects.core)
+    implementation(libs.koin.annotations)
 
     "devMainImplementation"(sourceSets.main.get().output)
     "devMainImplementation"(sourceSets.main.get().runtimeClasspath)
