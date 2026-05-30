@@ -14,7 +14,6 @@ import dev.kilua.startApplication
 import dev.kilua.theme.Theme
 import dev.kilua.theme.ThemeManager
 import dev.kilua.utils.isDom
-import dev.kodex.shared.coroutines.ioDispatcher
 import dev.kodex.webapp.design.i18n.initI18n
 import dev.kodex.webapp.di.appModule
 import dev.kodex.webapp.gsap.ScrollTrigger
@@ -24,7 +23,6 @@ import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.core.context.startKoin
 
 // import dev.kodex.webapp.pages.NotFoundPage
@@ -39,7 +37,7 @@ class App : Application() {
 
         ThemeManager.init(initialTheme = Theme.Auto, remember = true)
 
-        MainScope().launch { withContext(ioDispatcher) { initI18n() } }
+        MainScope().launch { initI18n() }
 
         if (isDom) {
             LocaleManager.setCurrentLocale(LocaleManager.currentLocale)
