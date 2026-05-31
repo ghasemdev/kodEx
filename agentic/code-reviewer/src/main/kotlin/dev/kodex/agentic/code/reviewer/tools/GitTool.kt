@@ -1,9 +1,7 @@
 package dev.kodex.agentic.code.reviewer.tools
 
 object GitTool {
-    fun getDiff(): String {
-        return runCmd("git diff origin/develop...HEAD")
-    }
+    fun getDiff(): String = runCmd("git diff origin/develop...HEAD")
 
     private fun runCmd(cmd: String): String {
         val parts = cmd.split(" ")

@@ -5,8 +5,9 @@ import dev.kodex.agentic.code.reviewer.tools.git.diff.models.DiffHunk
 import dev.kodex.agentic.code.reviewer.tools.git.diff.models.FileDiff
 
 class SmartDiffChunker(
-    private val maxChunkSize: Int = 8000
+    private val maxChunkSize: Int = 8000,
 ) {
+    @Suppress("LabeledExpression")
     fun chunk(files: List<FileDiff>): List<DiffChunk> {
         val chunks = mutableListOf<DiffChunk>()
 
@@ -18,8 +19,8 @@ class SmartDiffChunker(
                 chunks.add(
                     DiffChunk(
                         files = currentFiles.toList(),
-                        estimatedSize = currentSize
-                    )
+                        estimatedSize = currentSize,
+                    ),
                 )
             }
             currentFiles = mutableListOf()
@@ -31,7 +32,6 @@ class SmartDiffChunker(
             val fileSize = estimate(file)
 
             if (fileSize > maxChunkSize) {
-
                 flush()
 
                 chunks.addAll(splitLargeFile(file))
@@ -62,10 +62,10 @@ class SmartDiffChunker(
                 result.add(
                     DiffChunk(
                         files = listOf(
-                            file.copy(hunks = currentHunks.toList())
+                            file.copy(hunks = currentHunks.toList()),
                         ),
-                        estimatedSize = size
-                    )
+                        estimatedSize = size,
+                    ),
                 )
             }
             currentHunks = mutableListOf()
@@ -89,7 +89,5 @@ class SmartDiffChunker(
         return result
     }
 
-    private fun estimate(file: FileDiff): Int {
-        return file.hunks.sumOf { it.content.length } + file.filePath.length
-    }
+    private fun estimate(file: FileDiff): Int = file.hunks.sumOf { it.content.length } + file.filePath.length
 }

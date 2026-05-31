@@ -17,11 +17,9 @@ abstract class BaseAgent {
             systemPrompt = instruction,
             llmModel = GoogleModels.Gemini2_5Flash,
             temperature = temperature,
-            maxIterations = maxIterations
+            maxIterations = maxIterations,
         )
     }
 
-    suspend fun run(context: String): String {
-        return agent.run(context)
-    }
+    suspend fun run(context: String): String = agent.run(context)
 }

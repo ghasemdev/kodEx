@@ -14,7 +14,7 @@ suspend fun main() {
             BugAgent(),
             RefactorAgent(),
         ),
-        contextBuilder = ContextBuilder()
+        contextBuilder = ContextBuilder(),
     )
 
     val result = coordinator.review(diff)

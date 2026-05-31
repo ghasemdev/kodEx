@@ -18,8 +18,8 @@ class GitDiffParser {
                 currentHunks.add(
                     DiffHunk(
                         header = currentHunkHeader,
-                        content = currentHunkBody.toString()
-                    )
+                        content = currentHunkBody.toString(),
+                    ),
                 )
             }
             currentHunkHeader = ""
@@ -58,7 +58,5 @@ class GitDiffParser {
         return files
     }
 
-    private fun extractFile(line: String): String {
-        return line.split(" ").lastOrNull()?.removePrefix("b/") ?: "unknown"
-    }
+    private fun extractFile(line: String): String = line.split(" ").lastOrNull()?.removePrefix("b/") ?: "unknown"
 }

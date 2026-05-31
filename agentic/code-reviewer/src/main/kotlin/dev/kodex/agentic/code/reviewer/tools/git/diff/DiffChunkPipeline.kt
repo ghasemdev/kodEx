@@ -8,7 +8,6 @@ class DiffChunkPipeline {
     private val formatter = ChunkFormatter()
 
     fun process(diff: String): List<String> {
-
         val files = parser.parse(diff)
         val chunks = chunker.chunk(files)
 

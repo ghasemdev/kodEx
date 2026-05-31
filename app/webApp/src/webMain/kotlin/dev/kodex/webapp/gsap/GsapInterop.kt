@@ -22,6 +22,7 @@ external interface Gsap {
 
 // Build GSAP vars with unsafeJso<GsapVars> { ... } at callsites.
 // All numeric properties use Double; only repeat uses Int (-1 = infinite).
+@Suppress("ComplexInterface")
 external interface GsapVars : JsAny {
     var x: Double
     var y: Double

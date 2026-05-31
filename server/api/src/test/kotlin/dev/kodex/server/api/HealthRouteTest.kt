@@ -1,7 +1,7 @@
 package dev.kodex.server.api
 
+import dev.kodex.core.models.api.ApiEnvelope
 import dev.kodex.core.models.health.HealthResponse
-import dev.kodex.server.api.response.Envelope
 import dev.kodex.server.api.routes.healthRoutes
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -40,7 +40,7 @@ class HealthRouteTest : FunSpec({
                 routing { healthRoutes(startedAt = startedAt, version = version) }
             }
             val response = client.get("/api/v1/health")
-            val body = Json.decodeFromString<Envelope<HealthResponse>>(response.bodyAsText())
+            val body = Json.decodeFromString<ApiEnvelope<HealthResponse>>(response.bodyAsText())
             body.data.status shouldBe "UP"
         }
     }
@@ -52,7 +52,7 @@ class HealthRouteTest : FunSpec({
                 routing { healthRoutes(startedAt = startedAt, version = version) }
             }
             val response = client.get("/api/v1/health")
-            val body = Json.decodeFromString<Envelope<HealthResponse>>(response.bodyAsText())
+            val body = Json.decodeFromString<ApiEnvelope<HealthResponse>>(response.bodyAsText())
             body.meta.service shouldBe "kodex-api"
             body.meta.serviceVersion shouldBe version
         }
@@ -65,7 +65,7 @@ class HealthRouteTest : FunSpec({
                 routing { healthRoutes(startedAt = startedAt, version = version) }
             }
             val response = client.get("/api/v1/health")
-            val body = Json.decodeFromString<Envelope<HealthResponse>>(response.bodyAsText())
+            val body = Json.decodeFromString<ApiEnvelope<HealthResponse>>(response.bodyAsText())
             body.meta.requestId.shouldNotBeEmpty()
         }
     }
@@ -77,7 +77,7 @@ class HealthRouteTest : FunSpec({
                 routing { healthRoutes(startedAt = startedAt, version = version) }
             }
             val response = client.get("/api/v1/health")
-            val body = Json.decodeFromString<Envelope<HealthResponse>>(response.bodyAsText())
+            val body = Json.decodeFromString<ApiEnvelope<HealthResponse>>(response.bodyAsText())
             body.meta.timestamp.shouldNotBeEmpty()
         }
     }
@@ -102,7 +102,7 @@ class HealthRouteTest : FunSpec({
             val response = client.get("/api/v1/health") {
                 headers.append("X-Request-Id", "test-request-id-123")
             }
-            val body = Json.decodeFromString<Envelope<HealthResponse>>(response.bodyAsText())
+            val body = Json.decodeFromString<ApiEnvelope<HealthResponse>>(response.bodyAsText())
             body.meta.requestId shouldBe "test-request-id-123"
             body.meta.requestId shouldNotBe null
         }
