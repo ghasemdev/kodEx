@@ -113,7 +113,6 @@ kilua-i18n = { module = "dev.kilua:kilua-i18n", version.ref = "kilua" }
 kilua-fontawesome = { module = "dev.kilua:kilua-fontawesome", version.ref = "kilua" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 compose-runtime-annotation = { module = "androidx.compose.runtime:runtime-annotation", version.ref = "compose" }
-compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose" }
 
 # ── Sandbox ───────────────────────────────────────────────────────────────────────────────────────
 docker-java-core = { module = "com.github.docker-java:docker-java-core", version.ref = "docker-java" }

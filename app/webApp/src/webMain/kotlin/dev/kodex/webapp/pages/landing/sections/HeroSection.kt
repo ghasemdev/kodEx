@@ -9,7 +9,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import dev.kilua.core.IComponent
-import dev.kilua.html.button
 import dev.kilua.html.div
 import dev.kilua.html.h1
 import dev.kilua.html.p
@@ -19,35 +18,34 @@ import dev.kodex.shared.ui.UiState
 import dev.kodex.webapp.design.components.Button
 import dev.kodex.webapp.design.components.ButtonVariant
 import dev.kodex.webapp.design.i18n.i18n
-import dev.kodex.webapp.gsap.GsapVars
 import dev.kodex.webapp.gsap.gsap
 import js.objects.unsafeJso
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.browser.document
 import kotlinx.coroutines.delay
 
-private const val KOTLIN_CODE =
-    "fun solution(\n  input: String\n): String {\n  return input\n    .trim()\n    .uppercase()\n}"
+@Suppress("StringTemplateIndent")
+private val KOTLIN_CODE = """
+    fun solution(input: String): String {
+        return input
+            .trim()
+            .uppercase()
+    }
+""".trimIndent()
 
-private const val ANDROID_CODE =
-    "class TaskViewModel(\n  app: Application\n) : AndroidViewModel(app) {\n  fun onDone() {\n    _state.update {\n      it.copy(done = true)\n    }\n  }\n}"
+private val TYPING_DELAY = 38.milliseconds
+private val INITIAL_PAUSE = 600.milliseconds
+private val COMPILE_DELAY = 900.milliseconds
+private val LOOP_PAUSE = 2800.milliseconds
+private val COUNTER_STEP_DELAY = 30.milliseconds
+private val TEST_ROW_DELAY = 320.milliseconds
 
-private const val TYPING_DELAY_MS = 38L
-private const val INITIAL_PAUSE_MS = 500L
-private const val COMPILE_DELAY_MS = 900L
-private const val LOOP_PAUSE_MS = 2500L
 private const val COUNTER_STEPS = 60
-private const val COUNTER_STEP_DELAY_MS = 30L
-private const val TEST_ROW_DELAY_MS = 320L
 private const val BLOB_ANIM_DURATION = 10.0
 private const val BLOB2_ANIM_DURATION = 12.0
 
-enum class HeroTab(val displayLabel: String) {
-    Kotlin("⬛ Kotlin"),
-    Android("🤖 Android"),
-}
-
 @Composable
-fun IComponent.StatCounter(label: String, value: Int?, error: Boolean = false,) {
+fun IComponent.StatCounter(label: String, value: Int?, error: Boolean = false) {
     div(className = "flex flex-col items-center gap-1") {
         when {
             error -> span(className = "stat-value text-4xl font-bold text-on-surface/40") { +"—" }
@@ -64,7 +62,6 @@ fun IComponent.StatCounter(label: String, value: Int?, error: Boolean = false,) 
 
 @Composable
 fun IComponent.HeroSection(statsState: UiState<LandingStats>) {
-    var activeTab by remember { mutableStateOf(HeroTab.Kotlin) }
     var typedChars by remember { mutableStateOf(0) }
     var showCompileStatus by remember { mutableStateOf(false) }
     var showTestRows by remember { mutableStateOf(false) }
@@ -72,53 +69,57 @@ fun IComponent.HeroSection(statsState: UiState<LandingStats>) {
     var usersDisplay by remember { mutableStateOf<Int?>(null) }
     var contestsDisplay by remember { mutableStateOf<Int?>(null) }
 
-    val currentCode = if (activeTab == HeroTab.Kotlin) KOTLIN_CODE else ANDROID_CODE
-
-    // Typing animation — restarts on each tab change; auto-switches tab when done
-    LaunchedEffect(activeTab) {
-        typedChars = 0
-        showCompileStatus = false
-        showTestRows = false
-        delay(INITIAL_PAUSE_MS)
-        repeat(currentCode.length) {
-            typedChars++
-            delay(TYPING_DELAY_MS)
+    // Infinite typing loop — restarts automatically after each cycle
+    LaunchedEffect(Unit) {
+        while (true) {
+            typedChars = 0
+            showCompileStatus = false
+            showTestRows = false
+            delay(INITIAL_PAUSE)
+            repeat(KOTLIN_CODE.length) {
+                typedChars++
+                delay(TYPING_DELAY)
+            }
+            showCompileStatus = true
+            delay(COMPILE_DELAY)
+            showTestRows = true
+            delay(LOOP_PAUSE)
         }
-        showCompileStatus = true
-        delay(COMPILE_DELAY_MS)
-        showTestRows = true
-        delay(LOOP_PAUSE_MS)
-        activeTab = if (activeTab == HeroTab.Kotlin) HeroTab.Android else HeroTab.Kotlin
     }
 
-    // GSAP compile bar fill (scaleX 0→1)
+    // GSAP compile bar scaleX 0→1
     LaunchedEffect(showCompileStatus) {
         if (!showCompileStatus) return@LaunchedEffect
-        val el = document.getElementById("hero-compile-bar") ?: return@LaunchedEffect
-        gsap.to(el, unsafeJso<GsapVars> {
-            scaleX = 1.0;
-            duration = 0.8;
-            ease = "power2.out"
-        })
+        val element = document.getElementById("hero-compile-bar") ?: return@LaunchedEffect
+        gsap.to(
+            element,
+            unsafeJso {
+                scaleX = 1.0
+                duration = 0.8
+                ease = "power2.out"
+            },
+        )
     }
 
-    // GSAP test row slide-in — keyed on both flags to re-run after tab switch
-    val tabKey = activeTab.name.lowercase()
-    LaunchedEffect(showTestRows, tabKey) {
+    // GSAP test row slide-in
+    LaunchedEffect(showTestRows) {
         if (!showTestRows) return@LaunchedEffect
         for (rowIdx in 1..3) {
-            val el = document.getElementById("hero-test-row-$tabKey-$rowIdx") ?: continue
-            gsap.from(el, unsafeJso<GsapVars> {
-                x = -16.0;
-                opacity = 0.0;
-                duration = 0.4;
-                ease = "power2.out"
-            })
-            delay(TEST_ROW_DELAY_MS)
+            val element = document.getElementById("hero-test-row-$rowIdx") ?: continue
+            gsap.from(
+                element,
+                unsafeJso {
+                    x = -16.0
+                    opacity = 0.0
+                    duration = 0.4
+                    ease = "power2.out"
+                },
+            )
+            delay(TEST_ROW_DELAY)
         }
     }
 
-    // Stats counter roll-up via Compose state (no innerHTML — uses text node rendering)
+    // Stats counter roll-up (no innerHTML — Compose state only)
     LaunchedEffect(statsState) {
         if (statsState !is UiState.Success) return@LaunchedEffect
         val stats = statsState.data
@@ -127,24 +128,24 @@ fun IComponent.HeroSection(statsState: UiState<LandingStats>) {
             problemsDisplay = (stats.totalProblems * ratio).toInt()
             usersDisplay = (stats.totalUsers * ratio).toInt()
             contestsDisplay = (stats.totalContests * ratio).toInt()
-            delay(COUNTER_STEP_DELAY_MS)
+            delay(COUNTER_STEP_DELAY)
         }
         problemsDisplay = stats.totalProblems
         usersDisplay = stats.totalUsers
         contestsDisplay = stats.totalContests
     }
 
-    // Ambient background blob animations
+    // Ambient blob animations
     LaunchedEffect(Unit) {
         document.getElementById("hero-blob-1")?.let { el ->
             gsap.to(
                 el,
-                unsafeJso<GsapVars> {
-                    x = 80.0;
-                    y = -40.0;
-                    duration = BLOB_ANIM_DURATION;
-                    repeat = -1;
-                    yoyo = true;
+                unsafeJso {
+                    x = 80.0
+                    y = -40.0
+                    duration = BLOB_ANIM_DURATION
+                    repeat = -1
+                    yoyo = true
                     ease = "sine.inOut"
                 },
             )
@@ -152,12 +153,12 @@ fun IComponent.HeroSection(statsState: UiState<LandingStats>) {
         document.getElementById("hero-blob-2")?.let { el ->
             gsap.to(
                 el,
-                unsafeJso<GsapVars> {
-                    x = -60.0;
-                    y = 50.0;
-                    duration = BLOB2_ANIM_DURATION;
-                    repeat = -1;
-                    yoyo = true;
+                unsafeJso {
+                    x = -60.0
+                    y = 50.0
+                    duration = BLOB2_ANIM_DURATION
+                    repeat = -1
+                    yoyo = true
                     ease = "sine.inOut"
                 },
             )
@@ -165,14 +166,14 @@ fun IComponent.HeroSection(statsState: UiState<LandingStats>) {
     }
 
     div(className = "relative overflow-hidden") {
-        // Ambient gradient mesh background
         div(
             id = "hero-blob-1",
             className = "absolute -top-40 -start-40 w-96 h-96 rounded-full bg-primary/20 blur-3xl pointer-events-none",
         ) {}
         div(
             id = "hero-blob-2",
-            className = "absolute -bottom-40 -end-40 w-80 h-80 rounded-full bg-secondary/15 blur-3xl pointer-events-none",
+            className = "absolute -bottom-40 -end-40 w-80 h-80 rounded-full " +
+                "bg-secondary/15 blur-3xl pointer-events-none",
         ) {}
 
         div(
@@ -193,83 +194,41 @@ fun IComponent.HeroSection(statsState: UiState<LandingStats>) {
                     Button(label = i18n.tr("Get Started"), variant = ButtonVariant.Primary)
                     Button(label = i18n.tr("Explore Problems"), variant = ButtonVariant.Secondary)
                 }
-
-                // Stats row
                 div(className = "flex flex-wrap gap-8 mt-4 pt-6 border-t border-outline/20 w-full") {
                     buildStatCounters(statsState, problemsDisplay, usersDisplay, contestsDisplay)
                 }
             }
 
-            // Right column — tabbed code editor panel
+            // Right column — Mac-style code editor panel
             div(
+                id = "hero-editor-panel",
                 className = "flex-1 w-full max-w-lg rounded-2xl border border-outline/20 " +
-                    "bg-surface-container overflow-hidden shadow-2xl",
+                    "bg-neutral-900 overflow-hidden shadow-2xl",
             ) {
-                editorTabBar(activeTab = activeTab, onTabClick = { activeTab = it })
-                editorContent(code = currentCode, typedChars = typedChars)
-                compileStatusArea(showCompileStatus = showCompileStatus, showTestRows = showTestRows)
-                if (showTestRows) {
-                    testRows(activeTab = activeTab, tabKey = tabKey)
-                }
+                macWindowBar()
+                editorContent(code = KOTLIN_CODE, typedChars = typedChars)
+                terminalArea(showCompileStatus = showCompileStatus, showTestRows = showTestRows)
             }
         }
     }
 }
 
 @Composable
-private fun IComponent.buildStatCounters(
-    statsState: UiState<LandingStats>,
-    problemsDisplay: Int?,
-    usersDisplay: Int?,
-    contestsDisplay: Int?,
-) {
-    when {
-        statsState is UiState.Error -> {
-            StatCounter(label = i18n.tr("problems"), value = null, error = true)
-            StatCounter(label = i18n.tr("developers"), value = null, error = true)
-            StatCounter(label = i18n.tr("contests"), value = null, error = true)
-        }
-
-        statsState is UiState.Success && problemsDisplay != null -> {
-            StatCounter(label = i18n.tr("problems"), value = problemsDisplay)
-            StatCounter(label = i18n.tr("developers"), value = usersDisplay)
-            StatCounter(label = i18n.tr("contests"), value = contestsDisplay)
-        }
-
-        else -> {
-            StatCounter(label = i18n.tr("problems"), value = null)
-            StatCounter(label = i18n.tr("developers"), value = null)
-            StatCounter(label = i18n.tr("contests"), value = null)
-        }
-    }
-}
-
-@Composable
-private fun IComponent.editorTabBar(activeTab: HeroTab, onTabClick: (HeroTab) -> Unit) {
-    div(className = "flex border-b border-outline/20") {
-        HeroTab.entries.forEach { tab ->
-            val isActive = tab == activeTab
-            button(
-                id = "hero-tab-${tab.name.lowercase()}",
-                className = "flex-1 py-3 px-4 text-sm font-medium transition-all duration-150 " +
-                    if (isActive) {
-                        "text-primary border-b-2 border-primary bg-primary/5 tab-active"
-                    } else {
-                        "text-on-surface/60 hover:text-on-surface hover:bg-surface-variant"
-                    },
-            ) {
-                attribute("aria-selected", isActive.toString())
-                +tab.displayLabel
-                onClick { onTabClick(tab) }
-            }
-        }
+private fun IComponent.macWindowBar() {
+    div(
+        className = "flex items-center gap-2 px-4 py-3 bg-neutral-800 border-b border-white/5",
+    ) {
+        div(className = "w-3 h-3 rounded-full bg-[#FF5F57] mac-dot") {}
+        div(className = "w-3 h-3 rounded-full bg-[#FEBC2E] mac-dot") {}
+        div(className = "w-3 h-3 rounded-full bg-[#28C840] mac-dot") {}
+        span(className = "ms-3 text-xs text-neutral-500 font-mono") { +"Solution.kt" }
     }
 }
 
 @Composable
 private fun IComponent.editorContent(code: String, typedChars: Int) {
     div(
-        className = "p-4 font-mono text-sm bg-neutral-900 dark:bg-neutral-950 min-h-48 " +
+        className = "p-5 font-mono text-sm bg-neutral-900 h-52 overflow-hidden " +
             "text-neutral-200 leading-relaxed",
     ) {
         span(className = "whitespace-pre-wrap") { +code.take(typedChars) }
@@ -278,20 +237,44 @@ private fun IComponent.editorContent(code: String, typedChars: Int) {
 }
 
 @Composable
-private fun IComponent.compileStatusArea(showCompileStatus: Boolean, showTestRows: Boolean) {
-    div(className = "px-4 py-2 border-t border-outline/20 text-xs min-h-8") {
-        if (showCompileStatus) {
-            div(className = "flex flex-col gap-1.5") {
-                span(className = "text-on-surface/60") {
-                    +if (showTestRows) "✓ Build successful" else "▶ Compiling..."
+private fun IComponent.terminalArea(showCompileStatus: Boolean, showTestRows: Boolean) {
+    div(
+        className = "h-44 border-t border-white/5 bg-neutral-950 overflow-hidden",
+    ) {
+        div(className = "px-4 pt-3 pb-2 flex flex-col gap-1.5 h-full") {
+            // Prompt line — always visible
+            span(className = "text-xs font-mono text-green-400/70") {
+                +"$ ./gradlew :test --tests \"SolutionTest\""
+            }
+
+            if (showCompileStatus) {
+                // Status line
+                span(className = "text-xs font-mono text-neutral-400") {
+                    +if (showTestRows) "BUILD SUCCESSFUL in 1s" else "Compiling..."
                 }
-                div(className = "relative h-1 bg-surface-variant rounded-full overflow-hidden") {
+                // Progress bar
+                div(className = "relative h-0.5 bg-neutral-800 rounded-full overflow-hidden") {
                     div(
                         id = "hero-compile-bar",
                         className = "absolute inset-0 bg-primary rounded-full origin-left",
                     ) {
-                        // scaleX starts at 0; GSAP animates it to 1
                         attribute("style", "transform: scaleX(0);")
+                    }
+                }
+                // Test result rows
+                if (showTestRows) {
+                    val testLines = listOf(
+                        "  PASS  Test 1 passed in 9ms",
+                        "  PASS  Test 2 passed in 12ms",
+                        "  PASS  Test 3 passed in 8ms",
+                    )
+                    testLines.forEachIndexed { idx, text ->
+                        div(
+                            id = "hero-test-row-${idx + 1}",
+                            className = "text-xs font-mono text-green-400",
+                        ) {
+                            +text
+                        }
                     }
                 }
             }
@@ -299,29 +282,34 @@ private fun IComponent.compileStatusArea(showCompileStatus: Boolean, showTestRow
     }
 }
 
+private const val PROBLEMS = "problems"
+private const val DEVELOPERS = "developers"
+private const val CONTESTS = "contests"
+
 @Composable
-private fun IComponent.testRows(activeTab: HeroTab, tabKey: String) {
-    val rows = if (activeTab == HeroTab.Kotlin) {
-        listOf(
-            "✓  Test 1 — 9ms   PASS",
-            "✓  Test 2 — 12ms  PASS",
-            "✓  Test 3 — 8ms   PASS  🎉",
-        )
-    } else {
-        listOf(
-            "✓  onClick handler  PASS",
-            "✓  ViewModel state  PASS",
-            "✓  UI assertion     PASS  🎉",
-        )
-    }
-    div(className = "px-4 pb-4 flex flex-col gap-1") {
-        rows.forEachIndexed { idx, text ->
-            div(
-                id = "hero-test-row-$tabKey-${idx + 1}",
-                className = "text-xs font-mono text-success",
-            ) {
-                +text
-            }
+private fun IComponent.buildStatCounters(
+    statsState: UiState<LandingStats>,
+    problemsDisplay: Int?,
+    usersDisplay: Int?,
+    contestsDisplay: Int?,
+) {
+    when (statsState) {
+        is UiState.Error -> {
+            StatCounter(label = i18n.tr(PROBLEMS), value = null, error = true)
+            StatCounter(label = i18n.tr(DEVELOPERS), value = null, error = true)
+            StatCounter(label = i18n.tr(CONTESTS), value = null, error = true)
+        }
+
+        is UiState.Success if problemsDisplay != null -> {
+            StatCounter(label = i18n.tr(PROBLEMS), value = problemsDisplay)
+            StatCounter(label = i18n.tr(DEVELOPERS), value = usersDisplay)
+            StatCounter(label = i18n.tr(CONTESTS), value = contestsDisplay)
+        }
+
+        else -> {
+            StatCounter(label = i18n.tr(PROBLEMS), value = null)
+            StatCounter(label = i18n.tr(DEVELOPERS), value = null)
+            StatCounter(label = i18n.tr(CONTESTS), value = null)
         }
     }
 }

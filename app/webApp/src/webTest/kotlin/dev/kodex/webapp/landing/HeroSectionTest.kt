@@ -6,16 +6,13 @@ import dev.kodex.shared.landing.LandingStats
 import dev.kodex.shared.ui.UiState
 import dev.kodex.webapp.design.cleanupHost
 import dev.kodex.webapp.design.isJsTarget
-import dev.kodex.webapp.design.mouseEvent
 import dev.kodex.webapp.design.renderComponent
 import dev.kodex.webapp.pages.landing.sections.HeroSection
-import dev.kodex.webapp.pages.landing.sections.HeroTab
 import dev.kodex.webapp.pages.landing.sections.StatCounter
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
-import io.kotest.matchers.string.shouldNotContain
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
 
@@ -60,57 +57,22 @@ class HeroSectionTest : FunSpec({
         }
     }
 
-    context("HeroSection tab switching") {
-        test("Kotlin tab is active by default") {
+    context("HeroSection editor panel") {
+        test("mac window bar shows three dots") {
             if (!isJsTarget()) return@test
             val host = renderComponent { HeroSection(statsState = UiState.Loading) }
 
-            val kotlinTab = host.querySelector(HERO_TAB_KOTLIN).shouldNotBeNull()
-            kotlinTab.getAttribute(ARIA_SELECTED) shouldBe "true"
-            kotlinTab.className shouldContain "tab-active"
+            val dots = host.querySelectorAll(".mac-dot")
+            dots?.length shouldBe 3
 
             cleanupHost(host)
         }
 
-        test("Android tab is not active by default") {
+        test("editor panel container is present") {
             if (!isJsTarget()) return@test
             val host = renderComponent { HeroSection(statsState = UiState.Loading) }
 
-            val androidTab = host.querySelector(HERO_TAB_ANDROID).shouldNotBeNull()
-            androidTab.getAttribute(ARIA_SELECTED) shouldBe "false"
-            androidTab.className shouldNotContain "tab-active"
-
-            cleanupHost(host)
-        }
-
-        test("clicking Android tab makes it active") {
-            if (!isJsTarget()) return@test
-            val host = renderComponent { HeroSection(statsState = UiState.Loading) }
-
-            host.querySelector(HERO_TAB_ANDROID).shouldNotBeNull()
-                .dispatchEvent(mouseEvent())
-
-            delay(120.milliseconds) // allow Compose recomposition
-
-            host.querySelector(HERO_TAB_ANDROID).shouldNotBeNull()
-                .getAttribute(ARIA_SELECTED) shouldBe "true"
-            host.querySelector(HERO_TAB_KOTLIN).shouldNotBeNull()
-                .getAttribute(ARIA_SELECTED) shouldBe "false"
-
-            cleanupHost(host)
-        }
-
-        test("clicking Kotlin tab keeps it active") {
-            if (!isJsTarget()) return@test
-            val host = renderComponent { HeroSection(statsState = UiState.Loading) }
-
-            host.querySelector(HERO_TAB_KOTLIN).shouldNotBeNull()
-                .dispatchEvent(mouseEvent())
-
-            delay(120.milliseconds)
-
-            host.querySelector(HERO_TAB_KOTLIN).shouldNotBeNull()
-                .getAttribute(ARIA_SELECTED) shouldBe "true"
+            host.querySelector("#hero-editor-panel").shouldNotBeNull()
 
             cleanupHost(host)
         }
@@ -136,17 +98,6 @@ class HeroSectionTest : FunSpec({
 
             cleanupHost(host)
         }
-
-        test("hero tab buttons are rendered") {
-            if (!isJsTarget()) return@test
-            val host = renderComponent { HeroSection(statsState = UiState.Loading) }
-
-            HeroTab.entries.forEach { tab ->
-                host.querySelector("#hero-tab-${tab.name.lowercase()}").shouldNotBeNull()
-            }
-
-            cleanupHost(host)
-        }
     }
 
     context("HeroSection stats Success state") {
@@ -155,9 +106,7 @@ class HeroSectionTest : FunSpec({
             val stats = LandingStats(totalProblems = 100, totalUsers = 200, totalContests = 10)
             val host = renderComponent { HeroSection(statsState = UiState.Success(stats)) }
 
-            // Counter roll-up takes ~1.8s (60 steps × 30ms), so we wait longer than the 80ms
-            // settle time used in renderComponent. The initial render shows shimmer (null state).
-            // This test verifies that Success state eventually shows numeric values.
+            // Counter roll-up takes ~1.8s (60 steps × 30ms)
             delay(2200.milliseconds)
 
             val values = host.querySelectorAll(STAT_VALUE)
@@ -172,6 +121,3 @@ class HeroSectionTest : FunSpec({
 private const val STAT_SHIMMER = ".stat-shimmer"
 private const val PROBLEMS = "problems"
 private const val STAT_VALUE = ".stat-value"
-private const val ARIA_SELECTED = "aria-selected"
-private const val HERO_TAB_ANDROID = "#hero-tab-android"
-private const val HERO_TAB_KOTLIN = "#hero-tab-kotlin"

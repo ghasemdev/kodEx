@@ -21,7 +21,9 @@ private const val CARD_STAGGER_DELAY = 0.12
 
 private data class ExamCardSpec(
     val id: String,
-    val icon: String,
+    val iconLabel: String,
+    val iconBg: String,
+    val iconText: String,
     val titleKey: String,
     val descKey: String,
     val snippet: String,
@@ -30,23 +32,37 @@ private data class ExamCardSpec(
 private val EXAM_CARDS = listOf(
     ExamCardSpec(
         id = "exam-type-card-0",
-        icon = "📝",
+        iconLabel = "QZ",
+        iconBg = "bg-primary/10",
+        iconText = "text-primary",
         titleKey = ExamType.QUIZ.displayName,
-        descKey = "Answer multiple choice questions with instant feedback.",
-        snippet = "q.answer == correct?",
+        descKey = "Answer multiple-choice questions within a strict time limit. " +
+            "Each question delivers instant feedback and a detailed explanation, " +
+            "so you reinforce the concept immediately. Ideal for testing theoretical " +
+            "knowledge, language syntax, and SDK fundamentals.",
+        snippet = "question.answer == correct",
     ),
     ExamCardSpec(
         id = "exam-type-card-1",
-        icon = "⚡",
+        iconLabel = "IO",
+        iconBg = "bg-secondary/10",
+        iconText = "text-secondary",
         titleKey = ExamType.IO.displayName,
-        descKey = "Submit code that reads from stdin and writes to stdout.",
-        snippet = "readLine() → solution()",
+        descKey = "Write algorithms that read from standard input and print the correct output. " +
+            "Solutions are validated against hidden test cases covering normal inputs, " +
+            "boundary conditions, and adversarial edge cases — " +
+            "exactly the format used in competitive programming contests.",
+        snippet = "readLine() → solve() → println(result)",
     ),
     ExamCardSpec(
         id = "exam-type-card-2",
-        icon = "💉",
+        iconLabel = "FN",
+        iconBg = "bg-success/10",
+        iconText = "text-success",
         titleKey = ExamType.INJECTION.displayName,
-        descKey = "Write functions injected into a hidden test harness.",
+        descKey = "Implement functions that are injected directly into a hidden test harness. " +
+            "Your code must satisfy a full automated test suite written by the exam creator — " +
+            "the same paradigm used in professional TDD workflows and code-review pipelines.",
         snippet = "fun solve(n: Int): Int",
     ),
 )
@@ -81,7 +97,11 @@ private fun IComponent.examCard(spec: ExamCardSpec) {
             "hover:shadow-lg hover:shadow-primary/5",
     ) {
         div(className = "flex items-center gap-3") {
-            span(className = "text-3xl") { +spec.icon }
+            div(
+                className = "w-10 h-10 rounded-lg flex items-center justify-center ${spec.iconBg}",
+            ) {
+                span(className = "text-sm font-bold font-mono ${spec.iconText}") { +spec.iconLabel }
+            }
             span(className = "text-lg font-semibold text-on-surface") {
                 +i18n.tr(spec.titleKey)
             }
@@ -91,7 +111,7 @@ private fun IComponent.examCard(spec: ExamCardSpec) {
         }
         div(
             className = "font-mono text-xs px-3 py-2 rounded-lg bg-neutral-900 text-success " +
-                "border border-outline/10",
+                "border border-outline/10 mt-auto",
         ) {
             +spec.snippet
         }

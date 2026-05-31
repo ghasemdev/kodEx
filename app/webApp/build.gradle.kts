@@ -107,12 +107,6 @@ kotlin {
     }
 }
 
-configurations.configureEach {
-    resolutionStrategy.force(
-        libs.compose.ui.get().toString()
-    )
-}
-
 composeCompiler {
     targetKotlinPlatforms.set(
         KotlinPlatformType.entries
