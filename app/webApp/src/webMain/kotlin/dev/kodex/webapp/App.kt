@@ -18,15 +18,13 @@ import dev.kodex.webapp.design.i18n.initI18n
 import dev.kodex.webapp.di.KoinApp
 import dev.kodex.webapp.gsap.ScrollTrigger
 import dev.kodex.webapp.gsap.gsap
+import dev.kodex.webapp.pages.landing.LandingPage
 import dev.kodex.webapp.playground.PlaygroundApp
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.koin.plugin.module.dsl.startKoin
-
-// import dev.kodex.webapp.pages.NotFoundPage
-// import dev.kodex.webapp.pages.landing.LandingPage
 
 @Suppress("LabeledExpression")
 class App : Application() {
@@ -65,10 +63,9 @@ class App : Application() {
                 }
             }
 
-            /*when {
-                currentPath == "/" || currentPath.isEmpty() -> LandingPage()
-                else -> NotFoundPage()
-            }*/
+            if (currentPath == "/" || currentPath.isEmpty()) {
+                LandingPage()
+            }
         }
     }
 }

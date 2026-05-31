@@ -8,5 +8,6 @@ dependencies {
     implementation(projects.core)
 
     testImplementation(libs.ktor.server.test.host)
+    testImplementation(libs.ktor.server.rate.limit)
     testImplementation(libs.bundles.kotest)
 }

@@ -80,6 +80,7 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.koin.core)
+            implementation(libs.koin.compose)
             implementation(libs.koin.annotations)
         }
         webMain.dependencies {
@@ -104,6 +105,12 @@ kotlin {
             implementation(libs.kotest.assertions.core)
         }
     }
+}
+
+configurations.configureEach {
+    resolutionStrategy.force(
+        libs.compose.ui.get().toString()
+    )
 }
 
 composeCompiler {
