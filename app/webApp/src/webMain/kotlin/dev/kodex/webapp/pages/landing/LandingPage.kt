@@ -6,9 +6,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import dev.kilua.core.IComponent
 import dev.kilua.html.div
+import dev.kodex.webapp.di.org.koin.compose.koinInject
 import dev.kodex.webapp.pages.landing.sections.ExamTypesSection
 import dev.kodex.webapp.pages.landing.sections.HeroSection
-import org.koin.compose.koinInject
 
 @Composable
 fun IComponent.LandingPage() {

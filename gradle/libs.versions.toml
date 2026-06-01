@@ -80,7 +80,6 @@ ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negoti
 
 # ── Koin ──────────────────────────────────────────────────────────────────────────────────────────
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
-koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-ktor = { module = "io.insert-koin:koin-ktor", version.ref = "koin" }
 koin-logger-slf4j = { module = "io.insert-koin:koin-logger-slf4j", version.ref = "koin" }
 koin-annotations = { module = "io.insert-koin:koin-annotations", version.ref = "koin-annotations" }
