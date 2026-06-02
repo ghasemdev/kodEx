@@ -65,6 +65,7 @@ fun IComponent.HeroSection(statsState: UiState<LandingStats>) {
     var typedChars by remember { mutableStateOf(0) }
     var showCompileStatus by remember { mutableStateOf(false) }
     var showTestRows by remember { mutableStateOf(false) }
+    var visibleRows by remember { mutableStateOf(0) }
     var problemsDisplay by remember { mutableStateOf<Int?>(null) }
     var usersDisplay by remember { mutableStateOf<Int?>(null) }
     var contestsDisplay by remember { mutableStateOf<Int?>(null) }
@@ -75,6 +76,7 @@ fun IComponent.HeroSection(statsState: UiState<LandingStats>) {
             typedChars = 0
             showCompileStatus = false
             showTestRows = false
+            visibleRows = 0
             delay(INITIAL_PAUSE)
             repeat(KOTLIN_CODE.length) {
                 typedChars++
@@ -83,6 +85,10 @@ fun IComponent.HeroSection(statsState: UiState<LandingStats>) {
             showCompileStatus = true
             delay(COMPILE_DELAY)
             showTestRows = true
+            for (i in 1..3) {
+                visibleRows = i
+                delay(TEST_ROW_DELAY)
+            }
             delay(LOOP_PAUSE)
         }
     }
@@ -101,22 +107,19 @@ fun IComponent.HeroSection(statsState: UiState<LandingStats>) {
         )
     }
 
-    // GSAP test row slide-in
-    LaunchedEffect(showTestRows) {
-        if (!showTestRows) return@LaunchedEffect
-        for (rowIdx in 1..3) {
-            val element = document.getElementById("hero-test-row-$rowIdx") ?: continue
-            gsap.from(
-                element,
-                unsafeJso {
-                    x = -16.0
-                    opacity = 0.0
-                    duration = 0.4
-                    ease = "power2.out"
-                },
-            )
-            delay(TEST_ROW_DELAY)
-        }
+    // GSAP fade-in per row as each one enters the DOM
+    LaunchedEffect(visibleRows) {
+        if (visibleRows == 0) return@LaunchedEffect
+        val element = document.getElementById("hero-test-row-$visibleRows") ?: return@LaunchedEffect
+        gsap.from(
+            element,
+            unsafeJso {
+                opacity = 0.0
+                y = 6.0
+                duration = 0.45
+                ease = "power1.out"
+            },
+        )
     }
 
     // Stats counter roll-up (no innerHTML — Compose state only)
@@ -207,7 +210,11 @@ fun IComponent.HeroSection(statsState: UiState<LandingStats>) {
             ) {
                 macWindowBar()
                 editorContent(code = KOTLIN_CODE, typedChars = typedChars)
-                terminalArea(showCompileStatus = showCompileStatus, showTestRows = showTestRows)
+                terminalArea(
+                    showCompileStatus = showCompileStatus,
+                    showTestRows = showTestRows,
+                    visibleRows = visibleRows,
+                )
             }
         }
     }
@@ -237,7 +244,7 @@ private fun IComponent.editorContent(code: String, typedChars: Int) {
 }
 
 @Composable
-private fun IComponent.terminalArea(showCompileStatus: Boolean, showTestRows: Boolean) {
+private fun IComponent.terminalArea(showCompileStatus: Boolean, showTestRows: Boolean, visibleRows: Int) {
     div(
         className = "h-44 border-t border-white/5 bg-neutral-950 overflow-hidden",
     ) {
@@ -261,20 +268,19 @@ private fun IComponent.terminalArea(showCompileStatus: Boolean, showTestRows: Bo
                         attribute("style", "transform: scaleX(0);")
                     }
                 }
-                // Test result rows
-                if (showTestRows) {
-                    val testLines = listOf(
-                        "  PASS  Test 1 passed in 9ms",
-                        "  PASS  Test 2 passed in 12ms",
-                        "  PASS  Test 3 passed in 8ms",
-                    )
-                    testLines.forEachIndexed { idx, text ->
-                        div(
-                            id = "hero-test-row-${idx + 1}",
-                            className = "text-xs font-mono text-green-400",
-                        ) {
-                            +text
-                        }
+                // Test result rows — each fades in individually via GSAP
+                val testLines = listOf(
+                    "  PASS  Test 1 passed in 9ms",
+                    "  PASS  Test 2 passed in 12ms",
+                    "  PASS  Test 3 passed in 8ms",
+                )
+                testLines.take(visibleRows).forEachIndexed { idx, text ->
+                    div(
+                        id = "hero-test-row-${idx + 1}",
+                        className = "text-xs font-mono text-green-400" +
+                            if (idx == 0) " mt-2" else "",
+                    ) {
+                        +text
                     }
                 }
             }

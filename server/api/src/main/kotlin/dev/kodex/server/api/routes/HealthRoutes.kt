@@ -10,7 +10,7 @@ import io.ktor.server.routing.get
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
-fun Routing.healthRoutes(startedAt: Instant, version: String) {
+fun Routing.healthRoutes(startedAt: Instant, service: String = "kodex-api", version: String = "x.y.z") {
     get("/api/v1/health") {
         call.response.header(HttpHeaders.CacheControl, "no-store")
         val requestId = call.request.headers["X-Request-Id"] ?: Uuid.random().toString()
@@ -18,7 +18,7 @@ fun Routing.healthRoutes(startedAt: Instant, version: String) {
             buildEnvelope(
                 data = HealthResponse(status = "UP", startedAt = startedAt),
                 requestId = requestId,
-                service = "kodex-api",
+                service = service,
                 version = version,
             ),
         )

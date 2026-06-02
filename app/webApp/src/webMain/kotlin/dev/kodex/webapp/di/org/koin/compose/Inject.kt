@@ -1,3 +1,5 @@
+@file:Suppress("OutdatedDocumentation")
+
 package dev.kodex.webapp.di.org.koin.compose
 
 /*
@@ -25,7 +27,7 @@ import org.koin.core.qualifier.Qualifier
 import org.koin.core.scope.Scope
 
 /**
- * Resolve Koin dependency for given Type T
+ * Resolve Koin dependency for given Type T.
  *
  * <u>Note</u> this version unwrap parameters to ParametersHolder in order to let remember all parameters
  * This parameters unwrap will be triggered on recomposition
@@ -46,14 +48,14 @@ inline fun <reified T> koinInject(
     scope: Scope = currentKoinScope(),
     noinline parameters: ParametersDefinition,
 ): T {
-    val p = parameters.invoke()
-    return remember(qualifier, scope, p) {
-        scope.getWithParameters(T::class, qualifier, p)
+    val parameters = parameters.invoke()
+    return remember(qualifier, scope, parameters) {
+        scope.getWithParameters(T::class, qualifier, parameters)
     }
 }
 
 /**
- * Resolve Koin dependency for given Type T
+ * Resolve Koin dependency for given Type T.
  *
  * @param qualifier - dependency qualifier
  * @param scope - Koin's root by default
@@ -75,7 +77,7 @@ inline fun <reified T> koinInject(
 }
 
 /**
- * Resolve Koin dependency for given Type T
+ * Resolve Koin dependency for given Type T.
  *
  * @param qualifier - dependency qualifier
  * @param scope - Koin's root by default
@@ -84,10 +86,7 @@ inline fun <reified T> koinInject(
  * @author Arnaud Giuliani
  */
 @Composable
-inline fun <reified T> koinInject(
-    qualifier: Qualifier? = null,
-    scope: Scope = currentKoinScope()
-): T {
+inline fun <reified T> koinInject(qualifier: Qualifier? = null, scope: Scope = currentKoinScope()): T {
     return remember(qualifier, scope) {
         scope.get(T::class, qualifier)
     }

@@ -18,6 +18,7 @@ import dev.kodex.webapp.design.i18n.initI18n
 import dev.kodex.webapp.di.KoinApp
 import dev.kodex.webapp.gsap.ScrollTrigger
 import dev.kodex.webapp.gsap.gsap
+import dev.kodex.webapp.pages.NotFoundPage
 import dev.kodex.webapp.pages.landing.LandingPage
 import dev.kodex.webapp.playground.PlaygroundApp
 import kotlinx.browser.document
@@ -65,6 +66,8 @@ class App : Application() {
 
             if (currentPath == "/" || currentPath.isEmpty()) {
                 LandingPage()
+            } else {
+                NotFoundPage()
             }
         }
     }

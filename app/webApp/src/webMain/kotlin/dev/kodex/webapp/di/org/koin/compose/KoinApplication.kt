@@ -10,7 +10,7 @@ import org.koin.core.scope.Scope
 import org.koin.mp.KoinPlatform
 
 /**
- * Internal API
+ * Internal API.
  * Current Koin Scope, as default with Default Koin context root scope
  *
  * @see ComposeContextWrapper
@@ -23,7 +23,7 @@ internal val LocalKoinScopeContext: ProvidableCompositionLocal<ComposeContextWra
 private fun getDefaultRootScope() = KoinPlatform.getKoin().scopeRegistry.rootScope
 
 /**
- * Retrieve the current Koin scope from the composition
+ * Retrieve the current Koin scope from the composition.
  *
  * @author jjkester
  *
@@ -33,9 +33,12 @@ private fun getDefaultRootScope() = KoinPlatform.getKoin().scopeRegistry.rootSco
 fun currentKoinScope(): Scope = currentComposer.run {
     try {
         val currentScope = consume(LocalKoinScopeContext).getValue()
-        if (currentScope.closed) consume(LocalKoinScopeContext).resetValue()
-            ?: error("Can't get Koin scope. Scope '$currentScope' is closed")
-        else currentScope
+        if (currentScope.closed) {
+            consume(LocalKoinScopeContext).resetValue()
+                ?: error("Can't get Koin scope. Scope '$currentScope' is closed")
+        } else {
+            currentScope
+        }
     } catch (e: Exception) {
         consume(LocalKoinScopeContext).resetValue()
             ?: error("Can't get Koin scope due to error: $e")

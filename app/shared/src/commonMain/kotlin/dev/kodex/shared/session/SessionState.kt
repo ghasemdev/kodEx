@@ -1,7 +1,13 @@
 package dev.kodex.shared.session
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 sealed class SessionState {
+    @Immutable
     data object Guest : SessionState()
+
+    @Immutable
     data class Authenticated(
         val userId: String,
         val username: String,

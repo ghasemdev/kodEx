@@ -19,6 +19,7 @@ import org.koin.core.annotation.KoinInternalApi
  * @author Arnaud Giuliani
  */
 @KoinInternalApi
+@Suppress("OutdatedDocumentation")
 class ComposeContextWrapper<T>(initValue: T? = null, val setValue: (() -> T)? = null) {
     private var _value: T? = initValue
 
@@ -39,7 +40,9 @@ class ComposeContextWrapper<T>(initValue: T? = null, val setValue: (() -> T)? = 
         if (_value == null) {
             _value = setValue?.invoke()
         }
-        return _value
-            ?: error("Can't retrieve Koin context value. Ensure Koin is properly initialized with startKoin() or KoinApplication.")
+        return _value ?: error(
+            "Can't retrieve Koin context value. " +
+                "Ensure Koin is properly initialized with startKoin() or KoinApplication.",
+        )
     }
 }

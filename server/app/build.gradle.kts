@@ -35,6 +35,7 @@ dependencies {
     implementation(projects.server.data)
     implementation(projects.core)
     implementation(libs.koin.annotations)
+    implementation(libs.ktor.server.rate.limit)
 
     "devMainImplementation"(sourceSets.main.get().output)
     "devMainImplementation"(sourceSets.main.get().runtimeClasspath)
