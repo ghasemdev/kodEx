@@ -98,8 +98,12 @@ fun IComponent.GlobalNavBar(session: SessionState = SessionState.Guest) {
             }
         }
 
-        // Mobile drawer
-        if (drawerOpen) {
+        // Mobile drawer — always in DOM so CSS transition fires on open/close
+        val drawerVisClass = if (drawerOpen) "max-h-[500px] opacity-100" else "max-h-0 opacity-0"
+        div(
+            id = "nav-mobile-drawer-wrap",
+            className = "md:hidden overflow-hidden transition-all duration-300 ease-in-out $drawerVisClass",
+        ) {
             mobileDrawer(
                 session = session,
                 canCreateExam = canCreateExam,
@@ -282,7 +286,7 @@ private fun IComponent.dropdownItem(
 private fun IComponent.mobileDrawer(session: SessionState, canCreateExam: Boolean, onClose: () -> Unit) {
     div(
         id = "nav-mobile-drawer",
-        className = "md:hidden border-t border-outline/20 bg-surface px-4 py-4 flex flex-col gap-2",
+        className = "border-t border-outline/20 bg-surface px-4 py-4 flex flex-col gap-2",
     ) {
         role("dialog")
         attribute(ARIA_LABEL, i18n.tr("Mobile navigation menu"))

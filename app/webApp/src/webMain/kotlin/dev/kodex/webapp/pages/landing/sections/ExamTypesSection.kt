@@ -21,9 +21,6 @@ private const val CARD_STAGGER_DELAY = 0.12
 
 private data class ExamCardSpec(
     val id: String,
-    val iconLabel: String,
-    val iconBg: String,
-    val iconText: String,
     val titleKey: String,
     val descKey: String,
     val snippet: String,
@@ -32,9 +29,6 @@ private data class ExamCardSpec(
 private val EXAM_CARDS = listOf(
     ExamCardSpec(
         id = "exam-type-card-0",
-        iconLabel = "QZ",
-        iconBg = "bg-primary/10",
-        iconText = "text-primary",
         titleKey = ExamType.QUIZ.displayName,
         descKey = "Answer multiple-choice questions within a strict time limit. " +
             "Each question delivers instant feedback and a detailed explanation, " +
@@ -44,9 +38,6 @@ private val EXAM_CARDS = listOf(
     ),
     ExamCardSpec(
         id = "exam-type-card-1",
-        iconLabel = "IO",
-        iconBg = "bg-secondary/10",
-        iconText = "text-secondary",
         titleKey = ExamType.IO.displayName,
         descKey = "Write algorithms that read from standard input and print the correct output. " +
             "Solutions are validated against hidden test cases covering normal inputs, " +
@@ -56,9 +47,6 @@ private val EXAM_CARDS = listOf(
     ),
     ExamCardSpec(
         id = "exam-type-card-2",
-        iconLabel = "FN",
-        iconBg = "bg-success/10",
-        iconText = "text-success",
         titleKey = ExamType.INJECTION.displayName,
         descKey = "Implement functions that are injected directly into a hidden test harness. " +
             "Your code must satisfy a full automated test suite written by the exam creator — " +
@@ -96,15 +84,8 @@ private fun IComponent.examCard(spec: ExamCardSpec) {
             "border border-outline/20 hover:border-primary/40 transition-colors duration-200 " +
             "hover:shadow-lg hover:shadow-primary/5",
     ) {
-        div(className = "flex items-center gap-3") {
-            div(
-                className = "w-10 h-10 rounded-lg flex items-center justify-center ${spec.iconBg}",
-            ) {
-                span(className = "text-sm font-bold font-mono ${spec.iconText}") { +spec.iconLabel }
-            }
-            span(className = "text-lg font-semibold text-on-surface") {
-                +i18n.tr(spec.titleKey)
-            }
+        span(className = "text-lg font-semibold text-on-surface") {
+            +i18n.tr(spec.titleKey)
         }
         p(className = "text-sm text-on-surface/60 leading-relaxed") {
             +i18n.tr(spec.descKey)

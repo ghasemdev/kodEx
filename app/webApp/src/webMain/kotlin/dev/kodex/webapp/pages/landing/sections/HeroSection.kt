@@ -44,7 +44,6 @@ private val TEST_ROW_DELAY = 320.milliseconds
 private const val COUNTER_STEPS = 60
 private const val BLOB_ANIM_DURATION = 10.0
 private const val BLOB2_ANIM_DURATION = 12.0
-private const val PANEL_ANIM_DURATION = 0.18
 private const val ICON_APPEAR_DURATION = 0.24
 
 private const val MAC_DOT_RED = "#FF5F57"
@@ -69,16 +68,32 @@ private enum class PanelState { Normal, TerminalClosed, Minimized, Maximized }
 // ── Public StatCounter ────────────────────────────────────────────────────────
 
 @Composable
-fun IComponent.StatCounter(label: String, value: Int?, error: Boolean = false) {
+fun IComponent.StatCounter(label: String, value: Int?, targetValue: Int? = null, error: Boolean = false) {
     div(className = "flex flex-col items-center gap-1 min-w-[5rem]") {
         div(className = "h-10 flex items-center justify-center") {
             when {
-                error -> span(className = "stat-value text-4xl font-bold text-on-surface/40") { +"—" }
-                value == null -> div(
-                    className = "stat-shimmer animate-pulse bg-surface-variant rounded-lg h-8 w-16",
-                ) {}
-                else -> span(className = "stat-value text-4xl font-bold tabular-nums text-primary") {
-                    +value.toString()
+                error -> {
+                    span(className = "stat-value text-4xl font-bold text-on-surface/40") { +"—" }
+                }
+
+                value == null -> {
+                    div(
+                        className = "stat-shimmer animate-pulse bg-surface-variant rounded-lg h-8 w-16",
+                    ) {}
+                }
+
+                else -> {
+                    // Reserve width for the final digit count up-front so the span never
+                    // grows during the counting animation (tabular-nums makes each digit
+                    // equal width; ch unit anchors to the "0" glyph at the current font size).
+                    val digitCount = (targetValue ?: value).toString().length
+                    span(
+                        className = "stat-value text-4xl font-bold " +
+                            "tabular-nums text-primary text-center inline-block",
+                    ) {
+                        attribute("style", "min-width: ${digitCount}ch;")
+                        +value.toString()
+                    }
                 }
             }
         }
@@ -103,13 +118,22 @@ fun IComponent.HeroSection(statsState: UiState<LandingStats>) {
 
     LaunchedEffect(Unit) {
         while (true) {
-            typedChars = 0; showCompileStatus = false; showTestRows = false; visibleRows = 0
+            typedChars = 0
+            showCompileStatus = false
+            showTestRows = false
+            visibleRows = 0
             delay(INITIAL_PAUSE)
-            repeat(KOTLIN_CODE.length) { typedChars++; delay(TYPING_DELAY) }
+            repeat(KOTLIN_CODE.length) {
+                typedChars++
+                delay(TYPING_DELAY)
+            }
             showCompileStatus = true
             delay(COMPILE_DELAY)
             showTestRows = true
-            for (i in 1..3) { visibleRows = i; delay(TEST_ROW_DELAY) }
+            for (i in 1..3) {
+                visibleRows = i
+                delay(TEST_ROW_DELAY)
+            }
             delay(LOOP_PAUSE)
         }
     }
@@ -117,13 +141,28 @@ fun IComponent.HeroSection(statsState: UiState<LandingStats>) {
     LaunchedEffect(showCompileStatus) {
         if (!showCompileStatus) return@LaunchedEffect
         val element = document.getElementById("hero-compile-bar") ?: return@LaunchedEffect
-        gsap.to(element, unsafeJso { scaleX = 1.0; duration = 0.8; ease = "power2.out" })
+        gsap.to(
+            element,
+            unsafeJso {
+                scaleX = 1.0
+                duration = 0.8
+                ease = "power2.out"
+            },
+        )
     }
 
     LaunchedEffect(visibleRows) {
         if (visibleRows == 0) return@LaunchedEffect
         val element = document.getElementById("hero-test-row-$visibleRows") ?: return@LaunchedEffect
-        gsap.from(element, unsafeJso { opacity = 0.0; y = 6.0; duration = 0.45; ease = "power1.out" })
+        gsap.from(
+            element,
+            unsafeJso {
+                opacity = 0.0
+                y = 6.0
+                duration = 0.45
+                ease = "power1.out"
+            },
+        )
     }
 
     LaunchedEffect(statsState) {
@@ -143,16 +182,30 @@ fun IComponent.HeroSection(statsState: UiState<LandingStats>) {
 
     LaunchedEffect(Unit) {
         document.getElementById("hero-blob-1")?.let { blob ->
-            gsap.to(blob, unsafeJso {
-                x = 80.0; y = -40.0; duration = BLOB_ANIM_DURATION
-                repeat = -1; yoyo = true; ease = "sine.inOut"
-            })
+            gsap.to(
+                blob,
+                unsafeJso {
+                    x = 80.0
+                    y = -40.0
+                    duration = BLOB_ANIM_DURATION
+                    repeat = -1
+                    yoyo = true
+                    ease = "sine.inOut"
+                },
+            )
         }
         document.getElementById("hero-blob-2")?.let { blob ->
-            gsap.to(blob, unsafeJso {
-                x = -60.0; y = 50.0; duration = BLOB2_ANIM_DURATION
-                repeat = -1; yoyo = true; ease = "sine.inOut"
-            })
+            gsap.to(
+                blob,
+                unsafeJso {
+                    x = -60.0
+                    y = 50.0
+                    duration = BLOB2_ANIM_DURATION
+                    repeat = -1
+                    yoyo = true
+                    ease = "sine.inOut"
+                },
+            )
         }
     }
 
@@ -166,10 +219,15 @@ fun IComponent.HeroSection(statsState: UiState<LandingStats>) {
         if (prefersReducedMotion) return@LaunchedEffect
         delay(16.milliseconds) // one frame — let Compose render the icon before GSAP reads the element
         val icon = document.getElementById("hero-terminal-icon") ?: return@LaunchedEffect
-        gsap.from(icon, unsafeJso {
-            scale = 0.4; opacity = 0.0
-            duration = ICON_APPEAR_DURATION; ease = "back.out(1.7)"
-        })
+        gsap.from(
+            icon,
+            unsafeJso {
+                scale = 0.4
+                opacity = 0.0
+                duration = ICON_APPEAR_DURATION
+                ease = "back.out(1.7)"
+            },
+        )
     }
 
     div(className = "relative overflow-hidden") {
@@ -179,7 +237,8 @@ fun IComponent.HeroSection(statsState: UiState<LandingStats>) {
         ) {}
         div(
             id = "hero-blob-2",
-            className = "absolute -bottom-40 -end-40 w-80 h-80 rounded-full bg-secondary/15 blur-3xl pointer-events-none",
+            className = "absolute -bottom-40 -end-40 w-80 h-80 " +
+                "rounded-full bg-secondary/15 blur-3xl pointer-events-none",
         ) {}
 
         div(
@@ -224,9 +283,13 @@ fun IComponent.HeroSection(statsState: UiState<LandingStats>) {
                 ) {
                     macWindowBar(panelState = panelState) { panelState = it }
 
-                    // CSS max-height transition: collapses editor+terminal when Minimized
+                    // TerminalClosed included: prevents content expanding during panel opacity-out
                     val editorWrapClass = "overflow-hidden transition-all duration-300 ease-in-out " +
-                        if (panelState == PanelState.Minimized) "max-h-0 opacity-0" else "max-h-[420px] opacity-100"
+                        if (panelState == PanelState.Minimized || panelState == PanelState.TerminalClosed) {
+                            "max-h-0 opacity-0"
+                        } else {
+                            "max-h-[420px] opacity-100"
+                        }
                     div(id = "hero-panel-content", className = editorWrapClass) {
                         editorContent(code = KOTLIN_CODE, typedChars = typedChars)
 
@@ -395,11 +458,14 @@ private fun IComponent.buildStatCounters(
             StatCounter(label = i18n.tr(DEVELOPERS), value = null, error = true)
             StatCounter(label = i18n.tr(CONTESTS), value = null, error = true)
         }
+
         is UiState.Success if problemsDisplay != null -> {
-            StatCounter(label = i18n.tr(PROBLEMS), value = problemsDisplay)
-            StatCounter(label = i18n.tr(DEVELOPERS), value = usersDisplay)
-            StatCounter(label = i18n.tr(CONTESTS), value = contestsDisplay)
+            val data = statsState.data
+            StatCounter(label = i18n.tr(PROBLEMS), value = problemsDisplay, targetValue = data.totalProblems)
+            StatCounter(label = i18n.tr(DEVELOPERS), value = usersDisplay, targetValue = data.totalUsers)
+            StatCounter(label = i18n.tr(CONTESTS), value = contestsDisplay, targetValue = data.totalContests)
         }
+
         else -> {
             StatCounter(label = i18n.tr(PROBLEMS), value = null)
             StatCounter(label = i18n.tr(DEVELOPERS), value = null)

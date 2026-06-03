@@ -37,15 +37,6 @@ private val FOOTER_COLUMNS = listOf(
         ),
     ),
     FooterColumn(
-        titleKey = "Community",
-        links = listOf(
-            FooterLink("GitHub", "https://github.com/kodex", external = true),
-            FooterLink("Twitter / X", "https://twitter.com/kodex", external = true),
-            FooterLink("Telegram", "https://t.me/kodex", external = true),
-            FooterLink("Discord", "https://discord.gg/kodex", external = true),
-        ),
-    ),
-    FooterColumn(
         titleKey = "Legal",
         links = listOf(
             FooterLink("About", "/about"),
@@ -71,7 +62,7 @@ fun IComponent.Footer() {
         className = "border-t border-outline/20 bg-surface-container/40 py-12",
     ) {
         div(className = "container mx-auto px-4") {
-            div(className = "grid grid-cols-1 md:grid-cols-3 gap-8 mb-10") {
+            div(className = "grid grid-cols-1 md:grid-cols-2 gap-8 mb-10") {
                 FOOTER_COLUMNS.forEach { column -> footerColumn(column) }
             }
 
