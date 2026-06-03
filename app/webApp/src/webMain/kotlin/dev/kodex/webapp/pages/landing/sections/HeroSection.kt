@@ -1,4 +1,4 @@
-@file:Suppress("MagicNumber", "LabeledExpression", "LongMethod", "CognitiveComplexMethod")
+@file:Suppress("MagicNumber", "LabeledExpression", "LongMethod", "CognitiveComplexMethod", "StringLiteralDuplication")
 
 package dev.kodex.webapp.pages.landing.sections
 
@@ -22,6 +22,7 @@ import dev.kodex.webapp.gsap.gsap
 import js.objects.unsafeJso
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.browser.document
+import kotlinx.browser.window
 import kotlinx.coroutines.delay
 
 @Suppress("StringTemplateIndent")
@@ -43,6 +44,29 @@ private val TEST_ROW_DELAY = 320.milliseconds
 private const val COUNTER_STEPS = 60
 private const val BLOB_ANIM_DURATION = 10.0
 private const val BLOB2_ANIM_DURATION = 12.0
+private const val PANEL_ANIM_DURATION = 0.18
+private const val ICON_APPEAR_DURATION = 0.24
+
+private const val MAC_DOT_RED = "#FF5F57"
+private const val MAC_DOT_YELLOW = "#FEBC2E"
+private const val MAC_DOT_GREEN = "#28C840"
+
+// inset-0 + own flex: 'absolute' children don't join parent flex layout,
+// so they need inset-0 + flex to visually center inside the dot circle.
+private const val DOT_SYMBOL_CLASSES =
+    "absolute inset-0 flex items-center justify-center " +
+        "text-[9px] font-black leading-none select-none " +
+        "opacity-0 group-hover:opacity-100 transition-opacity text-black/80"
+
+private const val PROBLEMS = "problems"
+private const val DEVELOPERS = "developers"
+private const val CONTESTS = "contests"
+private const val KEY_ENTER = "Enter"
+private const val KEY_SPACE = " "
+
+private enum class PanelState { Normal, TerminalClosed, Minimized, Maximized }
+
+// ── Public StatCounter ────────────────────────────────────────────────────────
 
 @Composable
 fun IComponent.StatCounter(label: String, value: Int?, error: Boolean = false) {
@@ -50,7 +74,9 @@ fun IComponent.StatCounter(label: String, value: Int?, error: Boolean = false) {
         div(className = "h-10 flex items-center justify-center") {
             when {
                 error -> span(className = "stat-value text-4xl font-bold text-on-surface/40") { +"—" }
-                value == null -> div(className = "stat-shimmer animate-pulse bg-surface-variant rounded-lg h-8 w-16") {}
+                value == null -> div(
+                    className = "stat-shimmer animate-pulse bg-surface-variant rounded-lg h-8 w-16",
+                ) {}
                 else -> span(className = "stat-value text-4xl font-bold tabular-nums text-primary") {
                     +value.toString()
                 }
@@ -62,6 +88,8 @@ fun IComponent.StatCounter(label: String, value: Int?, error: Boolean = false) {
     }
 }
 
+// ── HeroSection ───────────────────────────────────────────────────────────────
+
 @Composable
 fun IComponent.HeroSection(statsState: UiState<LandingStats>) {
     var typedChars by remember { mutableStateOf(0) }
@@ -71,60 +99,33 @@ fun IComponent.HeroSection(statsState: UiState<LandingStats>) {
     var problemsDisplay by remember { mutableStateOf<Int?>(null) }
     var usersDisplay by remember { mutableStateOf<Int?>(null) }
     var contestsDisplay by remember { mutableStateOf<Int?>(null) }
+    var panelState by remember { mutableStateOf(PanelState.Normal) }
 
-    // Infinite typing loop — restarts automatically after each cycle
     LaunchedEffect(Unit) {
         while (true) {
-            typedChars = 0
-            showCompileStatus = false
-            showTestRows = false
-            visibleRows = 0
+            typedChars = 0; showCompileStatus = false; showTestRows = false; visibleRows = 0
             delay(INITIAL_PAUSE)
-            repeat(KOTLIN_CODE.length) {
-                typedChars++
-                delay(TYPING_DELAY)
-            }
+            repeat(KOTLIN_CODE.length) { typedChars++; delay(TYPING_DELAY) }
             showCompileStatus = true
             delay(COMPILE_DELAY)
             showTestRows = true
-            for (i in 1..3) {
-                visibleRows = i
-                delay(TEST_ROW_DELAY)
-            }
+            for (i in 1..3) { visibleRows = i; delay(TEST_ROW_DELAY) }
             delay(LOOP_PAUSE)
         }
     }
 
-    // GSAP compile bar scaleX 0→1
     LaunchedEffect(showCompileStatus) {
         if (!showCompileStatus) return@LaunchedEffect
         val element = document.getElementById("hero-compile-bar") ?: return@LaunchedEffect
-        gsap.to(
-            element,
-            unsafeJso {
-                scaleX = 1.0
-                duration = 0.8
-                ease = "power2.out"
-            },
-        )
+        gsap.to(element, unsafeJso { scaleX = 1.0; duration = 0.8; ease = "power2.out" })
     }
 
-    // GSAP fade-in per row as each one enters the DOM
     LaunchedEffect(visibleRows) {
         if (visibleRows == 0) return@LaunchedEffect
         val element = document.getElementById("hero-test-row-$visibleRows") ?: return@LaunchedEffect
-        gsap.from(
-            element,
-            unsafeJso {
-                opacity = 0.0
-                y = 6.0
-                duration = 0.45
-                ease = "power1.out"
-            },
-        )
+        gsap.from(element, unsafeJso { opacity = 0.0; y = 6.0; duration = 0.45; ease = "power1.out" })
     }
 
-    // Stats counter roll-up (no innerHTML — Compose state only)
     LaunchedEffect(statsState) {
         if (statsState !is UiState.Success) return@LaunchedEffect
         val stats = statsState.data
@@ -140,34 +141,35 @@ fun IComponent.HeroSection(statsState: UiState<LandingStats>) {
         contestsDisplay = stats.totalContests
     }
 
-    // Ambient blob animations
     LaunchedEffect(Unit) {
-        document.getElementById("hero-blob-1")?.let { el ->
-            gsap.to(
-                el,
-                unsafeJso {
-                    x = 80.0
-                    y = -40.0
-                    duration = BLOB_ANIM_DURATION
-                    repeat = -1
-                    yoyo = true
-                    ease = "sine.inOut"
-                },
-            )
+        document.getElementById("hero-blob-1")?.let { blob ->
+            gsap.to(blob, unsafeJso {
+                x = 80.0; y = -40.0; duration = BLOB_ANIM_DURATION
+                repeat = -1; yoyo = true; ease = "sine.inOut"
+            })
         }
-        document.getElementById("hero-blob-2")?.let { el ->
-            gsap.to(
-                el,
-                unsafeJso {
-                    x = -60.0
-                    y = 50.0
-                    duration = BLOB2_ANIM_DURATION
-                    repeat = -1
-                    yoyo = true
-                    ease = "sine.inOut"
-                },
-            )
+        document.getElementById("hero-blob-2")?.let { blob ->
+            gsap.to(blob, unsafeJso {
+                x = -60.0; y = 50.0; duration = BLOB2_ANIM_DURATION
+                repeat = -1; yoyo = true; ease = "sine.inOut"
+            })
         }
+    }
+
+    // Spring-in animation for the terminal icon when it becomes visible.
+    // The panel's opacity-0→1 cross-fade is handled by CSS transition (no GSAP needed there).
+    LaunchedEffect(panelState) {
+        if (panelState != PanelState.TerminalClosed) return@LaunchedEffect
+        val prefersReducedMotion = runCatching {
+            window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        }.getOrDefault(false)
+        if (prefersReducedMotion) return@LaunchedEffect
+        delay(16.milliseconds) // one frame — let Compose render the icon before GSAP reads the element
+        val icon = document.getElementById("hero-terminal-icon") ?: return@LaunchedEffect
+        gsap.from(icon, unsafeJso {
+            scale = 0.4; opacity = 0.0
+            duration = ICON_APPEAR_DURATION; ease = "back.out(1.7)"
+        })
     }
 
     div(className = "relative overflow-hidden") {
@@ -177,15 +179,14 @@ fun IComponent.HeroSection(statsState: UiState<LandingStats>) {
         ) {}
         div(
             id = "hero-blob-2",
-            className = "absolute -bottom-40 -end-40 w-80 h-80 rounded-full " +
-                "bg-secondary/15 blur-3xl pointer-events-none",
+            className = "absolute -bottom-40 -end-40 w-80 h-80 rounded-full bg-secondary/15 blur-3xl pointer-events-none",
         ) {}
 
         div(
             className = "relative container mx-auto px-4 py-24 flex flex-col lg:flex-row " +
                 "items-center gap-12 min-h-screen",
         ) {
-            // Left column — headline, tagline, CTAs, stats
+            // Left column
             div(className = "flex-1 flex flex-col items-start gap-6") {
                 h1(
                     className = "text-5xl lg:text-6xl font-extrabold leading-tight text-on-surface tracking-tight",
@@ -204,35 +205,134 @@ fun IComponent.HeroSection(statsState: UiState<LandingStats>) {
                 }
             }
 
-            // Right column — Mac-style code editor panel
-            div(
-                id = "hero-editor-panel",
-                className = "flex-1 w-full max-w-lg rounded-2xl border border-outline/20 " +
-                    "bg-neutral-900 overflow-hidden shadow-2xl",
-            ) {
-                macWindowBar()
-                editorContent(code = KOTLIN_CODE, typedChars = typedChars)
-                terminalArea(
-                    showCompileStatus = showCompileStatus,
-                    showTestRows = showTestRows,
-                    visibleRows = visibleRows,
-                )
+            // Right column — wrapper keeps SAME dimensions in ALL panel states.
+            // Both the panel and the terminal icon live here; CSS opacity cross-fades between them.
+            // This avoids DOM replacement so CSS transitions actually fire between states.
+            // The wrapper's lg:flex-1 max-w-lg is NEVER removed, so the left column width is stable
+            // and the headline never reflows when pressing red/green.
+            div(className = "relative lg:flex-1 w-full max-w-lg") {
+                // Editor panel — always in DOM; fades out via CSS when TerminalClosed
+                val panelVisClass = if (panelState == PanelState.TerminalClosed) {
+                    "opacity-0 pointer-events-none"
+                } else {
+                    "opacity-100 pointer-events-auto"
+                }
+                div(
+                    id = "hero-editor-panel",
+                    className = "w-full rounded-2xl border border-outline/20 bg-neutral-900 " +
+                        "overflow-clip shadow-2xl transition-all duration-300 $panelVisClass",
+                ) {
+                    macWindowBar(panelState = panelState) { panelState = it }
+
+                    // CSS max-height transition: collapses editor+terminal when Minimized
+                    val editorWrapClass = "overflow-hidden transition-all duration-300 ease-in-out " +
+                        if (panelState == PanelState.Minimized) "max-h-0 opacity-0" else "max-h-[420px] opacity-100"
+                    div(id = "hero-panel-content", className = editorWrapClass) {
+                        editorContent(code = KOTLIN_CODE, typedChars = typedChars)
+
+                        // Inner CSS transition: collapses only terminal when TerminalClosed/Minimized
+                        val termWrapClass = "overflow-hidden transition-all duration-300 ease-in-out " +
+                            if (panelState == PanelState.Normal || panelState == PanelState.Maximized) {
+                                "max-h-[200px] opacity-100"
+                            } else {
+                                "max-h-0 opacity-0"
+                            }
+                        div(id = "hero-panel-terminal", className = termWrapClass) {
+                            terminalArea(
+                                showCompileStatus = showCompileStatus,
+                                showTestRows = showTestRows,
+                                visibleRows = visibleRows,
+                            )
+                        }
+                    }
+                }
+
+                // Terminal icon overlay — absolute so it doesn't push layout.
+                // Fades in via CSS when TerminalClosed; GSAP adds the spring scale on top.
+                val iconVisClass = if (panelState == PanelState.TerminalClosed) {
+                    "opacity-100 pointer-events-auto"
+                } else {
+                    "opacity-0 pointer-events-none"
+                }
+                div(
+                    className = "absolute inset-0 flex items-center justify-center " +
+                        "transition-opacity duration-300 $iconVisClass",
+                ) {
+                    terminalAppIcon { panelState = PanelState.Normal }
+                }
+            }
+        }
+    }
+}
+
+// ── Mac window chrome ─────────────────────────────────────────────────────────
+
+@Composable
+private fun IComponent.macWindowBar(panelState: PanelState, onStateChange: (PanelState) -> Unit) {
+    div(className = "group flex items-center gap-2 px-4 py-3 bg-neutral-800 border-b border-white/5") {
+        macDot(color = MAC_DOT_RED, symbol = "×", ariaLabel = "Close to terminal icon") {
+            onStateChange(PanelState.TerminalClosed)
+        }
+        macDot(color = MAC_DOT_YELLOW, symbol = "−", ariaLabel = "Minimize editor") {
+            onStateChange(if (panelState == PanelState.Minimized) PanelState.Normal else PanelState.Minimized)
+        }
+        macDot(color = MAC_DOT_GREEN, symbol = "⊕", ariaLabel = "Maximize editor") {
+            onStateChange(if (panelState == PanelState.Maximized) PanelState.Normal else PanelState.Maximized)
+        }
+        span(className = "ms-3 text-xs text-neutral-500 font-mono") { +"Solution.kt" }
+        if (panelState != PanelState.Normal) {
+            span(className = "ms-auto me-1 text-[10px] text-neutral-600 font-mono italic") {
+                +when (panelState) {
+                    PanelState.Minimized -> "— minimized"
+                    PanelState.Maximized -> "— maximized"
+                    PanelState.TerminalClosed -> "— closed"
+                    PanelState.Normal -> ""
+                }
             }
         }
     }
 }
 
 @Composable
-private fun IComponent.macWindowBar() {
+private fun IComponent.macDot(color: String, symbol: String, ariaLabel: String, onClick: () -> Unit) {
     div(
-        className = "flex items-center gap-2 px-4 py-3 bg-neutral-800 border-b border-white/5",
+        className = "mac-dot relative w-3.5 h-3.5 rounded-full cursor-pointer flex items-center " +
+            "justify-center transition-transform hover:scale-125 active:scale-90",
     ) {
-        div(className = "w-3 h-3 rounded-full bg-[#FF5F57] mac-dot") {}
-        div(className = "w-3 h-3 rounded-full bg-[#FEBC2E] mac-dot") {}
-        div(className = "w-3 h-3 rounded-full bg-[#28C840] mac-dot") {}
-        span(className = "ms-3 text-xs text-neutral-500 font-mono") { +"Solution.kt" }
+        attribute("style", "background-color: $color;")
+        tabindex(0)
+        role("button")
+        attribute("aria-label", ariaLabel)
+        span(className = DOT_SYMBOL_CLASSES) { +symbol }
+        onClick { onClick() }
+        onKeydown { e -> if (e.key == KEY_ENTER || e.key == KEY_SPACE) onClick() }
     }
 }
+
+// macOS Terminal.app dock icon — clicking reopens the full panel
+@Composable
+private fun IComponent.terminalAppIcon(onOpen: () -> Unit) {
+    div(
+        id = "hero-terminal-icon",
+        className = "cursor-pointer select-none flex flex-col items-center justify-center gap-2 " +
+            "w-24 h-24 rounded-2xl bg-[#1a1a1a] border border-neutral-800 shadow-2xl " +
+            "hover:border-green-500/30 hover:shadow-green-500/10 " +
+            "hover:scale-105 active:scale-95 transition-all duration-200",
+    ) {
+        tabindex(0)
+        role("button")
+        attribute("aria-label", i18n.tr("Reopen editor"))
+        div(className = "flex items-baseline gap-px") {
+            span(className = "text-green-400 font-mono text-xl font-bold leading-none") { +">" }
+            span(className = "text-green-400 font-mono text-lg font-bold leading-none animate-pulse") { +"_" }
+        }
+        span(className = "text-neutral-600 text-[9px] font-mono tracking-widest uppercase") { +"terminal" }
+        onClick { onOpen() }
+        onKeydown { e -> if (e.key == KEY_ENTER || e.key == KEY_SPACE) onOpen() }
+    }
+}
+
+// ── Editor sections ───────────────────────────────────────────────────────────
 
 @Composable
 private fun IComponent.editorContent(code: String, typedChars: Int) {
@@ -247,21 +347,15 @@ private fun IComponent.editorContent(code: String, typedChars: Int) {
 
 @Composable
 private fun IComponent.terminalArea(showCompileStatus: Boolean, showTestRows: Boolean, visibleRows: Int) {
-    div(
-        className = "h-44 border-t border-white/5 bg-neutral-950 overflow-hidden",
-    ) {
+    div(className = "h-44 border-t border-white/5 bg-neutral-950") {
         div(className = "px-4 pt-3 pb-2 flex flex-col gap-1.5 h-full") {
-            // Prompt line — always visible
             span(className = "text-xs font-mono text-green-400/70") {
                 +"$ ./gradlew :test --tests \"SolutionTest\""
             }
-
             if (showCompileStatus) {
-                // Status line
                 span(className = "text-xs font-mono text-neutral-400") {
                     +if (showTestRows) "BUILD SUCCESSFUL in 1s" else "Compiling..."
                 }
-                // Progress bar
                 div(className = "relative h-0.5 bg-neutral-800 rounded-full overflow-hidden") {
                     div(
                         id = "hero-compile-bar",
@@ -270,7 +364,6 @@ private fun IComponent.terminalArea(showCompileStatus: Boolean, showTestRows: Bo
                         attribute("style", "transform: scaleX(0);")
                     }
                 }
-                // Test result rows — each fades in individually via GSAP
                 val testLines = listOf(
                     "  PASS  Test 1 passed in 9ms",
                     "  PASS  Test 2 passed in 12ms",
@@ -279,20 +372,15 @@ private fun IComponent.terminalArea(showCompileStatus: Boolean, showTestRows: Bo
                 testLines.take(visibleRows).forEachIndexed { idx, text ->
                     div(
                         id = "hero-test-row-${idx + 1}",
-                        className = "text-xs font-mono text-green-400" +
-                            if (idx == 0) " mt-2" else "",
-                    ) {
-                        +text
-                    }
+                        className = "text-xs font-mono text-green-400" + if (idx == 0) " mt-2" else "",
+                    ) { +text }
                 }
             }
         }
     }
 }
 
-private const val PROBLEMS = "problems"
-private const val DEVELOPERS = "developers"
-private const val CONTESTS = "contests"
+// ── Stat counters ─────────────────────────────────────────────────────────────
 
 @Composable
 private fun IComponent.buildStatCounters(
@@ -307,13 +395,11 @@ private fun IComponent.buildStatCounters(
             StatCounter(label = i18n.tr(DEVELOPERS), value = null, error = true)
             StatCounter(label = i18n.tr(CONTESTS), value = null, error = true)
         }
-
         is UiState.Success if problemsDisplay != null -> {
             StatCounter(label = i18n.tr(PROBLEMS), value = problemsDisplay)
             StatCounter(label = i18n.tr(DEVELOPERS), value = usersDisplay)
             StatCounter(label = i18n.tr(CONTESTS), value = contestsDisplay)
         }
-
         else -> {
             StatCounter(label = i18n.tr(PROBLEMS), value = null)
             StatCounter(label = i18n.tr(DEVELOPERS), value = null)
