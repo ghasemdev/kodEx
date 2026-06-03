@@ -103,18 +103,18 @@ No user story work begins until this phase is complete.
 
 ### Tests — US2
 
-- [ ] T039 [P] [US2] `BadgeDefinitionTest`: verify all 8 `BadgeDefinition` entries pass `init`-block validation (`id` regex `^[a-z0-9-]+$`, `iconPath` regex `^icons/[a-z0-9/.-]+\.svg$`); no duplicate ids; all fields non-blank — `app/webApp/src/webTest/.../landing/BadgeDefinitionTest.kt`
+- [x] T039 [P] [US2] `BadgeDefinitionTest`: verify all 8 `BadgeDefinition` entries pass `init`-block validation (`id` regex `^[a-z0-9-]+$`, `iconPath` regex `^icons/[a-z0-9/.-]+\.svg$`); no duplicate ids; all fields non-blank — `app/webApp/src/webTest/.../landing/BadgeDefinitionTest.kt`
 
 ### Implementation — US2
 
-- [ ] T040 [US2] Create `BadgeDefinition.kt` data class with `init`-block validation; create `object Badges` with all 8 definitions (kotlin-ninja, android-architect, night-owl, steady-hand, bug-hunter, speed-demon, creative-chaos, hello-world) using `iconPath = "icons/badges/{id}.svg"`; all `name`, `description`, `unlockCondition` strings wrapped in `i18n.tr()` — `app/webApp/.../pages/landing/model/BadgeDefinition.kt`
-- [ ] T041 [US2] Add 8 placeholder badge SVG files (simple geometric shapes — hexagon + letter initial) to resources; these are placeholder assets to be replaced by Figma-designed SVGs — `app/webApp/src/webMain/resources/icons/badges/*.svg`
-- [ ] T042 [US2] Add 4 tier SVG icon placeholders and 3 trophy SVG placeholders to resources — `app/webApp/src/webMain/resources/icons/tiers/*.svg`, `resources/icons/trophies/*.svg`
-- [ ] T043 [P] [US2] Create `PlaceholderData.kt`: `object PlaceholderLeaderboard` with 3 `LeaderboardEntry` rows (rank, username, avatarUrl=null, tier, score, solved, streakDays) — `app/webApp/.../pages/landing/model/PlaceholderData.kt`
-- [ ] T044 [US2] Create `GamificationSection.kt`: section heading (i18n); tier bar with 4 tier labels + filled segment; badge grid (8 `BadgeCard` composables); trophy case preview (2–3 rows with SVG cup icon + contest name + date); all text via `i18n.tr()` — `app/webApp/.../pages/landing/sections/GamificationSection.kt`
-- [ ] T045 [US2] Add tier bar ScrollTrigger animation: on enter `gsap.to(fillBar, {width:"50%", duration:1.2, ease:"power2.inOut"})` (placeholder fill — real value comes from SessionState in spec 011); badge grid items `from({y:20, opacity:0, stagger:0.08, ease:"power1.out"})` — `app/webApp/.../pages/landing/sections/GamificationSection.kt`
-- [ ] T046 [US2] Add `BadgeCard` composable with CSS 3D flip on hover: front face (badge SVG icon + name), back face (unlock condition text, max 2 lines); CSS `transform-style:preserve-3d`, `rotateY(180deg)` transition 0.4s on `hover`; keyboard: `Enter`/`Space` toggles flip state via Compose `var flipped by remember` — `app/webApp/.../pages/landing/sections/GamificationSection.kt`
-- [ ] T047 [US2] Create `LeaderboardSection.kt`: header row + 3 placeholder rows from `PlaceholderLeaderboard`; avatar circle (null avatarUrl → initials); tier icon from SVG; score roll-up on scroll entry (`gsap.to(scoreEl, {innerHTML:n, snap:"innerHTML", duration:1.6, ease:"power1.out"})`); "you" row shown when `sessionState is Authenticated` (placeholder rank=48, stubbed); link to full leaderboard page — `app/webApp/.../pages/landing/sections/LeaderboardSection.kt`
+- [x] T040 [US2] Create `BadgeDefinition.kt` data class with `init`-block validation; create `object Badges` with all 8 definitions (kotlin-ninja, android-architect, night-owl, steady-hand, bug-hunter, speed-demon, creative-chaos, hello-world) using `iconPath = "icons/badges/{id}.svg"`; all `name`, `description`, `unlockCondition` strings wrapped in `i18n.tr()` — `app/webApp/.../pages/landing/model/BadgeDefinition.kt`
+- [x] T041 [US2] Add 8 placeholder badge SVG files (simple geometric shapes — hexagon + letter initial) to resources; these are placeholder assets to be replaced by Figma-designed SVGs — `app/webApp/src/webMain/resources/icons/badges/*.svg`
+- [x] T042 [US2] Add 4 tier SVG icon placeholders and 3 trophy SVG placeholders to resources — `app/webApp/src/webMain/resources/icons/tiers/*.svg`, `resources/icons/trophies/*.svg`
+- [x] T043 [P] [US2] Create `PlaceholderData.kt`: `object PlaceholderLeaderboard` with 3 `LeaderboardEntry` rows (rank, username, avatarUrl=null, tier, score, solved, streakDays) — `app/webApp/.../pages/landing/model/PlaceholderData.kt`
+- [x] T044 [US2] Create `GamificationSection.kt`: section heading (i18n); tier bar with 4 tier labels + filled segment; badge grid (8 `BadgeCard` composables); trophy case preview (2–3 rows with SVG cup icon + contest name + date); all text via `i18n.tr()` — `app/webApp/.../pages/landing/sections/GamificationSection.kt`
+- [x] T045 [US2] Add tier bar ScrollTrigger animation: on enter `gsap.to(fillBar, {width:"50%", duration:1.2, ease:"power2.inOut"})` (placeholder fill — real value comes from SessionState in spec 011); badge grid items `from({y:20, opacity:0, stagger:0.08, ease:"power1.out"})` — `app/webApp/.../pages/landing/sections/GamificationSection.kt`
+- [x] T046 [US2] Add `BadgeCard` composable with CSS 3D flip on hover: front face (badge SVG icon + name), back face (unlock condition text, max 2 lines); CSS `transform-style:preserve-3d`, `rotateY(180deg)` transition 0.4s on `hover`; keyboard: `Enter`/`Space` toggles flip state via Compose `var flipped by remember` — `app/webApp/.../pages/landing/sections/GamificationSection.kt`
+- [x] T047 [US2] Create `LeaderboardSection.kt`: header row + 3 placeholder rows from `PlaceholderLeaderboard`; avatar circle (null avatarUrl → initials); tier icon from SVG; score roll-up on scroll entry (`gsap.to(scoreEl, {innerHTML:n, snap:"innerHTML", duration:1.6, ease:"power1.out"})`); "you" row shown when `sessionState is Authenticated` (placeholder rank=48, stubbed); link to full leaderboard page — `app/webApp/.../pages/landing/sections/LeaderboardSection.kt`
 
 **Checkpoint**: Gamification section scrolls into view with animations; badge hover flips; leaderboard scores count up; T039 passes.
 
@@ -127,8 +127,8 @@ No user story work begins until this phase is complete.
 
 ### Implementation — US3
 
-- [ ] T048 [P] [US3] Add `ProblemSummary` to `PlaceholderData.kt`: 5 entries with `id`, `title`, `type: ExamType`, `attemptCount`, `successCount`; verify `difficulty` computed property calls `computeDifficulty()` correctly — `app/webApp/.../pages/landing/model/PlaceholderData.kt`
-- [ ] T049 [US3] Create `ProblemsSection.kt`: section heading (i18n); filter hint chips (All / Kotlin / Android / Easy / Medium / Hard — decorative, no logic on landing); 5-row table with columns (title, type badge, difficulty badge); link to full problems page; ScrollTrigger `start:"top 85%", once:true` → `gsap.from(rows, {x:-20, opacity:0, stagger:0.06, ease:"power1.out"})` — `app/webApp/.../pages/landing/sections/ProblemsSection.kt`
+- [x] T048 [P] [US3] Add `ProblemSummary` to `PlaceholderData.kt`: 5 entries with `id`, `title`, `type: ExamType`, `attemptCount`, `successCount`; verify `difficulty` computed property calls `computeDifficulty()` correctly — `app/webApp/.../pages/landing/model/PlaceholderData.kt`
+- [x] T049 [US3] Create `ProblemsSection.kt`: section heading (i18n); filter hint chips (All / Kotlin / Android / Easy / Medium / Hard — decorative, no logic on landing); 5-row table with columns (title, type badge, difficulty badge); link to full problems page; ScrollTrigger `start:"top 85%", once:true` → `gsap.from(rows, {x:-20, opacity:0, stagger:0.06, ease:"power1.out"})` — `app/webApp/.../pages/landing/sections/ProblemsSection.kt`
 
 **Checkpoint**: Problems section renders with correct difficulty labels computed from placeholder data; rows animate in; T017 (HeroSection) still passes after changes.
 
@@ -141,7 +141,7 @@ No user story work begins until this phase is complete.
 
 ### Implementation — US4
 
-- [ ] T050 [US4] Create `CreateExamSection.kt`: dark background block; heading (i18n); 5-item animated checklist (Three exam types, Automated grading, Real-time leaderboard, Badge rewards, Export results) — each item `gsap.from({opacity:0, x:-12, stagger:0.15, ease:"power2.out"})` on ScrollTrigger enter; dual CTA button row: primary "Create an Exam →" (→ `/signup` if guest, → `/exam/new` if EXAM_CREATOR/ADMIN), secondary "See Demo" (→ `/problems`) — `app/webApp/.../pages/landing/sections/CreateExamSection.kt`
+- [x] T050 [US4] Create `CreateExamSection.kt`: dark background block; heading (i18n); 5-item animated checklist (Three exam types, Automated grading, Real-time leaderboard, Badge rewards, Export results) — each item `gsap.from({opacity:0, x:-12, stagger:0.15, ease:"power2.out"})` on ScrollTrigger enter; dual CTA button row: primary "Create an Exam →" (→ `/signup` if guest, → `/exam/new` if EXAM_CREATOR/ADMIN), secondary "See Demo" (→ `/problems`) — `app/webApp/.../pages/landing/sections/CreateExamSection.kt`
 
 **Checkpoint**: Create Exam section renders; checklist animates in; CTA is clickable; all US1–US4 sections visible in a single scroll from top to bottom.
 

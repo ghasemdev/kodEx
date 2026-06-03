@@ -11,8 +11,12 @@ import dev.kodex.webapp.di.org.koin.compose.koinInject
 import dev.kodex.webapp.layout.Footer
 import dev.kodex.webapp.layout.GlobalNavBar
 import dev.kodex.webapp.layout.PageTransition
+import dev.kodex.webapp.pages.landing.sections.CreateExamSection
 import dev.kodex.webapp.pages.landing.sections.ExamTypesSection
+import dev.kodex.webapp.pages.landing.sections.GamificationSection
 import dev.kodex.webapp.pages.landing.sections.HeroSection
+import dev.kodex.webapp.pages.landing.sections.LeaderboardSection
+import dev.kodex.webapp.pages.landing.sections.ProblemsSection
 
 @Composable
 fun IComponent.LandingPage() {
@@ -33,6 +37,10 @@ private fun IComponent.LandingPage(uiState: LandingUiState) {
         PageTransition(id = "landing-page-transition") {
             HeroSection(statsState = uiState.statsState)
             ExamTypesSection()
+            GamificationSection()
+            LeaderboardSection()
+            ProblemsSection()
+            CreateExamSection()
         }
         Footer()
     }

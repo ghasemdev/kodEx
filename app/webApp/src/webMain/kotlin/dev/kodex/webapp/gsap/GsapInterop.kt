@@ -59,4 +59,5 @@ external interface ScrollTriggerConfig : JsAny {
     var trigger: Element
     var start: String
     var once: Boolean
+    var onEnter: () -> Unit
 }
