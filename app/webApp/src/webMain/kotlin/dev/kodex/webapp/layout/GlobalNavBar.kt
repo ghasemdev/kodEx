@@ -16,6 +16,7 @@ import dev.kodex.shared.session.SessionState
 import dev.kodex.shared.session.UserRole
 import dev.kodex.webapp.design.components.Button
 import dev.kodex.webapp.design.components.ButtonVariant
+import dev.kodex.webapp.design.components.ComponentSize
 import dev.kodex.webapp.design.components.LanguageSwitcher
 import dev.kodex.webapp.design.components.ThemeSwitcher
 import dev.kodex.webapp.design.i18n.i18n
@@ -39,13 +40,14 @@ fun IComponent.GlobalNavBar(session: SessionState = SessionState.Guest) {
             // Logo
             div(
                 id = "nav-logo",
-                className = "font-extrabold text-xl text-primary tracking-tight cursor-pointer " +
+                className = "font-extrabold text-xl tracking-tight cursor-pointer " +
                     "flex-shrink-0 select-none",
             ) {
                 role("link")
                 tabindex(0)
                 attribute(ARIA_LABEL, i18n.tr("KodEx home"))
-                +"KodEx"
+                span(className = "text-on-surface") { +"Kod" }
+                span(className = "text-primary") { +"Ex" }
             }
 
             // Desktop nav links
@@ -144,6 +146,7 @@ private fun IComponent.guestButtons() {
         id = "nav-sign-up",
         label = i18n.tr("Sign Up"),
         variant = ButtonVariant.Primary,
+        size = ComponentSize.Sm,
         className = "hidden md:inline-flex",
     )
 }

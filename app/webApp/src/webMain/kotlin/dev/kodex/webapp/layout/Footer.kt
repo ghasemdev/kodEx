@@ -11,9 +11,11 @@ import dev.kilua.html.span
 import dev.kodex.webapp.design.i18n.i18n
 import dev.kodex.webapp.gsap.gsap
 import js.objects.unsafeJso
-import kotlin.js.js
+import kotlin.time.Clock
 import kotlinx.browser.document
 import kotlinx.browser.window
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 private const val ICON_BOUNCE_SCALE = 1.15
 private const val ICON_BOUNCE_DURATION = 0.3
@@ -169,4 +171,7 @@ private fun setupSocialHoverAnimations() {
     }
 }
 
-private fun currentYear(): String = js("new Date().getFullYear().toString()")
+private fun currentYear(): String = Clock.System.now()
+    .toLocalDateTime(TimeZone.currentSystemDefault())
+    .year
+    .toString()

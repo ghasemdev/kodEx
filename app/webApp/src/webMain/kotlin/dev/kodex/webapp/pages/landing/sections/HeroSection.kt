@@ -46,15 +46,17 @@ private const val BLOB2_ANIM_DURATION = 12.0
 
 @Composable
 fun IComponent.StatCounter(label: String, value: Int?, error: Boolean = false) {
-    div(className = "flex flex-col items-center gap-1") {
-        when {
-            error -> span(className = "stat-value text-4xl font-bold text-on-surface/40") { +"—" }
-            value == null -> div(className = "stat-shimmer animate-pulse bg-surface-variant rounded-lg h-10 w-20") {}
-            else -> span(className = "stat-value text-4xl font-bold tabular-nums text-primary") {
-                +value.toString()
+    div(className = "flex flex-col items-center gap-1 min-w-[5rem]") {
+        div(className = "h-10 flex items-center justify-center") {
+            when {
+                error -> span(className = "stat-value text-4xl font-bold text-on-surface/40") { +"—" }
+                value == null -> div(className = "stat-shimmer animate-pulse bg-surface-variant rounded-lg h-8 w-16") {}
+                else -> span(className = "stat-value text-4xl font-bold tabular-nums text-primary") {
+                    +value.toString()
+                }
             }
         }
-        span(className = "stat-label text-xs uppercase tracking-widest text-on-surface/50 mt-0.5") {
+        span(className = "stat-label text-xs uppercase tracking-widest text-on-surface/50") {
             +label
         }
     }

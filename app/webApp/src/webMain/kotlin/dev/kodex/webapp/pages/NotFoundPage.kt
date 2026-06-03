@@ -10,6 +10,7 @@ import dev.kodex.webapp.design.components.Button
 import dev.kodex.webapp.design.components.ButtonVariant
 import dev.kodex.webapp.design.i18n.i18n
 import kotlinx.browser.window
+import org.w3c.dom.events.Event
 
 @Composable
 fun IComponent.NotFoundPage() {
@@ -27,7 +28,10 @@ fun IComponent.NotFoundPage() {
         Button(
             label = i18n.tr("Back to Home"),
             variant = ButtonVariant.Primary,
-            onClick = { window.history.pushState(null, "", "/") },
+            onClick = {
+                window.history.pushState(null, "", "/")
+                window.dispatchEvent(Event("popstate"))
+            },
         )
     }
 }
