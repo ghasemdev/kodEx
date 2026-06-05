@@ -1,5 +1,20 @@
 package dev.kodex.webapp.pages.landing.model
 
+// ---------------------------------------------------------------------------
+// Tier scoring formula (implement in backend/scoring module when ready):
+//
+//   score = Σ(problem_base_pts × difficulty_multiplier) + Σ(contest_placement_bonus)
+//
+//   difficulty_multiplier : Easy=1×  Medium=2.5×  Hard=5×
+//   contest_placement_bonus: 1st=500  2nd=300  3rd=150  top-10=50
+//
+//   Tier thresholds:
+//     Junior      : score <  1_000
+//     Senior      : 1_000 ≤ score <  5_000
+//     Master      : 5_000 ≤ score < 15_000
+//     Grandmaster : score ≥ 15_000
+// ---------------------------------------------------------------------------
+
 import dev.kodex.core.models.DifficultyTier
 import dev.kodex.core.models.ExamType
 import dev.kodex.core.models.Tier

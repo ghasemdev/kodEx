@@ -23,7 +23,7 @@ import dev.kodex.webapp.pages.landing.model.Badges
 import js.objects.unsafeJso
 import kotlinx.browser.document
 
-private const val TIER_FILL_PERCENT = "50%"
+private const val TIER_FILL_PERCENT = "30%"
 private const val TIER_FILL_DURATION = 1.2
 private const val BADGE_ANIM_DURATION = 0.5
 private const val BADGE_STAGGER = 0.08
@@ -32,10 +32,10 @@ private const val TROPHY_STAGGER = 0.1
 private const val SECTION_SCROLL_START = "top 82%"
 
 private val TIERS = listOf(
-    Tier.JUNIOR to "bg-gray-400/20 text-gray-400",
-    Tier.SENIOR to "bg-green-500/20 text-green-500",
-    Tier.MASTER to "bg-orange-400/20 text-orange-400",
-    Tier.GRANDMASTER to "bg-purple-500/20 text-purple-500",
+    Tier.JUNIOR to "text-gray-400",
+    Tier.SENIOR to "text-green-500",
+    Tier.MASTER to "text-orange-400",
+    Tier.GRANDMASTER to "text-purple-500",
 )
 
 private data class TrophyRow(
@@ -101,13 +101,21 @@ private fun IComponent.tierBar() {
                 }
             }
         }
-        div(className = "relative h-3 bg-surface-variant rounded-full overflow-hidden") {
+        div(className = "relative h-3 rounded-full overflow-hidden") {
+            // Gradient spans the full track width so tier colors stay aligned with labels above
+            div(className = "absolute inset-0 rounded-full") {
+                attribute(
+                    "style",
+                    "background: linear-gradient(to right," +
+                        " #9ca3af 0%, #22c55e 33%, #fb923c 67%, #a855f7 100%);",
+                )
+            }
+            // Mask covers from the right; GSAP shrinks it to reveal the gradient
             div(
                 id = "gamification-tier-fill",
-                className = "absolute inset-y-0 start-0 rounded-full " +
-                    "bg-gradient-to-r from-gray-400 via-green-500 via-orange-400 to-purple-500",
+                className = "absolute inset-y-0 end-0 bg-surface-variant",
             ) {
-                attribute("style", "width: 0%;")
+                attribute("style", "width: 100%;")
             }
         }
         div(className = "flex justify-between mt-2") {
@@ -123,7 +131,7 @@ private fun IComponent.badgeCard(badge: BadgeDefinition) {
 
     div(
         id = "badge-card-${badge.id}",
-        className = "badge-card relative h-44 cursor-pointer select-none rounded-2xl",
+        className = "badge-card group relative h-52 cursor-pointer select-none rounded-2xl",
     ) {
         tabindex(0)
         role("button")
@@ -140,18 +148,15 @@ private fun IComponent.badgeCard(badge: BadgeDefinition) {
 
             // Front face
             div(
-                className = "absolute inset-0 flex flex-col items-center justify-center gap-3 " +
-                    "rounded-2xl border border-outline/20 bg-surface-container p-4",
+                className = "absolute inset-0 flex items-center justify-center overflow-hidden " +
+                    "rounded-2xl border border-outline/20 bg-surface-container p-2",
             ) {
                 attribute("style", "backface-visibility: hidden;")
                 img(
                     src = "/${badge.iconPath}",
                     alt = i18n.tr(badge.name),
-                    className = "w-12 h-12 object-contain",
+                    className = "w-full h-full object-contain transition-transform duration-300 group-hover:scale-110",
                 ) {}
-                span(className = "text-xs font-semibold text-center text-on-surface/80 leading-tight") {
-                    +i18n.tr(badge.name)
-                }
             }
 
             // Back face

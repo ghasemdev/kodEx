@@ -36,10 +36,10 @@ private fun IComponent.LandingPage(uiState: LandingUiState) {
         GlobalNavBar(session = SessionState.Guest)
         PageTransition(id = "landing-page-transition") {
             HeroSection(statsState = uiState.statsState)
-            ExamTypesSection()
             GamificationSection()
             LeaderboardSection()
             ProblemsSection()
+            ExamTypesSection()
             CreateExamSection()
         }
         Footer()
