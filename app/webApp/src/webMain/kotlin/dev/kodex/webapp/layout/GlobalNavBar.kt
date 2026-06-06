@@ -102,7 +102,7 @@ fun IComponent.GlobalNavBar(session: SessionState = SessionState.Guest) {
         val drawerVisClass = if (drawerOpen) "max-h-[500px] opacity-100" else "max-h-0 opacity-0"
         div(
             id = "nav-mobile-drawer-wrap",
-            className = "md:hidden overflow-hidden transition-all duration-300 ease-in-out $drawerVisClass",
+            className = "md:hidden overflow-hidden transition-all duration-500 ease-in-out $drawerVisClass",
         ) {
             mobileDrawer(
                 session = session,
