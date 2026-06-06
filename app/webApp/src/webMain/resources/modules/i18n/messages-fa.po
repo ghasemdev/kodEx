@@ -185,7 +185,7 @@ msgstr "KodEx — میدان کدنویسی Kotlin و Android"
 
 #: HeroSection.kt
 msgid "Compete. Build. Master."
-msgstr "رقابت کن. بساز. تسلط پیدا کن."
+msgstr "رقابت کن. بساز. مسلط شو."
 
 #: HeroSection.kt
 msgid "Get Started"
@@ -197,7 +197,7 @@ msgstr "مرور مسائل"
 
 #: HeroSection.kt
 msgid "Reopen editor"
-msgstr "باز کردن مجدد ویرایشگر"
+msgstr "نمایش ویرایشگر"
 
 #: HeroSection.kt
 msgid "problems"
@@ -215,7 +215,7 @@ msgstr "مسابقه"
 
 #: ExamTypesSection.kt
 msgid "Three ways to challenge developers"
-msgstr "سه روش برای چالش با توسعه‌دهندگان"
+msgstr "سه روش برای آزمایش توسعه‌دهندگان"
 
 #: ExamTypesSection.kt
 msgid "Each exam type tests a different dimension of engineering skill."
@@ -264,7 +264,7 @@ msgid ""
 msgstr ""
 "توابعی پیاده‌سازی کنید که مستقیماً به یک محیط آزمایش پنهان تزریق می‌شوند. "
 "کد شما باید مجموعه آزمون‌های خودکار نوشته‌شده توسط برگزارکننده را برآورده کند — "
-"همان الگویی که در TDD حرفه‌ای و خطوط لوله بازبینی کد استفاده می‌شود."
+"همان الگویی که در TDD حرفه‌ای و فرآیندهای CI/CD استفاده می‌شود."
 
 # ── Gamification Section ───────────────────────────────────────────────────
 
@@ -274,11 +274,11 @@ msgstr "رتبه‌ات را کسب کن"
 
 #: GamificationSection.kt
 msgid "Solve problems, win contests, and climb the tier ladder."
-msgstr "مسائل را حل کن، مسابقات را ببر و در نردبان رتبه‌بندی بالا برو."
+msgstr "مسئله حل کن، مسابقه ببر، در رده‌بندی صعود کن."
 
 #: GamificationSection.kt
 msgid "Achievement Badges"
-msgstr "نشان‌های دستاورد"
+msgstr "مدال‌های افتخار"
 
 #: GamificationSection.kt
 msgid "Beginner"
@@ -290,19 +290,19 @@ msgstr "نخبه"
 
 #: Tier.kt
 msgid "Junior Coder"
-msgstr "کدنویس مبتدی"
+msgstr "کدآموز"
 
 #: Tier.kt
 msgid "Senior Coder"
-msgstr "کدنویس ارشد"
+msgstr "کدساز"
 
 #: Tier.kt
 msgid "Master"
-msgstr "استاد"
+msgstr "اوستا"
 
 #: Tier.kt
 msgid "Grandmaster"
-msgstr "گرندماستر"
+msgstr "استادِ کُل"
 
 #: BadgeDefinition.kt
 msgid "Kotlin Ninja"
@@ -318,11 +318,11 @@ msgstr "جغد شب"
 
 #: BadgeDefinition.kt
 msgid "Steady Hand"
-msgstr "دست ثابت"
+msgstr "پایداری"
 
 #: BadgeDefinition.kt
 msgid "Bug Hunter"
-msgstr "شکارچی باگ"
+msgstr "باگ‌شکار"
 
 #: BadgeDefinition.kt
 msgid "Speed Demon"
@@ -388,7 +388,7 @@ msgstr "حل‌شده"
 
 #: LeaderboardSection.kt
 msgid "Streak"
-msgstr "روزهای متوالی"
+msgstr "زنجیره"
 
 #: LeaderboardSection.kt
 msgid "Sign up to claim your rank"
@@ -472,7 +472,7 @@ msgstr "چرخه حیات ViewModel در Android"
 
 #: CreateExamSection.kt
 msgid "For Educators & Organisers"
-msgstr "برای معلمان و برگزارکنندگان"
+msgstr "برای مدرسان و برگزارکنندگان"
 
 #: CreateExamSection.kt
 msgid "Run Your Own Kotlin Exam"
@@ -488,7 +488,7 @@ msgstr "ایجاد آزمون ←"
 
 #: CreateExamSection.kt
 msgid "Sign Up to Create →"
-msgstr "ثبت‌نام برای ایجاد ←"
+msgstr "ثبت‌نام کن و بساز ←"
 
 #: CreateExamSection.kt
 msgid "See Demo"
@@ -504,7 +504,7 @@ msgstr "داوری خودکار با موارد آزمون پنهان"
 
 #: CreateExamSection.kt
 msgid "Real-time leaderboard per contest"
-msgstr "جدول برترین‌ها به‌صورت زنده برای هر مسابقه"
+msgstr "جدول زنده برترین‌ها برای هر مسابقه"
 
 #: CreateExamSection.kt
 msgid "Badge and trophy rewards for top finishers"

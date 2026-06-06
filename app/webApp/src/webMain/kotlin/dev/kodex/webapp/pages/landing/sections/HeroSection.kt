@@ -281,6 +281,7 @@ fun IComponent.HeroSection(statsState: UiState<LandingStats>) {
                     className = "w-full rounded-2xl border border-outline/20 bg-neutral-900 " +
                         "overflow-clip shadow-2xl transition-all duration-300 $panelVisClass",
                 ) {
+                    attribute("dir", "ltr")
                     macWindowBar(panelState = panelState) { panelState = it }
 
                     // TerminalClosed included: prevents content expanding during panel opacity-out

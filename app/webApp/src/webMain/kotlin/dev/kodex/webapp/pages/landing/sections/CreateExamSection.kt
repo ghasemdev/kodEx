@@ -45,21 +45,23 @@ fun IComponent.CreateExamSection(session: SessionState = SessionState.Guest) {
         className = "py-24 bg-neutral-950 text-white",
     ) {
         div(className = "container mx-auto px-4") {
-            div(className = "max-w-2xl mx-auto text-center mb-10") {
-                span(
-                    className = "text-xs font-semibold uppercase tracking-widest text-primary mb-3 block",
-                ) { +i18n.tr("For Educators & Organisers") }
-                h2(className = "text-3xl font-bold mb-4") {
-                    +i18n.tr("Run Your Own Kotlin Exam")
+            div(className = "max-w-lg mx-auto") {
+                div(className = "text-center mb-10") {
+                    span(
+                        className = "text-xs font-semibold uppercase tracking-widest text-primary mb-3 block",
+                    ) { +i18n.tr("For Educators & Organisers") }
+                    h2(className = "text-3xl font-bold mb-4") {
+                        +i18n.tr("Run Your Own Kotlin Exam")
+                    }
+                    p(className = "text-white/60") {
+                        +i18n.tr("Create a fully automated exam in minutes and let KodEx do the grading.")
+                    }
                 }
-                p(className = "text-white/60") {
-                    +i18n.tr("Create a fully automated exam in minutes and let KodEx do the grading.")
-                }
-            }
 
-            div(className = "max-w-lg mx-auto mb-10 flex flex-col gap-3") {
-                CHECKLIST_ITEMS.forEachIndexed { idx, item ->
-                    checklistItem(item, idx)
+                div(className = "mb-10 flex flex-col gap-3") {
+                    CHECKLIST_ITEMS.forEachIndexed { idx, item ->
+                        checklistItem(item, idx)
+                    }
                 }
             }
 
@@ -113,14 +115,18 @@ private fun IComponent.checklistItem(text: String, idx: Int) {
 
 private fun animateChecklist() {
     if (prefersReducedMotion()) return
+
     val section = document.getElementById("create-exam-section") ?: return
+    val isRtl = document.documentElement?.getAttribute("dir") == "rtl"
+    val slideX = if (isRtl) -CHECKLIST_SLIDE_X else CHECKLIST_SLIDE_X
+
     repeat(CHECKLIST_ITEMS.size) { idx ->
         val item = document.getElementById("checklist-item-$idx") ?: return@repeat
         gsap.from(
             item,
             unsafeJso {
                 opacity = 0.0
-                x = CHECKLIST_SLIDE_X
+                x = slideX
                 duration = CHECKLIST_ANIM_DURATION
                 delay = idx * CHECKLIST_STAGGER
                 ease = "power2.out"
