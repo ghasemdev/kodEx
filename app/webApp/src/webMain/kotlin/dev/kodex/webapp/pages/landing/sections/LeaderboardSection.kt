@@ -193,7 +193,10 @@ private fun IComponent.tierChip(tier: Tier) {
 }
 
 private fun setupLeaderboardAnimation(onEnterViewport: () -> Unit) {
-    if (prefersReducedMotion()) { onEnterViewport(); return }
+    if (prefersReducedMotion()) {
+        onEnterViewport()
+        return
+    }
     val section = document.getElementById("leaderboard-section") ?: return
     gsap.from(
         section,
