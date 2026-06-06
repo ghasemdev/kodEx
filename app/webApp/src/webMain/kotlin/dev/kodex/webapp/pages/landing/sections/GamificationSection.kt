@@ -114,13 +114,12 @@ private fun IComponent.badgeCard(badge: BadgeDefinition) {
                 "duration-300 group-hover:scale-110 group-focus:scale-110",
         ) {}
 
-        // Info overlay — slides up from bottom; gradient fades from transparent at the
-        // top into the frosted surface so the badge image blends naturally into the panel.
+        // Info overlay — slides up from bottom on hover/focus; backdrop-blur ensures
+        // text stays readable regardless of the badge image colors beneath.
         div(
-            className = "absolute inset-x-0 bottom-0 backdrop-blur-sm " +
-                "bg-gradient-to-t from-surface-container-high/90 to-transparent " +
+            className = "absolute inset-x-0 bottom-0 backdrop-blur-sm bg-surface-container-high/90 " +
                 "translate-y-full group-hover:translate-y-0 group-focus-within:translate-y-0 " +
-                "transition-transform duration-[400ms] ease-out p-3 pt-10",
+                "transition-transform duration-[400ms] ease-out p-3 pt-5",
         ) {
             span(className = "block text-xs font-semibold text-on-surface text-center mb-1") {
                 +i18n.tr(badge.name)
