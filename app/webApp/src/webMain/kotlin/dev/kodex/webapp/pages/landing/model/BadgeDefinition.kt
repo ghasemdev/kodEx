@@ -9,7 +9,7 @@ data class BadgeDefinition(
 ) {
     init {
         require(id.matches(Regex("^[a-z0-9-]+$"))) {
-            "id '$id' must match ^[a-z0-9-]+\$"
+            $$"id '$$id' must match ^[a-z0-9-]+$"
         }
         require(iconPath.matches(Regex("^icons/badges/[a-z0-9/.-]+\\.svg$"))) {
             $$"iconPath '$$iconPath' must match ^icons/badges/[a-z0-9/.-]+\\.svg$"
@@ -21,6 +21,7 @@ data class BadgeDefinition(
 }
 
 object Badges {
+    @Suppress("PropertyName", "RedundantSuppression")
     val all: List<BadgeDefinition> = listOf(
         BadgeDefinition(
             id = "kotlin-ninja",

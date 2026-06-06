@@ -31,6 +31,7 @@ data class LeaderboardEntry(
 )
 
 object PlaceholderLeaderboard {
+    @Suppress("PropertyName", "RedundantSuppression")
     val entries: List<LeaderboardEntry> = listOf(
         LeaderboardEntry(1, "kotlin_wizard", null, Tier.GRANDMASTER, 9840, 312, 67),
         LeaderboardEntry(2, "android_pro", null, Tier.MASTER, 8720, 287, 45),
