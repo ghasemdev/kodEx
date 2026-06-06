@@ -16,6 +16,7 @@ import dev.kodex.webapp.design.components.ButtonVariant
 import dev.kodex.webapp.design.i18n.i18n
 import dev.kodex.webapp.gsap.ScrollTriggerConfig
 import dev.kodex.webapp.gsap.gsap
+import dev.kodex.webapp.gsap.prefersReducedMotion
 import js.objects.unsafeJso
 import kotlinx.browser.document
 import kotlinx.browser.window
@@ -111,6 +112,7 @@ private fun IComponent.checklistItem(text: String, idx: Int) {
 }
 
 private fun animateChecklist() {
+    if (prefersReducedMotion()) return
     val section = document.getElementById("create-exam-section") ?: return
     repeat(CHECKLIST_ITEMS.size) { idx ->
         val item = document.getElementById("checklist-item-$idx") ?: return@repeat

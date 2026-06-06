@@ -51,6 +51,7 @@ data class ProblemSummary(
 }
 
 object PlaceholderProblems {
+    @Suppress("PropertyName", "RedundantSuppression")
     val entries: List<ProblemSummary> = listOf(
         ProblemSummary("p001", "Reverse a String", ExamType.IO, 1200, 840),
         ProblemSummary("p002", "FizzBuzz with Lambdas", ExamType.INJECTION, 980, 410),

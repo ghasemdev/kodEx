@@ -14,6 +14,7 @@ import dev.kodex.core.models.Tier
 import dev.kodex.webapp.design.i18n.i18n
 import dev.kodex.webapp.gsap.ScrollTriggerConfig
 import dev.kodex.webapp.gsap.gsap
+import dev.kodex.webapp.gsap.prefersReducedMotion
 import dev.kodex.webapp.pages.landing.model.BadgeDefinition
 import dev.kodex.webapp.pages.landing.model.Badges
 import js.objects.unsafeJso
@@ -132,6 +133,7 @@ private fun IComponent.badgeCard(badge: BadgeDefinition) {
 }
 
 private fun animateGamification() {
+    if (prefersReducedMotion()) return
     document.getElementById("gamification-tier-fill")?.let { fill ->
         gsap.to(
             fill,

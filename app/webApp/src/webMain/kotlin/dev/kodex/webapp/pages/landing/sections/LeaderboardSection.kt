@@ -19,6 +19,7 @@ import dev.kodex.shared.session.SessionState
 import dev.kodex.webapp.design.i18n.i18n
 import dev.kodex.webapp.gsap.ScrollTriggerConfig
 import dev.kodex.webapp.gsap.gsap
+import dev.kodex.webapp.gsap.prefersReducedMotion
 import dev.kodex.webapp.pages.landing.model.LeaderboardEntry
 import dev.kodex.webapp.pages.landing.model.PlaceholderLeaderboard
 import js.objects.unsafeJso
@@ -192,6 +193,7 @@ private fun IComponent.tierChip(tier: Tier) {
 }
 
 private fun setupLeaderboardAnimation(onEnterViewport: () -> Unit) {
+    if (prefersReducedMotion()) { onEnterViewport(); return }
     val section = document.getElementById("leaderboard-section") ?: return
     gsap.from(
         section,

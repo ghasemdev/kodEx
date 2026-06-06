@@ -14,6 +14,7 @@ import dev.kodex.core.models.ExamType
 import dev.kodex.webapp.design.i18n.i18n
 import dev.kodex.webapp.gsap.ScrollTriggerConfig
 import dev.kodex.webapp.gsap.gsap
+import dev.kodex.webapp.gsap.prefersReducedMotion
 import dev.kodex.webapp.pages.landing.model.PlaceholderProblems
 import dev.kodex.webapp.pages.landing.model.ProblemSummary
 import js.objects.unsafeJso
@@ -118,6 +119,7 @@ private fun difficultyBadgeClass(tier: DifficultyTier): String = when (tier) {
 }
 
 private fun animateProblemRows() {
+    if (prefersReducedMotion()) return
     val section = document.getElementById("problems-section") ?: return
     repeat(PlaceholderProblems.entries.size) { idx ->
         val row = document.getElementById("problem-row-$idx") ?: return@repeat

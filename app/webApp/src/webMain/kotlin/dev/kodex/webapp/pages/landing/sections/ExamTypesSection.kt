@@ -13,6 +13,7 @@ import dev.kodex.core.models.ExamType
 import dev.kodex.webapp.design.i18n.i18n
 import dev.kodex.webapp.gsap.ScrollTriggerConfig
 import dev.kodex.webapp.gsap.gsap
+import dev.kodex.webapp.gsap.prefersReducedMotion
 import js.objects.unsafeJso
 import kotlinx.browser.document
 
@@ -100,6 +101,7 @@ private fun IComponent.examCard(spec: ExamCardSpec) {
 }
 
 private fun animateExamCards() {
+    if (prefersReducedMotion()) return
     EXAM_CARDS.forEachIndexed { idx, spec ->
         val element = document.getElementById(spec.id) ?: return@forEachIndexed
         gsap.from(

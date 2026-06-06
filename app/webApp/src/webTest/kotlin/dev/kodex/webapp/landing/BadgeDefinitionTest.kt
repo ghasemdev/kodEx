@@ -14,9 +14,9 @@ class BadgeDefinitionTest : FunSpec({
             }
         }
 
-        test("all 8 badge iconPaths match regex ^icons/badges/[a-z0-9/.-]+\\.svg$") {
+        test("all 8 badge iconPaths match regex ^icons/badges/[a-z0-9/.-]+\\.png$") {
             Badges.all.forEach { badge ->
-                badge.iconPath shouldMatch Regex("^icons/badges/[a-z0-9/.-]+\\.svg$")
+                badge.iconPath shouldMatch Regex("^icons/badges/[a-z0-9/.-]+\\.png$")
             }
         }
 
@@ -47,7 +47,7 @@ class BadgeDefinitionTest : FunSpec({
                     name = "Test",
                     description = "Test",
                     unlockCondition = "Test",
-                    iconPath = "icons/badges/test.svg",
+                    iconPath = "icons/badges/test.png",
                 )
             } catch (_: IllegalArgumentException) {
                 threw = true
@@ -63,7 +63,7 @@ class BadgeDefinitionTest : FunSpec({
                     name = "Test",
                     description = "Test",
                     unlockCondition = "Test",
-                    iconPath = "wrong/path/icon.svg",
+                    iconPath = "wrong/path/icon.png",
                 )
             } catch (_: IllegalArgumentException) {
                 threw = true
@@ -79,7 +79,7 @@ class BadgeDefinitionTest : FunSpec({
                     name = "   ",
                     description = "Test",
                     unlockCondition = "Test",
-                    iconPath = "icons/badges/test.svg",
+                    iconPath = "icons/badges/test.png",
                 )
             } catch (_: IllegalArgumentException) {
                 threw = true
