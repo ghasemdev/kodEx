@@ -120,14 +120,18 @@ private fun difficultyBadgeClass(tier: DifficultyTier): String = when (tier) {
 
 private fun animateProblemRows() {
     if (prefersReducedMotion()) return
+
     val section = document.getElementById("problems-section") ?: return
+    val isRtl = document.documentElement?.getAttribute("dir") == "rtl"
+    val slideX = if (isRtl) -ROW_SLIDE_X else ROW_SLIDE_X
+
     repeat(PlaceholderProblems.entries.size) { idx ->
         val row = document.getElementById("problem-row-$idx") ?: return@repeat
         gsap.from(
             row,
             unsafeJso {
                 opacity = 0.0
-                x = ROW_SLIDE_X
+                x = slideX
                 duration = ROW_ANIM_DURATION
                 delay = idx * ROW_STAGGER
                 ease = "power1.out"
