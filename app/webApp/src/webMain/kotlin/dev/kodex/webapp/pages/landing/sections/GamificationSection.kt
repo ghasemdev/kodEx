@@ -1,13 +1,9 @@
-@file:Suppress("MagicNumber", "LabeledExpression", "LongMethod", "CognitiveComplexMethod")
+@file:Suppress("MagicNumber", "LabeledExpression", "LongMethod")
 
 package dev.kodex.webapp.pages.landing.sections
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import dev.kilua.core.IComponent
 import dev.kilua.html.div
 import dev.kilua.html.h2
@@ -62,7 +58,6 @@ fun IComponent.GamificationSection() {
             div(className = "grid grid-cols-2 sm:grid-cols-4 gap-4") {
                 Badges.all.forEachIndexed { _, badge -> badgeCard(badge) }
             }
-
         }
     }
 }
@@ -103,53 +98,36 @@ private fun IComponent.tierBar() {
 
 @Composable
 private fun IComponent.badgeCard(badge: BadgeDefinition) {
-    var flipped by remember { mutableStateOf(false) }
-
     div(
         id = "badge-card-${badge.id}",
-        className = "badge-card group relative h-52 cursor-pointer select-none rounded-2xl",
+        className = "badge-card group relative h-52 select-none rounded-2xl overflow-hidden " +
+            "border border-outline/20 bg-surface-container",
     ) {
         tabindex(0)
-        role("button")
-        attribute("aria-label", "${i18n.tr(badge.name)} — ${i18n.tr("press Enter to reveal unlock condition")}")
-        attribute(STYLE, "perspective: 700px;")
+        role("img")
+        attribute("aria-label", "${i18n.tr(badge.name)} — ${i18n.tr(badge.unlockCondition)}")
 
-        // Inner flipper
-        div(className = "relative w-full h-full") {
-            attribute(
-                STYLE,
-                "transform-style: preserve-3d; transition: transform 0.4s ease; " +
-                    "transform: rotateY(${if (flipped) 180 else 0}deg);",
-            )
+        img(
+            src = "/${badge.iconPath}",
+            alt = i18n.tr(badge.name),
+            className = "w-full h-full object-contain p-2 transition-transform " +
+                "duration-300 group-hover:scale-110 group-focus:scale-110",
+        ) {}
 
-            // Front face
-            div(
-                className = "absolute inset-0 flex items-center justify-center overflow-hidden " +
-                    "rounded-2xl border border-outline/20 bg-surface-container p-2",
-            ) {
-                attribute(STYLE, "backface-visibility: hidden;")
-                img(
-                    src = "/${badge.iconPath}",
-                    alt = i18n.tr(badge.name),
-                    className = "w-full h-full object-contain transition-transform duration-300 group-hover:scale-110",
-                ) {}
+        // Info overlay — slides up from bottom; gradient fades from transparent at the
+        // top into the frosted surface so the badge image blends naturally into the panel.
+        div(
+            className = "absolute inset-x-0 bottom-0 backdrop-blur-sm " +
+                "bg-gradient-to-t from-surface-container-high/90 to-transparent " +
+                "translate-y-full group-hover:translate-y-0 group-focus-within:translate-y-0 " +
+                "transition-transform duration-[400ms] ease-out p-3 pt-10",
+        ) {
+            span(className = "block text-xs font-semibold text-on-surface text-center mb-1") {
+                +i18n.tr(badge.name)
             }
-
-            // Back face
-            div(
-                className = "absolute inset-0 flex flex-col items-center justify-center gap-2 " +
-                    "rounded-2xl border border-primary/30 bg-primary/10 p-4",
-            ) {
-                attribute(STYLE, "backface-visibility: hidden; transform: rotateY(180deg);")
-                span(className = "text-xs text-primary font-semibold text-center leading-snug") {
-                    +i18n.tr(badge.unlockCondition)
-                }
+            span(className = "block text-[10px] text-on-surface/60 leading-snug text-center") {
+                +i18n.tr(badge.unlockCondition)
             }
-        }
-
-        onClick { flipped = !flipped }
-        onKeydown { e ->
-            if (e.key == "Enter" || e.key == " ") flipped = !flipped
         }
     }
 }
