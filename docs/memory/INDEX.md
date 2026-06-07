@@ -43,6 +43,7 @@ Compact routing map for durable project memory (`docs/memory/`). Keep it short.
 | [docs/security-reviews/2026-05-28-feature-002-design-system-branch.md](../security-reviews/2026-05-28-feature-002-design-system-branch.md) | branch | 2026-05-28 | MODERATE | C:0 H:0 M:1 L:2 | A03,A05,A06 |
 | [docs/security-reviews/2026-05-28-feature-002-design-system-followup.md](../security-reviews/2026-05-28-feature-002-design-system-followup.md) | followup | 2026-05-28 | MODERATE | C:0 H:0 M:1 L:2 | A03,A05,A06 |
 | [docs/security-reviews/2026-05-29-feature-002-design-system-whitebox.md](../security-reviews/2026-05-29-feature-002-design-system-whitebox.md) | whitebox | 2026-05-29 | LOW | C:0 H:0 M:1 L:2 I:2 resolved:3 deferred:2 | A03,A05,A06 |
+| [docs/security-reviews/2026-06-07-feature-003-landing-page.md](../security-reviews/2026-06-07-feature-003-landing-page.md) | branch | 2026-06-07 | MODERATE | C:0 H:0 M:3 L:1 | A03,A05 |
 
 ## Workflow
 
