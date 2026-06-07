@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1780008696793,
+  "lastUpdate": 1780864529557,
   "repoUrl": "https://github.com/ghasemdev/kodEx",
   "entries": {
     "Benchmark": [
@@ -438,6 +438,50 @@ window.BENCHMARK_DATA = {
           {
             "name": "dev.kodex.core.model.benchmark.JvmTestBenchmark.sqrtBenchmark",
             "value": 334164462.070565,
+            "unit": "ops/s",
+            "extra": "iterations: 1\nforks: 1\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "ghasemdev",
+            "username": "ghasemdev"
+          },
+          "committer": {
+            "name": "ghasemdev",
+            "username": "ghasemdev"
+          },
+          "id": "dab170152db0f714ebf8d0079c06c7bf7869eea2",
+          "message": "Feature/003 landing page",
+          "timestamp": "2026-05-28T22:55:02Z",
+          "url": "https://github.com/ghasemdev/kodEx/pull/45/commits/dab170152db0f714ebf8d0079c06c7bf7869eea2"
+        },
+        "date": 1780864529016,
+        "tool": "jmh",
+        "benches": [
+          {
+            "name": "dev.kodex.server.api.benchmark.JvmTestBenchmark.cosBenchmark",
+            "value": 120380892.23842455,
+            "unit": "ops/s",
+            "extra": "iterations: 1\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "dev.kodex.server.api.benchmark.JvmTestBenchmark.sqrtBenchmark",
+            "value": 365363695.3544252,
+            "unit": "ops/s",
+            "extra": "iterations: 1\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "dev.kodex.core.model.benchmark.JvmTestBenchmark.cosBenchmark",
+            "value": 120096194.31194565,
+            "unit": "ops/s",
+            "extra": "iterations: 1\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "dev.kodex.core.model.benchmark.JvmTestBenchmark.sqrtBenchmark",
+            "value": 365934492.989342,
             "unit": "ops/s",
             "extra": "iterations: 1\nforks: 1\nthreads: 1"
           }
