@@ -15,6 +15,9 @@ test("typography screenshots", async ({page}) => {
         `,
     });
 
+    // open Typography preview
+    await page.getByText("Typography", {exact: true}).click();
+
     const sections = [
         "typography-font-families",
         "typography-type-scale",

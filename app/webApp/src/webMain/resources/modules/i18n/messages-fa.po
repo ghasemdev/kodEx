@@ -113,7 +113,7 @@ msgstr "حرفه‌ای"
 
 #: Footer.kt
 msgid "The Kotlin & Android Coding Arena"
-msgstr "میدان کدنویسی Kotlin و Android"
+msgstr "بستر کدنویسی Kotlin و Android"
 
 #: Footer.kt
 msgid "Platform"
@@ -181,7 +181,7 @@ msgstr "بازگشت به صفحه اصلی"
 
 #: HeroSection.kt
 msgid "KodEx — The Kotlin & Android Coding Arena"
-msgstr "KodEx — میدان کدنویسی Kotlin و Android"
+msgstr "KodEx — بستر کدنویسی Kotlin و Android"
 
 #: HeroSection.kt
 msgid "Compete. Build. Master."
@@ -242,7 +242,7 @@ msgid ""
 msgstr ""
 "در محدودیت زمانی مشخص به سوالات چندگزینه‌ای پاسخ دهید. هر سوال بازخورد "
 "فوری و توضیح کامل ارائه می‌دهد تا مفهوم را بلافاصله تثبیت کنید. مناسب "
-"برای سنجش دانش نظری، نحو زبان و مبانی SDK."
+"برای سنجش دانش نظری، Syntax و مبانی SDK."
 
 #: ExamTypesSection.kt
 msgid ""
@@ -302,7 +302,7 @@ msgstr "اوستا"
 
 #: Tier.kt
 msgid "Grandmaster"
-msgstr "استادِ کُل"
+msgstr "اوستا کار"
 
 #: BadgeDefinition.kt
 msgid "Kotlin Ninja"

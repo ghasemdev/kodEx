@@ -105,8 +105,10 @@ private fun IComponent.badgeCard(badge: BadgeDefinition) {
             "border border-outline/20 bg-surface-container",
     ) {
         tabindex(0)
-        role("img")
+        role("button")
         attribute("aria-label", "${i18n.tr(badge.name)} — ${i18n.tr(badge.unlockCondition)}")
+        // Space/Enter: prevent page scroll; CSS focus-within already shows the info overlay
+        onKeydown { e -> if (e.key == "Enter" || e.key == " ") e.preventDefault() }
 
         img(
             src = "/${badge.iconPath}",

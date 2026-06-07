@@ -230,7 +230,7 @@ fun IComponent.HeroSection(statsState: UiState<LandingStats>) {
         )
     }
 
-    div(className = "relative overflow-hidden") {
+    div(id = "hero-section", className = "relative overflow-hidden") {
         div(
             id = "hero-blob-1",
             className = "absolute -top-40 -start-40 w-96 h-96 rounded-full bg-primary/20 blur-3xl pointer-events-none",

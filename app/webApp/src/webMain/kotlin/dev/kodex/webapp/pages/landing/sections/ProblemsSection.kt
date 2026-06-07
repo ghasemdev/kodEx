@@ -48,6 +48,7 @@ fun IComponent.ProblemsSection() {
                 ) {
                     role("link")
                     tabindex(0)
+                    onKeydown { e -> if (e.key == "Enter" || e.key == " ") e.preventDefault() }
                     +i18n.tr("Explore all problems →")
                 }
             }
@@ -75,7 +76,7 @@ fun IComponent.ProblemsSection() {
 @Composable
 private fun IComponent.problemsHeader() {
     div(
-        className = "grid grid-cols-[1fr_auto_auto] gap-4 px-4 py-2 " +
+        className = "grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_auto_auto] gap-4 px-4 py-2 " +
             "bg-surface-variant/50 text-[10px] uppercase tracking-wider text-on-surface/40",
     ) {
         span { +i18n.tr("Title") }
@@ -88,10 +89,13 @@ private fun IComponent.problemsHeader() {
 private fun IComponent.problemRow(problem: ProblemSummary, idx: Int) {
     div(
         id = "problem-row-$idx",
-        className = "grid grid-cols-[1fr_auto_auto] gap-4 px-4 py-3 items-center " +
-            "border-t border-outline/10 hover:bg-surface-variant/30 transition-colors duration-100 " +
-            "cursor-pointer",
+        className = "grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_auto_auto] gap-4 px-4 py-3 " +
+            "items-center border-t border-outline/10 hover:bg-surface-variant/30 " +
+            "transition-colors duration-100 cursor-pointer",
     ) {
+        tabindex(0)
+        role("button")
+        onKeydown { e -> if (e.key == "Enter" || e.key == " ") e.preventDefault() }
         span(className = "text-sm font-medium text-on-surface truncate") {
             +i18n.tr(problem.title)
         }

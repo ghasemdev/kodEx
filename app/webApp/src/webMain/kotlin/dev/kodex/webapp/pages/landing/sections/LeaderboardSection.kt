@@ -75,6 +75,7 @@ fun IComponent.LeaderboardSection(session: SessionState = SessionState.Guest) {
                 ) {
                     role("link")
                     tabindex(0)
+                    onKeydown { e -> if (e.key == "Enter" || e.key == " ") e.preventDefault() }
                     +i18n.tr("View full leaderboard →")
                 }
             }
@@ -109,6 +110,7 @@ fun IComponent.LeaderboardSection(session: SessionState = SessionState.Guest) {
                 ) {
                     role("link")
                     tabindex(0)
+                    onKeydown { e -> if (e.key == "Enter" || e.key == " ") e.preventDefault() }
                     +i18n.tr("View full leaderboard →")
                 }
             }
@@ -120,8 +122,8 @@ fun IComponent.LeaderboardSection(session: SessionState = SessionState.Guest) {
 private fun IComponent.leaderboardTable(entries: List<LeaderboardEntry>, displayScores: List<Int>) {
     div(className = "rounded-2xl border border-outline/20 overflow-hidden") {
         div(
-            className = "grid grid-cols-[2rem_1fr_auto_auto_auto] gap-3 px-4 py-2 " +
-                "bg-surface-variant/50 text-[10px] uppercase tracking-wider text-on-surface/40",
+            className = "grid grid-cols-[2rem_1fr_auto] sm:grid-cols-[2rem_1fr_auto_auto_auto] " +
+                "gap-3 px-4 py-2 bg-surface-variant/50 text-[10px] uppercase tracking-wider text-on-surface/40",
         ) {
             span { +"#" }
             span { +i18n.tr("User") }
@@ -140,8 +142,8 @@ private fun IComponent.leaderboardRow(entry: LeaderboardEntry, displayScore: Int
     val rowBg = if (idx == 0) "bg-primary/5" else ""
     div(
         id = "leaderboard-row-$idx",
-        className = "grid grid-cols-[2rem_1fr_auto_auto_auto] gap-3 px-4 py-3 items-center " +
-            "border-t border-outline/10 $rowBg",
+        className = "grid grid-cols-[2rem_1fr_auto] sm:grid-cols-[2rem_1fr_auto_auto_auto] " +
+            "gap-3 px-4 py-3 items-center border-t border-outline/10 $rowBg",
     ) {
         span(className = "text-sm font-mono text-on-surface/40 text-center") {
             +"${entry.rank}"

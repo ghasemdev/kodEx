@@ -87,7 +87,7 @@ fun IComponent.GlobalNavBar(session: SessionState = SessionState.Guest) {
                     FOCUS_VISIBLE_OUTLINE,
             ) {
                 tabindex(0)
-                role("button")
+                role(BUTTON)
                 attribute(ARIA_LABEL, i18n.tr("Open menu"))
                 attribute("aria-expanded", drawerOpen.toString())
                 span(className = W_5_H_0_5_BG_ON_SURFACE_ROUNDED_FULL_TRANSITION_ALL) {}
@@ -192,7 +192,7 @@ private fun IComponent.authenticatedSection(
                 FOCUS_VISIBLE_OUTLINE,
         ) {
             tabindex(0)
-            role("button")
+            role(BUTTON)
             attribute(ARIA_LABEL, i18n.tr("Profile menu"))
             attribute("aria-haspopup", "menu")
             attribute("aria-expanded", dropdownOpen.toString())
@@ -272,7 +272,7 @@ private fun IComponent.dropdownItem(
             "focus-visible:ring-primary/50 $className",
     ) {
         tabindex(0)
-        role("menuitem")
+        role(MENUITEM)
         +label
         onClick { onClose() }
         onKeydown { e ->
@@ -283,6 +283,7 @@ private fun IComponent.dropdownItem(
 }
 
 @Composable
+@Suppress("CognitiveComplexMethod")
 private fun IComponent.mobileDrawer(session: SessionState, canCreateExam: Boolean, onClose: () -> Unit) {
     div(
         id = "nav-mobile-drawer",
@@ -302,6 +303,13 @@ private fun IComponent.mobileDrawer(session: SessionState, canCreateExam: Boolea
                     "hover:bg-surface-variant cursor-pointer transition-colors",
             ) {
                 tabindex(0)
+                role(MENUITEM)
+                onKeydown { e ->
+                    if (e.key == ENTER || e.key == " ") {
+                        e.preventDefault()
+                        onClose()
+                    }
+                }
                 +label
                 onClick { onClose() }
             }
@@ -314,6 +322,13 @@ private fun IComponent.mobileDrawer(session: SessionState, canCreateExam: Boolea
                     "hover:bg-primary/10 cursor-pointer transition-colors",
             ) {
                 tabindex(0)
+                role(MENUITEM)
+                onKeydown { e ->
+                    if (e.key == ENTER || e.key == " ") {
+                        e.preventDefault()
+                        onClose()
+                    }
+                }
                 +i18n.tr("Create Exam")
                 onClick { onClose() }
             }
@@ -333,6 +348,14 @@ private fun IComponent.mobileDrawer(session: SessionState, canCreateExam: Boolea
                     className = "px-3 py-2 rounded-lg text-sm text-center text-on-surface/70 " +
                         "hover:bg-surface-variant cursor-pointer transition-colors border border-outline/20",
                 ) {
+                    tabindex(0)
+                    role(BUTTON)
+                    onKeydown { e ->
+                        if (e.key == ENTER || e.key == " ") {
+                            e.preventDefault()
+                            onClose()
+                        }
+                    }
                     +i18n.tr("Sign In")
                 }
                 div(
@@ -340,6 +363,14 @@ private fun IComponent.mobileDrawer(session: SessionState, canCreateExam: Boolea
                     className = "px-3 py-2 rounded-lg text-sm text-center text-white bg-primary " +
                         "hover:bg-primary/90 cursor-pointer transition-colors",
                 ) {
+                    tabindex(0)
+                    role(BUTTON)
+                    onKeydown { e ->
+                        if (e.key == ENTER || e.key == " ") {
+                            e.preventDefault()
+                            onClose()
+                        }
+                    }
                     +i18n.tr("Sign Up")
                 }
             }
@@ -355,3 +386,5 @@ private const val FOCUS_VISIBLE_OUTLINE =
 private const val W_5_H_0_5_BG_ON_SURFACE_ROUNDED_FULL_TRANSITION_ALL =
     "w-5 h-0.5 bg-on-surface rounded-full transition-all"
 private const val ENTER = "Enter"
+private const val BUTTON = "button"
+private const val MENUITEM = "menuitem"
