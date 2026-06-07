@@ -69,7 +69,7 @@ class LanguageSwitcherDomTest : FunSpec({
 
         val toggle = host.querySelector(QUERY_SELECTOR).shouldNotBeNull()
         toggle.dispatchEvent(mouseEvent())
-        delay(10.milliseconds)
+        delay(80.milliseconds)
         val dropdown = host.querySelector("[role='listbox']")
         dropdown.shouldNotBeNull()
 
@@ -85,7 +85,7 @@ class LanguageSwitcherDomTest : FunSpec({
 
         val toggle = host.querySelector(QUERY_SELECTOR).shouldNotBeNull()
         toggle.dispatchEvent(mouseEvent())
-        delay(10.milliseconds)
+        delay(80.milliseconds)
         val options = host.querySelectorAll("[role='option']")
         options?.length?.shouldBeGreaterThan(0)
 

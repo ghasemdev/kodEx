@@ -5,6 +5,37 @@ Only record durable lessons — what future work should know, not what was done.
 
 ---
 
+### 2026-06-07 - W4: Feature 003 complete — Landing page + tests + security hardening
+
+**Branch**: `feature/003-landing-page`
+
+**What future work needs to know**:
+
+**`sanitizeRequestId()` is the server-side header reflection pattern** — All server endpoints
+that echo `X-Request-Id` must use `server/api/src/.../util/RequestId.kt`. The inline
+`?: Uuid.random()` fallback is the vulnerable form removed in SEC-001. See D15.
+
+**Vite proxy must be explicit when `DefaultRequest` base URL is absent** — Removing
+`DefaultRequest { url("http://localhost:8080") }` from `NetworkKoinModule` means `/api/*`
+calls go to Vite, not directly to the backend. The proxy rule `proxy("/api", "http://localhost:8080")`
+in `vite { server { } }` of `build.gradle.kts` is the correct fix. See A5.
+
+**Kilua event-driven tests need 80ms settle time** — After `dispatchEvent()`, wait 80ms before
+asserting DOM state. Matches `renderComponent`'s settle delay. See B2.
+
+**ViewModel loading state requires a suspending fake repo** — With `Dispatchers.Main.immediate`,
+a fake repo that returns without `delay()` causes the coroutine to complete synchronously inside
+the `init` block. `Loading` state is never observable. Use `FakeDelayedRepo` with `delay(50ms)`.
+
+**Screenshot tests cover all 8 landing sections** — `landingPage.screenshot.test.ts` tests
+each section at 1280px (dark) and 375px (light). Below-fold sections require
+`scrollIntoViewIfNeeded()` before capture. Stats API is mocked via `page.route(...)`.
+
+**SEC-004 (rate-limit key) deferred** — `local.remoteHost` collapses to proxy IP behind a
+load balancer. Revisit when reverse proxy is introduced or auth/submission endpoints are added.
+
+---
+
 ### 2026-05-29 - W3: Feature 002 complete — Client-side design system
 
 **Branch**: `feature/002-design-system` (security commit `a7e4a9c2`)

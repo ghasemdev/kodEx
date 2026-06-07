@@ -93,18 +93,33 @@ class HealthRouteTest : FunSpec({
         }
     }
 
-    test("GET /api/v1/health X-Request-Id header is forwarded as requestId") {
+    test("GET /api/v1/health valid UUID in X-Request-Id is echoed back unchanged") {
+        val clientRequestId = "550e8400-e29b-41d4-a716-446655440000"
         testApplication {
             application {
                 install(ContentNegotiation) { json() }
                 routing { healthRoutes(startedAt = startedAt, version = version) }
             }
             val response = client.get("/api/v1/health") {
-                headers.append("X-Request-Id", "test-request-id-123")
+                headers.append("X-Request-Id", clientRequestId)
             }
             val body = Json.decodeFromString<ApiEnvelope<HealthResponse>>(response.bodyAsText())
-            body.meta.requestId shouldBe "test-request-id-123"
-            body.meta.requestId shouldNotBe null
+            body.meta.requestId shouldBe clientRequestId
+        }
+    }
+
+    test("GET /api/v1/health non-UUID X-Request-Id is replaced with a server-generated UUID") {
+        testApplication {
+            application {
+                install(ContentNegotiation) { json() }
+                routing { healthRoutes(startedAt = startedAt, version = version) }
+            }
+            val response = client.get("/api/v1/health") {
+                headers.append("X-Request-Id", "not-a-uuid")
+            }
+            val body = Json.decodeFromString<ApiEnvelope<HealthResponse>>(response.bodyAsText())
+            body.meta.requestId shouldNotBe "not-a-uuid"
+            body.meta.requestId.shouldNotBeEmpty()
         }
     }
 })

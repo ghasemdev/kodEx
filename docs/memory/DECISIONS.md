@@ -222,6 +222,36 @@ so until KEEP-0068 reaches stable status and covers this use case.
 
 ---
 
+### 2026-06-07 - D15: `sanitizeRequestId()` is the only correct pattern for X-Request-Id
+
+**Status**: Active
+
+**Why this is durable**
+Security Constitution §6 requires UUID validation before reflecting `X-Request-Id` into any
+response body or log. The inline fallback `call.request.headers["X-Request-Id"] ?: Uuid.random().toString()`
+is the **vulnerable pattern** — it was present at 3 call sites (LandingRoutes, HealthRoutes,
+Application StatusPages) and removed in SEC-001 remediation (feature/003). Any new server
+endpoint that echoes this header without the utility silently violates the constitution and
+enables log injection (CWE-117).
+
+**Decision**
+Use `sanitizeRequestId()` from `server/api/src/main/kotlin/dev/kodex/server/api/util/RequestId.kt`
+at every call site that reads and reflects `X-Request-Id`:
+
+```kotlin
+val requestId = sanitizeRequestId(call.request.headers["X-Request-Id"])
+```
+
+The utility rejects anything that does not match the UUID regex (case-insensitive, RFC 4122 format)
+and replaces it with `Uuid.random()`. Both lowercase and uppercase UUIDs pass through unchanged.
+Do not re-inline the `?: Uuid.random()` shorthand — it is the removed vulnerable form.
+
+**Tradeoffs**
+- Gained: log-injection prevention; constitution compliance at all server endpoints
+- Made harder: new endpoint authors must know to import from `server:api` util — not `server:app`
+
+---
+
 ### 2026-05-31 - D14: API route constants in `ApiRoutes` object
 
 **Status**: Active
