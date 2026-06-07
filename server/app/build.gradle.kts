@@ -1,6 +1,8 @@
 plugins {
     id("ktor-service-convention")
     application
+
+    alias(libs.plugins.koin.compiler)
 }
 
 application {
@@ -32,6 +34,9 @@ dependencies {
     implementation(projects.server.domain)
     implementation(projects.server.data)
     implementation(projects.core)
+    implementation(libs.koin.annotations)
+    implementation(libs.ktor.server.rate.limit)
+    implementation(libs.ktor.server.forwarded.header)
 
     "devMainImplementation"(sourceSets.main.get().output)
     "devMainImplementation"(sourceSets.main.get().runtimeClasspath)

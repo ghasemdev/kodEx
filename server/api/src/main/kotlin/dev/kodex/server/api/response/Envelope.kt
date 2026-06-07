@@ -1,31 +1,15 @@
 package dev.kodex.server.api.response
 
+import dev.kodex.core.models.api.ApiEnvelope
+import dev.kodex.core.models.api.ApiErrorEnvelope
+import dev.kodex.core.models.api.ApiMeta
 import kotlin.time.Clock
-import kotlinx.serialization.Serializable
 
-@Serializable
-data class Meta(
-    val requestId: String,
-    val timestamp: String,
-    val service: String,
-    val serviceVersion: String,
-)
-
-@Serializable
-data class Envelope<T>(
-    val data: T,
-    val meta: Meta,
-)
-
-@Serializable
-data class ErrorEnvelope(
-    val error: String,
-    val meta: Meta,
-)
-
-fun <T> buildEnvelope(data: T, requestId: String, service: String, version: String): Envelope<T> = Envelope(
+// Envelope data classes live in core:models (ApiEnvelope, ApiMeta, ApiErrorEnvelope).
+// These builder functions remain server-side — they populate service/version from server config.
+fun <T> buildEnvelope(data: T, requestId: String, service: String, version: String): ApiEnvelope<T> = ApiEnvelope(
     data = data,
-    meta = Meta(
+    meta = ApiMeta(
         requestId = requestId,
         timestamp = Clock.System.now().toString(),
         service = service,
@@ -33,10 +17,10 @@ fun <T> buildEnvelope(data: T, requestId: String, service: String, version: Stri
     ),
 )
 
-fun buildErrorEnvelope(message: String, requestId: String, service: String, version: String): ErrorEnvelope =
-    ErrorEnvelope(
+fun buildErrorEnvelope(message: String, requestId: String, service: String, version: String): ApiErrorEnvelope =
+    ApiErrorEnvelope(
         error = message,
-        meta = Meta(
+        meta = ApiMeta(
             requestId = requestId,
             timestamp = Clock.System.now().toString(),
             service = service,

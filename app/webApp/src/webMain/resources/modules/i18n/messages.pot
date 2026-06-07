@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: KodEx\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-24\n"
+"POT-Creation-Date: 2026-06-06\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,10 +15,502 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+# ── Shared UI ──────────────────────────────────────────────────────────────
+
 #: CodeBlock.kt
 msgid "Copy"
 msgstr ""
 
 #: CodeBlock.kt
 msgid "Copied!"
+msgstr ""
+
+# ── Global Nav Bar ─────────────────────────────────────────────────────────
+
+#: GlobalNavBar.kt
+msgid "Problems"
+msgstr ""
+
+#: GlobalNavBar.kt
+msgid "Contests"
+msgstr ""
+
+#: GlobalNavBar.kt
+msgid "Leaderboard"
+msgstr ""
+
+#: GlobalNavBar.kt
+msgid "Create Exam"
+msgstr ""
+
+#: GlobalNavBar.kt
+msgid "Sign In"
+msgstr ""
+
+#: GlobalNavBar.kt
+msgid "Sign Up"
+msgstr ""
+
+#: GlobalNavBar.kt
+msgid "Sign in to your account"
+msgstr ""
+
+#: GlobalNavBar.kt
+msgid "Log Out"
+msgstr ""
+
+#: GlobalNavBar.kt
+msgid "My Profile"
+msgstr ""
+
+#: GlobalNavBar.kt
+msgid "My Badges"
+msgstr ""
+
+#: GlobalNavBar.kt
+msgid "My Trophies"
+msgstr ""
+
+#: GlobalNavBar.kt
+msgid "My Stats"
+msgstr ""
+
+#: GlobalNavBar.kt
+msgid "My Contests"
+msgstr ""
+
+#: GlobalNavBar.kt
+msgid "Settings"
+msgstr ""
+
+#: GlobalNavBar.kt
+msgid "KodEx home"
+msgstr ""
+
+#: GlobalNavBar.kt
+msgid "Mobile navigation menu"
+msgstr ""
+
+#: GlobalNavBar.kt
+msgid "Open menu"
+msgstr ""
+
+#: GlobalNavBar.kt
+msgid "Profile menu"
+msgstr ""
+
+#: GlobalNavBar.kt
+msgid "Main navigation"
+msgstr ""
+
+#: GlobalNavBar.kt
+msgid "Free"
+msgstr ""
+
+#: GlobalNavBar.kt
+msgid "Pro"
+msgstr ""
+
+# ── Footer ─────────────────────────────────────────────────────────────────
+
+#: Footer.kt
+msgid "The Kotlin & Android Coding Arena"
+msgstr ""
+
+#: Footer.kt
+msgid "Platform"
+msgstr ""
+
+#: Footer.kt
+msgid "Legal"
+msgstr ""
+
+#: Footer.kt
+msgid "(opens in new tab)"
+msgstr ""
+
+#: Footer.kt
+msgid "About"
+msgstr ""
+
+#: Footer.kt
+msgid "Contact"
+msgstr ""
+
+#: Footer.kt
+msgid "Privacy Policy"
+msgstr ""
+
+#: Footer.kt
+msgid "Terms of Service"
+msgstr ""
+
+#: Footer.kt
+msgid "Cookies"
+msgstr ""
+
+#: Footer.kt
+msgid "GitHub"
+msgstr ""
+
+#: Footer.kt
+msgid "Twitter / X"
+msgstr ""
+
+#: Footer.kt
+msgid "Telegram"
+msgstr ""
+
+#: Footer.kt
+msgid "Discord"
+msgstr ""
+
+# ── Not Found Page ─────────────────────────────────────────────────────────
+
+#: NotFoundPage.kt
+msgid "Page not found"
+msgstr ""
+
+#: NotFoundPage.kt
+msgid "The page you're looking for doesn't exist or has been moved."
+msgstr ""
+
+#: NotFoundPage.kt
+msgid "Back to Home"
+msgstr ""
+
+# ── Hero Section ───────────────────────────────────────────────────────────
+
+#: HeroSection.kt
+msgid "KodEx — The Kotlin & Android Coding Arena"
+msgstr ""
+
+#: HeroSection.kt
+msgid "Compete. Build. Master."
+msgstr ""
+
+#: HeroSection.kt
+msgid "Get Started"
+msgstr ""
+
+#: HeroSection.kt
+msgid "Explore Problems"
+msgstr ""
+
+#: HeroSection.kt
+msgid "Reopen editor"
+msgstr ""
+
+#: HeroSection.kt
+msgid "problems"
+msgstr ""
+
+#: HeroSection.kt
+msgid "developers"
+msgstr ""
+
+#: HeroSection.kt
+msgid "contests"
+msgstr ""
+
+# ── Exam Types Section ─────────────────────────────────────────────────────
+
+#: ExamTypesSection.kt
+msgid "Three ways to challenge developers"
+msgstr ""
+
+#: ExamTypesSection.kt
+msgid "Each exam type tests a different dimension of engineering skill."
+msgstr ""
+
+#: ExamTypesSection.kt
+msgid "Multiple Choice"
+msgstr ""
+
+#: ExamTypesSection.kt
+msgid "I/O Test Cases"
+msgstr ""
+
+#: ExamTypesSection.kt
+msgid "Injection / Project"
+msgstr ""
+
+#: ExamTypesSection.kt
+msgid ""
+"Answer multiple-choice questions within a strict time limit. Each question "
+"delivers instant feedback and a detailed explanation, so you reinforce the "
+"concept immediately. Ideal for testing theoretical knowledge, language "
+"syntax, and SDK fundamentals."
+msgstr ""
+
+#: ExamTypesSection.kt
+msgid ""
+"Write algorithms that read from standard input and print the correct output. "
+"Solutions are validated against hidden test cases covering normal inputs, "
+"boundary conditions, and adversarial edge cases — exactly the format used in "
+"competitive programming contests."
+msgstr ""
+
+#: ExamTypesSection.kt
+msgid ""
+"Implement functions that are injected directly into a hidden test harness. "
+"Your code must satisfy a full automated test suite written by the exam "
+"creator — the same paradigm used in professional TDD workflows and "
+"code-review pipelines."
+msgstr ""
+
+# ── Gamification Section ───────────────────────────────────────────────────
+
+#: GamificationSection.kt
+msgid "Earn Your Rank"
+msgstr ""
+
+#: GamificationSection.kt
+msgid "Solve problems, win contests, and climb the tier ladder."
+msgstr ""
+
+#: GamificationSection.kt
+msgid "Achievement Badges"
+msgstr ""
+
+#: GamificationSection.kt
+msgid "Beginner"
+msgstr ""
+
+#: GamificationSection.kt
+msgid "Elite"
+msgstr ""
+
+#: Tier.kt
+msgid "Junior Coder"
+msgstr ""
+
+#: Tier.kt
+msgid "Senior Coder"
+msgstr ""
+
+#: Tier.kt
+msgid "Master"
+msgstr ""
+
+#: Tier.kt
+msgid "Grandmaster"
+msgstr ""
+
+#: BadgeDefinition.kt
+msgid "Kotlin Ninja"
+msgstr ""
+
+#: BadgeDefinition.kt
+msgid "Android Architect"
+msgstr ""
+
+#: BadgeDefinition.kt
+msgid "Night Owl"
+msgstr ""
+
+#: BadgeDefinition.kt
+msgid "Steady Hand"
+msgstr ""
+
+#: BadgeDefinition.kt
+msgid "Bug Hunter"
+msgstr ""
+
+#: BadgeDefinition.kt
+msgid "Speed Demon"
+msgstr ""
+
+#: BadgeDefinition.kt
+msgid "Creative Chaos"
+msgstr ""
+
+#: BadgeDefinition.kt
+msgid "Hello World"
+msgstr ""
+
+#: BadgeDefinition.kt
+msgid "Solve 50 Kotlin problems."
+msgstr ""
+
+#: BadgeDefinition.kt
+msgid "Solve 30 Android architecture problems."
+msgstr ""
+
+#: BadgeDefinition.kt
+msgid "Submit a solution between midnight and 4 AM."
+msgstr ""
+
+#: BadgeDefinition.kt
+msgid "Maintain a 7-day solving streak."
+msgstr ""
+
+#: BadgeDefinition.kt
+msgid "Pass all hidden edge-case tests in 10 problems."
+msgstr ""
+
+#: BadgeDefinition.kt
+msgid "Solve a problem in under 60 seconds."
+msgstr ""
+
+#: BadgeDefinition.kt
+msgid "Solve a problem using an unexpected algorithm."
+msgstr ""
+
+#: BadgeDefinition.kt
+msgid "Solve your first problem."
+msgstr ""
+
+# ── Leaderboard Section ────────────────────────────────────────────────────
+
+#: LeaderboardSection.kt
+msgid "Top performers this season."
+msgstr ""
+
+#: LeaderboardSection.kt
+msgid "User"
+msgstr ""
+
+#: LeaderboardSection.kt
+msgid "Score"
+msgstr ""
+
+#: LeaderboardSection.kt
+msgid "Solved"
+msgstr ""
+
+#: LeaderboardSection.kt
+msgid "Streak"
+msgstr ""
+
+#: LeaderboardSection.kt
+msgid "Sign up to claim your rank"
+msgstr ""
+
+#: LeaderboardSection.kt
+msgid "View full leaderboard →"
+msgstr ""
+
+# ── Problems Section ───────────────────────────────────────────────────────
+
+#: ProblemsSection.kt
+msgid "Problem Dataset"
+msgstr ""
+
+#: ProblemsSection.kt
+msgid "Curated Kotlin & Android challenges at every level."
+msgstr ""
+
+#: ProblemsSection.kt
+msgid "Title"
+msgstr ""
+
+#: ProblemsSection.kt
+msgid "Type"
+msgstr ""
+
+#: ProblemsSection.kt
+msgid "Difficulty"
+msgstr ""
+
+#: ProblemsSection.kt
+msgid "Explore all problems →"
+msgstr ""
+
+#: ProblemsSection.kt
+msgid "All"
+msgstr ""
+
+#: ProblemsSection.kt
+msgid "Kotlin"
+msgstr ""
+
+#: ProblemsSection.kt
+msgid "Android"
+msgstr ""
+
+#: ProblemsSection.kt DifficultyTier.kt
+msgid "Easy"
+msgstr ""
+
+#: ProblemsSection.kt DifficultyTier.kt
+msgid "Medium"
+msgstr ""
+
+#: ProblemsSection.kt DifficultyTier.kt
+msgid "Hard"
+msgstr ""
+
+#: PlaceholderData.kt
+msgid "Reverse a String"
+msgstr ""
+
+#: PlaceholderData.kt
+msgid "FizzBuzz with Lambdas"
+msgstr ""
+
+#: PlaceholderData.kt
+msgid "Binary Search Tree"
+msgstr ""
+
+#: PlaceholderData.kt
+msgid "Coroutines Quiz"
+msgstr ""
+
+#: PlaceholderData.kt
+msgid "Android ViewModel Lifecycle"
+msgstr ""
+
+#: ExamType.kt
+msgid "I/O Test Cases"
+msgstr ""
+
+#: ExamType.kt
+msgid "Injection / Project"
+msgstr ""
+
+# ── Create Exam Section ────────────────────────────────────────────────────
+
+#: CreateExamSection.kt
+msgid "For Educators & Organisers"
+msgstr ""
+
+#: CreateExamSection.kt
+msgid "Run Your Own Kotlin Exam"
+msgstr ""
+
+#: CreateExamSection.kt
+msgid "Create a fully automated exam in minutes and let KodEx do the grading."
+msgstr ""
+
+#: CreateExamSection.kt
+msgid "Create an Exam →"
+msgstr ""
+
+#: CreateExamSection.kt
+msgid "Sign Up to Create →"
+msgstr ""
+
+#: CreateExamSection.kt
+msgid "See Demo"
+msgstr ""
+
+#: CreateExamSection.kt
+msgid "Three exam types: Multiple Choice, I/O, Injection"
+msgstr ""
+
+#: CreateExamSection.kt
+msgid "Automated grading against hidden test cases"
+msgstr ""
+
+#: CreateExamSection.kt
+msgid "Real-time leaderboard per contest"
+msgstr ""
+
+#: CreateExamSection.kt
+msgid "Badge and trophy rewards for top finishers"
+msgstr ""
+
+#: CreateExamSection.kt
+msgid "Export results to CSV for your records"
 msgstr ""

@@ -16,6 +16,7 @@ import dev.kodex.webapp.playground.previews.BadgePreview
 import dev.kodex.webapp.playground.previews.ButtonPreview
 import dev.kodex.webapp.playground.previews.CardPreview
 import dev.kodex.webapp.playground.previews.CodeBlockPreview
+import dev.kodex.webapp.playground.previews.GsapSmokePreview
 import dev.kodex.webapp.playground.previews.InputPreview
 import dev.kodex.webapp.playground.previews.LanguageSwitcherPreview
 import dev.kodex.webapp.playground.previews.ModalPreview
@@ -28,6 +29,7 @@ import dev.kodex.webapp.playground.previews.TypographyPreview
 private val PLAYGROUND_ENTRIES: List<PlaygroundEntry> by lazy {
     buildPlaygroundEntries(
         listOf(
+            PlaygroundEntry("GSAP Smoke Test", "Foundation") { GsapSmokePreview() },
             // Foundation
             PlaygroundEntry("Typography", "Foundation") { TypographyPreview() },
             // Atoms

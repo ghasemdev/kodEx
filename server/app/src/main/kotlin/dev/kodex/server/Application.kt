@@ -4,6 +4,9 @@ import dev.kodex.core.env.env
 import dev.kodex.core.env.envOrNull
 import dev.kodex.server.api.response.buildErrorEnvelope
 import dev.kodex.server.api.routes.healthRoutes
+import dev.kodex.server.api.routes.landingRoutes
+import dev.kodex.server.api.util.sanitizeRequestId
+import dev.kodex.server.di.KoinServerApplication
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
@@ -15,15 +18,23 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.plugins.defaultheaders.DefaultHeaders
+import io.ktor.server.plugins.forwardedheaders.XForwardedHeaders
+import io.ktor.server.plugins.origin
+import io.ktor.server.plugins.ratelimit.RateLimit
+import io.ktor.server.plugins.ratelimit.RateLimitName
+import io.ktor.server.plugins.ratelimit.rateLimit
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
 import io.ktor.server.routing.routing
 import kotlin.time.Clock
-import kotlin.uuid.Uuid
+import kotlin.time.Duration.Companion.minutes
 import org.koin.ktor.plugin.Koin
+import org.koin.logger.slf4jLogger
+import org.koin.plugin.module.dsl.withConfiguration
 
 private const val PORT = 8080
 
+@Suppress("LongMethod")
 fun main() {
     val port = envOrNull("SERVER_PORT")?.toInt() ?: PORT
     val host = envOrNull("SERVER_HOST") ?: "0.0.0.0"
@@ -66,25 +77,37 @@ fun main() {
         install(StatusPages) {
             exception<Throwable> { call, cause ->
                 call.application.log.error("Unhandled exception", cause)
-                val requestId = call.request.headers["X-Request-Id"] ?: Uuid.random().toString()
+                val requestId = sanitizeRequestId(call.request.headers["X-Request-Id"])
                 call.respond(
                     HttpStatusCode.InternalServerError,
                     buildErrorEnvelope(
                         message = "An unexpected error occurred.",
                         requestId = requestId,
-                        service = "kodex-api",
+                        service = BuildConfig.SERVICE_NAME,
                         version = BuildConfig.VERSION,
                     ),
                 )
             }
         }
 
+        install(XForwardedHeaders) // or ForwardedHeaders — restrict to trusted proxy CIDRs
+        install(RateLimit) {
+            register(RateLimitName("public")) {
+                rateLimiter(limit = 60, refillPeriod = 1.minutes)
+                requestKey { call -> call.request.origin.remoteHost }
+            }
+        }
+
         install(Koin) {
-            modules(SERVER_MODULE)
+            slf4jLogger()
+            withConfiguration<KoinServerApplication>()
         }
 
         routing {
-            healthRoutes(startedAt = startedAt, version = BuildConfig.VERSION)
+            healthRoutes(startedAt = startedAt, service = BuildConfig.SERVICE_NAME, version = BuildConfig.VERSION)
+            rateLimit(RateLimitName("public")) {
+                landingRoutes(service = BuildConfig.SERVICE_NAME, version = BuildConfig.VERSION)
+            }
         }
     }.start(wait = true)
 }

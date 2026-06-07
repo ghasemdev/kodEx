@@ -4,14 +4,16 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: KodEx\n"
-"POT-Creation-Date: 2026-05-24\n"
-"PO-Revision-Date: 2026-05-24\n"
+"POT-Creation-Date: 2026-06-06\n"
+"PO-Revision-Date: 2026-06-06\n"
 "Language-Team: Persian\n"
 "Language: fa\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+
+# ── Shared UI ──────────────────────────────────────────────────────────────
 
 #: CodeBlock.kt
 msgid "Copy"
@@ -20,3 +22,494 @@ msgstr "کپی"
 #: CodeBlock.kt
 msgid "Copied!"
 msgstr "کپی شد!"
+
+# ── Global Nav Bar ─────────────────────────────────────────────────────────
+
+#: GlobalNavBar.kt
+msgid "Problems"
+msgstr "مسائل"
+
+#: GlobalNavBar.kt
+msgid "Contests"
+msgstr "مسابقات"
+
+#: GlobalNavBar.kt
+msgid "Leaderboard"
+msgstr "جدول برترین‌ها"
+
+#: GlobalNavBar.kt
+msgid "Create Exam"
+msgstr "ایجاد آزمون"
+
+#: GlobalNavBar.kt
+msgid "Sign In"
+msgstr "ورود"
+
+#: GlobalNavBar.kt
+msgid "Sign Up"
+msgstr "ثبت‌نام"
+
+#: GlobalNavBar.kt
+msgid "Sign in to your account"
+msgstr "وارد حساب خود شوید"
+
+#: GlobalNavBar.kt
+msgid "Log Out"
+msgstr "خروج"
+
+#: GlobalNavBar.kt
+msgid "My Profile"
+msgstr "پروفایل من"
+
+#: GlobalNavBar.kt
+msgid "My Badges"
+msgstr "نشان‌های من"
+
+#: GlobalNavBar.kt
+msgid "My Trophies"
+msgstr "جوایز من"
+
+#: GlobalNavBar.kt
+msgid "My Stats"
+msgstr "آمار من"
+
+#: GlobalNavBar.kt
+msgid "My Contests"
+msgstr "مسابقات من"
+
+#: GlobalNavBar.kt
+msgid "Settings"
+msgstr "تنظیمات"
+
+#: GlobalNavBar.kt
+msgid "KodEx home"
+msgstr "صفحه اصلی KodEx"
+
+#: GlobalNavBar.kt
+msgid "Mobile navigation menu"
+msgstr "منوی ناوبری موبایل"
+
+#: GlobalNavBar.kt
+msgid "Open menu"
+msgstr "باز کردن منو"
+
+#: GlobalNavBar.kt
+msgid "Profile menu"
+msgstr "منوی پروفایل"
+
+#: GlobalNavBar.kt
+msgid "Main navigation"
+msgstr "ناوبری اصلی"
+
+#: GlobalNavBar.kt
+msgid "Free"
+msgstr "رایگان"
+
+#: GlobalNavBar.kt
+msgid "Pro"
+msgstr "حرفه‌ای"
+
+# ── Footer ─────────────────────────────────────────────────────────────────
+
+#: Footer.kt
+msgid "The Kotlin & Android Coding Arena"
+msgstr "بستر کدنویسی Kotlin و Android"
+
+#: Footer.kt
+msgid "Platform"
+msgstr "پلتفرم"
+
+#: Footer.kt
+msgid "Legal"
+msgstr "قانونی"
+
+#: Footer.kt
+msgid "(opens in new tab)"
+msgstr "(در تب جدید باز می‌شود)"
+
+#: Footer.kt
+msgid "About"
+msgstr "درباره ما"
+
+#: Footer.kt
+msgid "Contact"
+msgstr "تماس با ما"
+
+#: Footer.kt
+msgid "Privacy Policy"
+msgstr "سیاست حریم خصوصی"
+
+#: Footer.kt
+msgid "Terms of Service"
+msgstr "شرایط استفاده"
+
+#: Footer.kt
+msgid "Cookies"
+msgstr "کوکی‌ها"
+
+#: Footer.kt
+msgid "GitHub"
+msgstr "GitHub"
+
+#: Footer.kt
+msgid "Twitter / X"
+msgstr "توییتر / ایکس"
+
+#: Footer.kt
+msgid "Telegram"
+msgstr "تلگرام"
+
+#: Footer.kt
+msgid "Discord"
+msgstr "دیسکورد"
+
+# ── Not Found Page ─────────────────────────────────────────────────────────
+
+#: NotFoundPage.kt
+msgid "Page not found"
+msgstr "صفحه پیدا نشد"
+
+#: NotFoundPage.kt
+msgid "The page you're looking for doesn't exist or has been moved."
+msgstr "صفحه‌ای که دنبالش می‌گردید وجود ندارد یا جابه‌جا شده است."
+
+#: NotFoundPage.kt
+msgid "Back to Home"
+msgstr "بازگشت به صفحه اصلی"
+
+# ── Hero Section ───────────────────────────────────────────────────────────
+
+#: HeroSection.kt
+msgid "KodEx — The Kotlin & Android Coding Arena"
+msgstr "KodEx — بستر کدنویسی Kotlin و Android"
+
+#: HeroSection.kt
+msgid "Compete. Build. Master."
+msgstr "رقابت کن. بساز. مسلط شو."
+
+#: HeroSection.kt
+msgid "Get Started"
+msgstr "شروع کن"
+
+#: HeroSection.kt
+msgid "Explore Problems"
+msgstr "مرور مسائل"
+
+#: HeroSection.kt
+msgid "Reopen editor"
+msgstr "نمایش ویرایشگر"
+
+#: HeroSection.kt
+msgid "problems"
+msgstr "مسئله"
+
+#: HeroSection.kt
+msgid "developers"
+msgstr "توسعه‌دهنده"
+
+#: HeroSection.kt
+msgid "contests"
+msgstr "مسابقه"
+
+# ── Exam Types Section ─────────────────────────────────────────────────────
+
+#: ExamTypesSection.kt
+msgid "Three ways to challenge developers"
+msgstr "سه روش برای آزمایش توسعه‌دهندگان"
+
+#: ExamTypesSection.kt
+msgid "Each exam type tests a different dimension of engineering skill."
+msgstr "هر نوع آزمون یک بُعد متفاوت از مهارت مهندسی را می‌سنجد."
+
+#: ExamTypesSection.kt
+msgid "Multiple Choice"
+msgstr "چندگزینه‌ای"
+
+#: ExamTypesSection.kt
+msgid "I/O Test Cases"
+msgstr "آزمون ورودی/خروجی"
+
+#: ExamTypesSection.kt
+msgid "Injection / Project"
+msgstr "تزریق / پروژه"
+
+#: ExamTypesSection.kt
+msgid ""
+"Answer multiple-choice questions within a strict time limit. Each question "
+"delivers instant feedback and a detailed explanation, so you reinforce the "
+"concept immediately. Ideal for testing theoretical knowledge, language "
+"syntax, and SDK fundamentals."
+msgstr ""
+"در محدودیت زمانی مشخص به سوالات چندگزینه‌ای پاسخ دهید. هر سوال بازخورد "
+"فوری و توضیح کامل ارائه می‌دهد تا مفهوم را بلافاصله تثبیت کنید. مناسب "
+"برای سنجش دانش نظری، Syntax و مبانی SDK."
+
+#: ExamTypesSection.kt
+msgid ""
+"Write algorithms that read from standard input and print the correct output. "
+"Solutions are validated against hidden test cases covering normal inputs, "
+"boundary conditions, and adversarial edge cases — exactly the format used in "
+"competitive programming contests."
+msgstr ""
+"الگوریتم‌هایی بنویسید که از ورودی استاندارد می‌خوانند و خروجی صحیح چاپ "
+"می‌کنند. راه‌حل‌ها با موارد آزمون پنهان، شامل ورودی‌های عادی، شرایط "
+"مرزی و موارد استثنا، ارزیابی می‌شوند — دقیقاً همان فرمت مسابقات برنامه‌نویسی رقابتی."
+
+#: ExamTypesSection.kt
+msgid ""
+"Implement functions that are injected directly into a hidden test harness. "
+"Your code must satisfy a full automated test suite written by the exam "
+"creator — the same paradigm used in professional TDD workflows and "
+"code-review pipelines."
+msgstr ""
+"توابعی پیاده‌سازی کنید که مستقیماً به یک محیط آزمایش پنهان تزریق می‌شوند. "
+"کد شما باید مجموعه آزمون‌های خودکار نوشته‌شده توسط برگزارکننده را برآورده کند — "
+"همان الگویی که در TDD حرفه‌ای و فرآیندهای CI/CD استفاده می‌شود."
+
+# ── Gamification Section ───────────────────────────────────────────────────
+
+#: GamificationSection.kt
+msgid "Earn Your Rank"
+msgstr "رتبه‌ات را کسب کن"
+
+#: GamificationSection.kt
+msgid "Solve problems, win contests, and climb the tier ladder."
+msgstr "مسئله حل کن، مسابقه ببر، در رده‌بندی صعود کن."
+
+#: GamificationSection.kt
+msgid "Achievement Badges"
+msgstr "مدال‌های افتخار"
+
+#: GamificationSection.kt
+msgid "Beginner"
+msgstr "مبتدی"
+
+#: GamificationSection.kt
+msgid "Elite"
+msgstr "نخبه"
+
+#: Tier.kt
+msgid "Junior Coder"
+msgstr "کدآموز"
+
+#: Tier.kt
+msgid "Senior Coder"
+msgstr "کدساز"
+
+#: Tier.kt
+msgid "Master"
+msgstr "اوستا"
+
+#: Tier.kt
+msgid "Grandmaster"
+msgstr "اوستا کار"
+
+#: BadgeDefinition.kt
+msgid "Kotlin Ninja"
+msgstr "نینجای Kotlin"
+
+#: BadgeDefinition.kt
+msgid "Android Architect"
+msgstr "معمار Android"
+
+#: BadgeDefinition.kt
+msgid "Night Owl"
+msgstr "جغد شب"
+
+#: BadgeDefinition.kt
+msgid "Steady Hand"
+msgstr "پایداری"
+
+#: BadgeDefinition.kt
+msgid "Bug Hunter"
+msgstr "باگ‌شکار"
+
+#: BadgeDefinition.kt
+msgid "Speed Demon"
+msgstr "شیطان سرعت"
+
+#: BadgeDefinition.kt
+msgid "Creative Chaos"
+msgstr "آشوب خلاقانه"
+
+#: BadgeDefinition.kt
+msgid "Hello World"
+msgstr "سلام دنیا"
+
+#: BadgeDefinition.kt
+msgid "Solve 50 Kotlin problems."
+msgstr "۵۰ مسئله Kotlin حل کنید."
+
+#: BadgeDefinition.kt
+msgid "Solve 30 Android architecture problems."
+msgstr "۳۰ مسئله معماری Android حل کنید."
+
+#: BadgeDefinition.kt
+msgid "Submit a solution between midnight and 4 AM."
+msgstr "بین نیمه شب تا ۴ بامداد راه‌حل ارسال کنید."
+
+#: BadgeDefinition.kt
+msgid "Maintain a 7-day solving streak."
+msgstr "۷ روز متوالی مسئله حل کنید."
+
+#: BadgeDefinition.kt
+msgid "Pass all hidden edge-case tests in 10 problems."
+msgstr "در ۱۰ مسئله تمام آزمون‌های پنهان حالت مرزی را پاس کنید."
+
+#: BadgeDefinition.kt
+msgid "Solve a problem in under 60 seconds."
+msgstr "یک مسئله را در کمتر از ۶۰ ثانیه حل کنید."
+
+#: BadgeDefinition.kt
+msgid "Solve a problem using an unexpected algorithm."
+msgstr "مسئله‌ای را با الگوریتمی غیرمتعارف حل کنید."
+
+#: BadgeDefinition.kt
+msgid "Solve your first problem."
+msgstr "اولین مسئله‌تان را حل کنید."
+
+# ── Leaderboard Section ────────────────────────────────────────────────────
+
+#: LeaderboardSection.kt
+msgid "Top performers this season."
+msgstr "برترین‌های این فصل."
+
+#: LeaderboardSection.kt
+msgid "User"
+msgstr "کاربر"
+
+#: LeaderboardSection.kt
+msgid "Score"
+msgstr "امتیاز"
+
+#: LeaderboardSection.kt
+msgid "Solved"
+msgstr "حل‌شده"
+
+#: LeaderboardSection.kt
+msgid "Streak"
+msgstr "زنجیره"
+
+#: LeaderboardSection.kt
+msgid "Sign up to claim your rank"
+msgstr "ثبت‌نام کن تا رتبه‌ات را بگیری"
+
+#: LeaderboardSection.kt
+msgid "View full leaderboard →"
+msgstr "مشاهده جدول کامل ←"
+
+# ── Problems Section ───────────────────────────────────────────────────────
+
+#: ProblemsSection.kt
+msgid "Problem Dataset"
+msgstr "مجموعه مسائل"
+
+#: ProblemsSection.kt
+msgid "Curated Kotlin & Android challenges at every level."
+msgstr "چالش‌های Kotlin و Android برای هر سطحی."
+
+#: ProblemsSection.kt
+msgid "Title"
+msgstr "عنوان"
+
+#: ProblemsSection.kt
+msgid "Type"
+msgstr "نوع"
+
+#: ProblemsSection.kt
+msgid "Difficulty"
+msgstr "سختی"
+
+#: ProblemsSection.kt
+msgid "Explore all problems →"
+msgstr "مرور همه مسائل ←"
+
+#: ProblemsSection.kt
+msgid "All"
+msgstr "همه"
+
+#: ProblemsSection.kt
+msgid "Kotlin"
+msgstr "Kotlin"
+
+#: ProblemsSection.kt
+msgid "Android"
+msgstr "Android"
+
+#: ProblemsSection.kt DifficultyTier.kt
+msgid "Easy"
+msgstr "آسان"
+
+#: ProblemsSection.kt DifficultyTier.kt
+msgid "Medium"
+msgstr "متوسط"
+
+#: ProblemsSection.kt DifficultyTier.kt
+msgid "Hard"
+msgstr "دشوار"
+
+#: PlaceholderData.kt
+msgid "Reverse a String"
+msgstr "معکوس کردن رشته"
+
+#: PlaceholderData.kt
+msgid "FizzBuzz with Lambdas"
+msgstr "FizzBuzz با لامبداها"
+
+#: PlaceholderData.kt
+msgid "Binary Search Tree"
+msgstr "درخت جستجوی دودویی"
+
+#: PlaceholderData.kt
+msgid "Coroutines Quiz"
+msgstr "آزمون کوروتین‌ها"
+
+#: PlaceholderData.kt
+msgid "Android ViewModel Lifecycle"
+msgstr "چرخه حیات ViewModel در Android"
+
+# ── Create Exam Section ────────────────────────────────────────────────────
+
+#: CreateExamSection.kt
+msgid "For Educators & Organisers"
+msgstr "برای مدرسان و برگزارکنندگان"
+
+#: CreateExamSection.kt
+msgid "Run Your Own Kotlin Exam"
+msgstr "آزمون Kotlin خودت را برگزار کن"
+
+#: CreateExamSection.kt
+msgid "Create a fully automated exam in minutes and let KodEx do the grading."
+msgstr "در چند دقیقه یک آزمون کاملاً خودکار بساز و داوری را به KodEx بسپار."
+
+#: CreateExamSection.kt
+msgid "Create an Exam →"
+msgstr "ایجاد آزمون ←"
+
+#: CreateExamSection.kt
+msgid "Sign Up to Create →"
+msgstr "ثبت‌نام کن و بساز ←"
+
+#: CreateExamSection.kt
+msgid "See Demo"
+msgstr "مشاهده نمونه"
+
+#: CreateExamSection.kt
+msgid "Three exam types: Multiple Choice, I/O, Injection"
+msgstr "سه نوع آزمون: چندگزینه‌ای، ورودی/خروجی، تزریق"
+
+#: CreateExamSection.kt
+msgid "Automated grading against hidden test cases"
+msgstr "داوری خودکار با موارد آزمون پنهان"
+
+#: CreateExamSection.kt
+msgid "Real-time leaderboard per contest"
+msgstr "جدول زنده برترین‌ها برای هر مسابقه"
+
+#: CreateExamSection.kt
+msgid "Badge and trophy rewards for top finishers"
+msgstr "جوایز نشان و تروفی برای برترین‌ها"
+
+#: CreateExamSection.kt
+msgid "Export results to CSV for your records"
+msgstr "صدور نتایج به CSV برای سوابق شما"

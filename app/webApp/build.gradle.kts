@@ -22,13 +22,14 @@ plugins {
     alias(libs.plugins.kilua)
     alias(libs.plugins.gettext)
     alias(libs.plugins.vite)
+    alias(libs.plugins.koin.compiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotest)
 }
 
 @OptIn(ExperimentalWasmDsl::class)
 kotlin {
-    js(IR) {
+    js {
         useEsModules()
         browser {
             commonWebpackConfig {
@@ -76,6 +77,10 @@ kotlin {
             implementation(projects.app.shared)
             implementation(libs.napier)
             implementation(libs.ktor.client.core)
+            implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.koin.core)
+            implementation(libs.koin.annotations)
         }
         webMain.dependencies {
             implementation(libs.kilua)
@@ -89,6 +94,9 @@ kotlin {
             implementation(npm("@fontsource-variable/vazirmatn", libs.versions.fontsource.get()))
             implementation(npm("@fontsource-variable/jetbrains-mono", libs.versions.fontsource.get()))
             implementation(npm("highlight.js", libs.versions.highlightjs.get()))
+            implementation(npm("gsap", libs.versions.gsap.get()))
+            implementation(libs.kotlinx.datetime)
+            implementation(npm("@js-joda/timezone", "2.25.1"))
         }
         webTest.dependencies {
             implementation(npm("html2canvas", libs.versions.html2canvas.get()))
@@ -123,6 +131,7 @@ vite {
     }
     server {
         port = 3000
+        proxy("/api", "http://localhost:8080")
     }
 }
 

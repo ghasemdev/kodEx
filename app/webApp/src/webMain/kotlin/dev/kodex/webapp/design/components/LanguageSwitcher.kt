@@ -49,6 +49,7 @@ fun IComponent.LanguageSwitcher(className: String? = null, id: String? = null) {
 
         // Dropdown
         if (open) {
+            div(className = "fixed inset-0 z-40") { onClick { open = false } }
             div(
                 id = "language-switcher-dropdown",
                 className = "absolute end-0 top-full mt-1 z-50 min-w-32 rounded-xl overflow-hidden " +

@@ -97,6 +97,33 @@ In `server:app`:
 
 Pattern: `devMain` source set extends `main` classpath, activated by a `devRun` task, excluded from `distributions`.
 
+### 2026-06-07 - A5: Ktor HttpClient must not have a hardcoded base URL — relative paths only
+
+**Status**: Active
+
+**Why this is durable**
+`install(DefaultRequest) { url("http://localhost:8080") }` is a dev shortcut that silently
+misdirects every production API call to the visitor's local port 8080 instead of the backend.
+This was SEC-003 in feature/003: all landing stats calls in production targeted users' own
+machines. Removing this block also revealed that the Vite proxy rule must be explicit in
+`build.gradle.kts` — without it, `/api/*` requests return 404 from Vite.
+
+**Constraint**
+1. `NetworkKoinModule.kt` MUST NOT install `DefaultRequest { url(...) }`. All `ApiRoutes`
+   constants use relative paths (`/api/v1/...`).
+2. `app/webApp/build.gradle.kts` MUST declare the dev proxy in the `vite { server { } }` block:
+   ```kotlin
+   proxy("/api", "http://localhost:8080")
+   ```
+   Vite uses this to forward `/api/*` → `localhost:8080` in development. In production, the
+   same relative paths resolve as same-origin requests to the production backend.
+3. If a non-Vite environment needs an explicit base URL, supply it via a `BuildConfig` constant
+   from an env var — never hardcoded.
+
+**Reconsider when**: A non-Vite build environment is introduced that cannot use a dev proxy.
+
+---
+
 ### 2026-05-29 - A4: Frontend XSS boundary — text-node-only rendering in design system components
 
 **Status**: Active

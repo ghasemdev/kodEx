@@ -115,6 +115,58 @@ Configuration lives in `config/detekt/detekt.yml` at the repository root. CI MUS
 Detekt rule violation. The Detekt configuration integrates `detekt-formatting` (ktlint rules)
 via `detekt-convention`, eliminating any need for a separate ktlint pass.
 
+### Detekt Rules — Recurring Patterns to Avoid
+
+The following violations have recurred in new UI files (`GlobalNavBar.kt`, `Footer.kt`).
+Each new file MUST be checked against these before committing.
+
+| Rule | What it means | Fix |
+|---|---|---|
+| `StringLiteralDuplication` (threshold=3) | Same string literal used ≥3 times | Extract to a `private const val` at file bottom |
+| `VariableMinLength` (min=3) | Variable name shorter than 3 chars (e.g. `el`) | Use descriptive names: `element`, `iconEl`, `navEl` |
+| `CollapsibleIfStatements` | `if (a) { if (b) { ... } }` nesting | Collapse: `if (a && b) { ... }` |
+| `NoSemicolons` | Semicolon on same line between statements | One statement per line; no `;` |
+| `TrailingCommaOnCallSite` | Missing trailing comma in multi-line calls | Add `,` after last argument before `)` |
+| `Wrapping` | Multiple statements on one line | One expression per line in lambdas/blocks |
+| `MaximumLineLength` (max=120) | Line exceeds 120 chars | Break string concatenation or lambda args across lines |
+| `LabeledExpression` | `return@label` inside forEach | Use a named function or `@Suppress` with comment if unavoidable |
+
+**Constant extraction pattern** — for repeated CSS class fragments in Kilua components:
+
+```kotlin
+// At bottom of file, grouped with other constants
+private const val FOCUS_VISIBLE_RING = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+private const val TRANSITION_COLORS  = "transition-colors duration-150"
+```
+
+**Variable naming in event callbacks** — never `el`, always meaningful:
+
+```kotlin
+// Bad
+SOCIAL_LINKS.forEach { (key, _, _) ->
+    val el = document.getElementById(...)  // VariableMinLength
+}
+// Good
+SOCIAL_LINKS.forEach { (key, _, _) ->
+    val element = document.getElementById(...)
+}
+```
+
+**`@Suppress` usage** — only for rules that are architecturally unavoidable (e.g., `LabeledExpression`
+inside a `forEach` where restructuring would harm readability). Always pair with a comment explaining why.
+
+```kotlin
+@Suppress("LabeledExpression") // forEach with nullable early-exit — restructuring adds indentation
+private fun setupHoverAnimations() { ... }
+```
+
+**Platform utilities** — never use raw `js()` for values Kotlin can compute:
+
+| Need | Wrong | Right |
+|---|---|---|
+| Current year | `js("new Date().getFullYear().toString()")` | `js.core.Date().getFullYear().toString()` |
+| Current timestamp | `js("Date.now()")` | `kotlinx.datetime.Clock.System.now()` (if dep available) |
+
 **Rationale**: A single language + clean layering boundary prevents the codebase from
 becoming a tangle of cross-cutting concerns as features are added. MVI aligns frontend
 architecture with patterns familiar from Android/Compose, reducing context-switching cost.

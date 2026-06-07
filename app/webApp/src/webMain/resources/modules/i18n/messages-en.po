@@ -4,14 +4,16 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: KodEx\n"
-"POT-Creation-Date: 2026-05-24\n"
-"PO-Revision-Date: 2026-05-24\n"
+"POT-Creation-Date: 2026-06-06\n"
+"PO-Revision-Date: 2026-06-06\n"
 "Language-Team: English\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+# ── Shared UI ──────────────────────────────────────────────────────────────
 
 #: CodeBlock.kt
 msgid "Copy"
@@ -20,3 +22,497 @@ msgstr "Copy"
 #: CodeBlock.kt
 msgid "Copied!"
 msgstr "Copied!"
+
+# ── Global Nav Bar ─────────────────────────────────────────────────────────
+
+#: GlobalNavBar.kt
+msgid "Problems"
+msgstr "Problems"
+
+#: GlobalNavBar.kt
+msgid "Contests"
+msgstr "Contests"
+
+#: GlobalNavBar.kt
+msgid "Leaderboard"
+msgstr "Leaderboard"
+
+#: GlobalNavBar.kt
+msgid "Create Exam"
+msgstr "Create Exam"
+
+#: GlobalNavBar.kt
+msgid "Sign In"
+msgstr "Sign In"
+
+#: GlobalNavBar.kt
+msgid "Sign Up"
+msgstr "Sign Up"
+
+#: GlobalNavBar.kt
+msgid "Sign in to your account"
+msgstr "Sign in to your account"
+
+#: GlobalNavBar.kt
+msgid "Log Out"
+msgstr "Log Out"
+
+#: GlobalNavBar.kt
+msgid "My Profile"
+msgstr "My Profile"
+
+#: GlobalNavBar.kt
+msgid "My Badges"
+msgstr "My Badges"
+
+#: GlobalNavBar.kt
+msgid "My Trophies"
+msgstr "My Trophies"
+
+#: GlobalNavBar.kt
+msgid "My Stats"
+msgstr "My Stats"
+
+#: GlobalNavBar.kt
+msgid "My Contests"
+msgstr "My Contests"
+
+#: GlobalNavBar.kt
+msgid "Settings"
+msgstr "Settings"
+
+#: GlobalNavBar.kt
+msgid "KodEx home"
+msgstr "KodEx home"
+
+#: GlobalNavBar.kt
+msgid "Mobile navigation menu"
+msgstr "Mobile navigation menu"
+
+#: GlobalNavBar.kt
+msgid "Open menu"
+msgstr "Open menu"
+
+#: GlobalNavBar.kt
+msgid "Profile menu"
+msgstr "Profile menu"
+
+#: GlobalNavBar.kt
+msgid "Main navigation"
+msgstr "Main navigation"
+
+#: GlobalNavBar.kt
+msgid "Free"
+msgstr "Free"
+
+#: GlobalNavBar.kt
+msgid "Pro"
+msgstr "Pro"
+
+# ── Footer ─────────────────────────────────────────────────────────────────
+
+#: Footer.kt
+msgid "The Kotlin & Android Coding Arena"
+msgstr "The Kotlin & Android Coding Arena"
+
+#: Footer.kt
+msgid "Platform"
+msgstr "Platform"
+
+#: Footer.kt
+msgid "Legal"
+msgstr "Legal"
+
+#: Footer.kt
+msgid "(opens in new tab)"
+msgstr "(opens in new tab)"
+
+#: Footer.kt
+msgid "About"
+msgstr "About"
+
+#: Footer.kt
+msgid "Contact"
+msgstr "Contact"
+
+#: Footer.kt
+msgid "Privacy Policy"
+msgstr "Privacy Policy"
+
+#: Footer.kt
+msgid "Terms of Service"
+msgstr "Terms of Service"
+
+#: Footer.kt
+msgid "Cookies"
+msgstr "Cookies"
+
+#: Footer.kt
+msgid "GitHub"
+msgstr "GitHub"
+
+#: Footer.kt
+msgid "Twitter / X"
+msgstr "Twitter / X"
+
+#: Footer.kt
+msgid "Telegram"
+msgstr "Telegram"
+
+#: Footer.kt
+msgid "Discord"
+msgstr "Discord"
+
+# ── Not Found Page ─────────────────────────────────────────────────────────
+
+#: NotFoundPage.kt
+msgid "Page not found"
+msgstr "Page not found"
+
+#: NotFoundPage.kt
+msgid "The page you're looking for doesn't exist or has been moved."
+msgstr "The page you're looking for doesn't exist or has been moved."
+
+#: NotFoundPage.kt
+msgid "Back to Home"
+msgstr "Back to Home"
+
+# ── Hero Section ───────────────────────────────────────────────────────────
+
+#: HeroSection.kt
+msgid "KodEx — The Kotlin & Android Coding Arena"
+msgstr "KodEx — The Kotlin & Android Coding Arena"
+
+#: HeroSection.kt
+msgid "Compete. Build. Master."
+msgstr "Compete. Build. Master."
+
+#: HeroSection.kt
+msgid "Get Started"
+msgstr "Get Started"
+
+#: HeroSection.kt
+msgid "Explore Problems"
+msgstr "Explore Problems"
+
+#: HeroSection.kt
+msgid "Reopen editor"
+msgstr "Reopen editor"
+
+#: HeroSection.kt
+msgid "problems"
+msgstr "Problems"
+
+#: HeroSection.kt
+msgid "developers"
+msgstr "Developers"
+
+#: HeroSection.kt
+msgid "contests"
+msgstr "Contests"
+
+# ── Exam Types Section ─────────────────────────────────────────────────────
+
+#: ExamTypesSection.kt
+msgid "Three ways to challenge developers"
+msgstr "Three ways to challenge developers"
+
+#: ExamTypesSection.kt
+msgid "Each exam type tests a different dimension of engineering skill."
+msgstr "Each exam type tests a different dimension of engineering skill."
+
+#: ExamTypesSection.kt
+msgid "Multiple Choice"
+msgstr "Multiple Choice"
+
+#: ExamTypesSection.kt
+msgid "I/O Test Cases"
+msgstr "I/O Test Cases"
+
+#: ExamTypesSection.kt
+msgid "Injection / Project"
+msgstr "Injection / Project"
+
+#: ExamTypesSection.kt
+msgid ""
+"Answer multiple-choice questions within a strict time limit. Each question "
+"delivers instant feedback and a detailed explanation, so you reinforce the "
+"concept immediately. Ideal for testing theoretical knowledge, language "
+"syntax, and SDK fundamentals."
+msgstr ""
+"Answer multiple-choice questions within a strict time limit. Each question "
+"delivers instant feedback and a detailed explanation, so you reinforce the "
+"concept immediately. Ideal for testing theoretical knowledge, language "
+"syntax, and SDK fundamentals."
+
+#: ExamTypesSection.kt
+msgid ""
+"Write algorithms that read from standard input and print the correct output. "
+"Solutions are validated against hidden test cases covering normal inputs, "
+"boundary conditions, and adversarial edge cases — exactly the format used in "
+"competitive programming contests."
+msgstr ""
+"Write algorithms that read from standard input and print the correct output. "
+"Solutions are validated against hidden test cases covering normal inputs, "
+"boundary conditions, and adversarial edge cases — exactly the format used in "
+"competitive programming contests."
+
+#: ExamTypesSection.kt
+msgid ""
+"Implement functions that are injected directly into a hidden test harness. "
+"Your code must satisfy a full automated test suite written by the exam "
+"creator — the same paradigm used in professional TDD workflows and "
+"code-review pipelines."
+msgstr ""
+"Implement functions that are injected directly into a hidden test harness. "
+"Your code must satisfy a full automated test suite written by the exam "
+"creator — the same paradigm used in professional TDD workflows and "
+"code-review pipelines."
+
+# ── Gamification Section ───────────────────────────────────────────────────
+
+#: GamificationSection.kt
+msgid "Earn Your Rank"
+msgstr "Earn Your Rank"
+
+#: GamificationSection.kt
+msgid "Solve problems, win contests, and climb the tier ladder."
+msgstr "Solve problems, win contests, and climb the tier ladder."
+
+#: GamificationSection.kt
+msgid "Achievement Badges"
+msgstr "Achievement Badges"
+
+#: GamificationSection.kt
+msgid "Beginner"
+msgstr "Beginner"
+
+#: GamificationSection.kt
+msgid "Elite"
+msgstr "Elite"
+
+#: Tier.kt
+msgid "Junior Coder"
+msgstr "Junior Coder"
+
+#: Tier.kt
+msgid "Senior Coder"
+msgstr "Senior Coder"
+
+#: Tier.kt
+msgid "Master"
+msgstr "Master"
+
+#: Tier.kt
+msgid "Grandmaster"
+msgstr "Grandmaster"
+
+#: BadgeDefinition.kt
+msgid "Kotlin Ninja"
+msgstr "Kotlin Ninja"
+
+#: BadgeDefinition.kt
+msgid "Android Architect"
+msgstr "Android Architect"
+
+#: BadgeDefinition.kt
+msgid "Night Owl"
+msgstr "Night Owl"
+
+#: BadgeDefinition.kt
+msgid "Steady Hand"
+msgstr "Steady Hand"
+
+#: BadgeDefinition.kt
+msgid "Bug Hunter"
+msgstr "Bug Hunter"
+
+#: BadgeDefinition.kt
+msgid "Speed Demon"
+msgstr "Speed Demon"
+
+#: BadgeDefinition.kt
+msgid "Creative Chaos"
+msgstr "Creative Chaos"
+
+#: BadgeDefinition.kt
+msgid "Hello World"
+msgstr "Hello World"
+
+#: BadgeDefinition.kt
+msgid "Solve 50 Kotlin problems."
+msgstr "Solve 50 Kotlin problems."
+
+#: BadgeDefinition.kt
+msgid "Solve 30 Android architecture problems."
+msgstr "Solve 30 Android architecture problems."
+
+#: BadgeDefinition.kt
+msgid "Submit a solution between midnight and 4 AM."
+msgstr "Submit a solution between midnight and 4 AM."
+
+#: BadgeDefinition.kt
+msgid "Maintain a 7-day solving streak."
+msgstr "Maintain a 7-day solving streak."
+
+#: BadgeDefinition.kt
+msgid "Pass all hidden edge-case tests in 10 problems."
+msgstr "Pass all hidden edge-case tests in 10 problems."
+
+#: BadgeDefinition.kt
+msgid "Solve a problem in under 60 seconds."
+msgstr "Solve a problem in under 60 seconds."
+
+#: BadgeDefinition.kt
+msgid "Solve a problem using an unexpected algorithm."
+msgstr "Solve a problem using an unexpected algorithm."
+
+#: BadgeDefinition.kt
+msgid "Solve your first problem."
+msgstr "Solve your first problem."
+
+# ── Leaderboard Section ────────────────────────────────────────────────────
+
+#: LeaderboardSection.kt
+msgid "Top performers this season."
+msgstr "Top performers this season."
+
+#: LeaderboardSection.kt
+msgid "User"
+msgstr "User"
+
+#: LeaderboardSection.kt
+msgid "Score"
+msgstr "Score"
+
+#: LeaderboardSection.kt
+msgid "Solved"
+msgstr "Solved"
+
+#: LeaderboardSection.kt
+msgid "Streak"
+msgstr "Streak"
+
+#: LeaderboardSection.kt
+msgid "Sign up to claim your rank"
+msgstr "Sign up to claim your rank"
+
+#: LeaderboardSection.kt
+msgid "View full leaderboard →"
+msgstr "View full leaderboard →"
+
+# ── Problems Section ───────────────────────────────────────────────────────
+
+#: ProblemsSection.kt
+msgid "Problem Dataset"
+msgstr "Problem Dataset"
+
+#: ProblemsSection.kt
+msgid "Curated Kotlin & Android challenges at every level."
+msgstr "Curated Kotlin & Android challenges at every level."
+
+#: ProblemsSection.kt
+msgid "Title"
+msgstr "Title"
+
+#: ProblemsSection.kt
+msgid "Type"
+msgstr "Type"
+
+#: ProblemsSection.kt
+msgid "Difficulty"
+msgstr "Difficulty"
+
+#: ProblemsSection.kt
+msgid "Explore all problems →"
+msgstr "Explore all problems →"
+
+#: ProblemsSection.kt
+msgid "All"
+msgstr "All"
+
+#: ProblemsSection.kt
+msgid "Kotlin"
+msgstr "Kotlin"
+
+#: ProblemsSection.kt
+msgid "Android"
+msgstr "Android"
+
+#: ProblemsSection.kt DifficultyTier.kt
+msgid "Easy"
+msgstr "Easy"
+
+#: ProblemsSection.kt DifficultyTier.kt
+msgid "Medium"
+msgstr "Medium"
+
+#: ProblemsSection.kt DifficultyTier.kt
+msgid "Hard"
+msgstr "Hard"
+
+#: PlaceholderData.kt
+msgid "Reverse a String"
+msgstr "Reverse a String"
+
+#: PlaceholderData.kt
+msgid "FizzBuzz with Lambdas"
+msgstr "FizzBuzz with Lambdas"
+
+#: PlaceholderData.kt
+msgid "Binary Search Tree"
+msgstr "Binary Search Tree"
+
+#: PlaceholderData.kt
+msgid "Coroutines Quiz"
+msgstr "Coroutines Quiz"
+
+#: PlaceholderData.kt
+msgid "Android ViewModel Lifecycle"
+msgstr "Android ViewModel Lifecycle"
+
+# ── Create Exam Section ────────────────────────────────────────────────────
+
+#: CreateExamSection.kt
+msgid "For Educators & Organisers"
+msgstr "For Educators & Organisers"
+
+#: CreateExamSection.kt
+msgid "Run Your Own Kotlin Exam"
+msgstr "Run Your Own Kotlin Exam"
+
+#: CreateExamSection.kt
+msgid "Create a fully automated exam in minutes and let KodEx do the grading."
+msgstr "Create a fully automated exam in minutes and let KodEx do the grading."
+
+#: CreateExamSection.kt
+msgid "Create an Exam →"
+msgstr "Create an Exam →"
+
+#: CreateExamSection.kt
+msgid "Sign Up to Create →"
+msgstr "Sign Up to Create →"
+
+#: CreateExamSection.kt
+msgid "See Demo"
+msgstr "See Demo"
+
+#: CreateExamSection.kt
+msgid "Three exam types: Multiple Choice, I/O, Injection"
+msgstr "Three exam types: Multiple Choice, I/O, Injection"
+
+#: CreateExamSection.kt
+msgid "Automated grading against hidden test cases"
+msgstr "Automated grading against hidden test cases"
+
+#: CreateExamSection.kt
+msgid "Real-time leaderboard per contest"
+msgstr "Real-time leaderboard per contest"
+
+#: CreateExamSection.kt
+msgid "Badge and trophy rewards for top finishers"
+msgstr "Badge and trophy rewards for top finishers"
+
+#: CreateExamSection.kt
+msgid "Export results to CSV for your records"
+msgstr "Export results to CSV for your records"

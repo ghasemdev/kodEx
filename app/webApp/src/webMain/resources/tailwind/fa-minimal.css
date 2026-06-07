@@ -1,6 +1,7 @@
 /*!
  * Font Awesome Free 7.2.0 — minimal subset for KodEx
- * Only includes: fa-moon, fa-sun, fa-circle-half-stroke (used by ThemeSwitcher)
+ * Solid: fa-moon, fa-sun, fa-circle-half-stroke, nav/sidebar icons
+ * Brands: fa-github, fa-x-twitter, fa-telegram, fa-discord (Footer social links)
  * Full license: https://fontawesome.com/license/free
  */
 
@@ -8,8 +9,11 @@
    ../webfonts/ relative path resolves correctly from within node_modules. */
 @import "@fortawesome/fontawesome-free/css/solid.css";
 
-/* Base display rules (extracted from fontawesome.css, trimmed to .fa-solid only) */
-.fa-solid, .fas, .fa {
+/* Brands font face (separate webfont from solid) */
+@import "@fortawesome/fontawesome-free/css/brands.css";
+
+/* Base display rules — covers both solid and brands icon families */
+.fa-solid, .fas, .fa, .fa-brands, .fab {
   --_fa-family: var(--fa-family, var(--fa-style-family, 'Font Awesome 7 Free'));
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -26,12 +30,12 @@
   width: var(--fa-width, 1.25em);
 }
 
-:is(.fas, .fa-solid, .fa)::before {
+:is(.fas, .fa-solid, .fa, .fa-brands, .fab)::before {
   content: var(--fa) / "";
 }
 
 @supports not (content: "" / "") {
-  :is(.fas, .fa-solid, .fa)::before {
+  :is(.fas, .fa-solid, .fa, .fa-brands, .fab)::before {
     content: var(--fa);
   }
 }
@@ -50,3 +54,8 @@
 .fa-users              { --fa: "\f0c0"; }
 .fa-chart-line         { --fa: "\f201"; }
 .fa-gear               { --fa: "\f013"; }
+/* Footer social — brands (fa-brands class sets font-family to Brands webfont) */
+.fa-github             { --fa: "\f09b"; }
+.fa-x-twitter          { --fa: "\e61b"; }
+.fa-telegram           { --fa: "\f2c6"; }
+.fa-discord            { --fa: "\f392"; }
