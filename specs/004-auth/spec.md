@@ -159,8 +159,8 @@ When a user successfully logs in from an IP address or device that has never bee
 
 **Acceptance Scenarios**:
 
-1. **Given** a user who has logged in before from IP A, **When** a successful login occurs from IP B (unseen for this account), **Then** a security alert email is sent immediately with details (time, approximate location, device hint) and a "revoke all sessions" link.
-2. **Given** the "this wasn't me" revoke link in the email, **When** clicked, **Then** all refresh tokens for the account are revoked, the user is logged out everywhere, and a confirmation page is shown.
+1. **Given** a user who has logged in before from IP A, **When** a successful login occurs from IP B (unseen for this account), **Then** a security alert email is sent immediately with details (time, approximate location, device hint) and a single-use "revoke all sessions" link.
+2. **Given** the "this wasn't me" revoke link in the email, **When** clicked, **Then** all refresh tokens for the account are revoked, the user is logged out everywhere, and a confirmation page is shown. The link works without requiring login (the user may no longer have access if credentials were compromised).
 3. **Given** a login from an already-seen IP, **When** authentication succeeds, **Then** no alert email is sent.
 4. **Given** an OAuth login from a new device, **When** it succeeds, **Then** the same alert logic applies as for password login.
 
@@ -297,6 +297,11 @@ A logged-in user can edit their public and private profile details: upload a pro
 - **FR-038**: On successful email change, the old email MUST receive a notification and all existing refresh tokens MUST be revoked.
 - **FR-039**: A pending email change that is not verified within 24 hours MUST be automatically cancelled.
 
+**OAuth Username & Username Change**
+
+- **FR-040**: When a new account is created via OAuth the system MUST auto-generate a username from the OAuth provider email prefix: strip non-`[a-z0-9_-]` characters, truncate to 30 characters, and append an incrementing numeric suffix (e.g. `2`, `3`) until the name is unique.
+- **FR-041**: Logged-in users MUST be able to change their username from profile settings; the new username MUST satisfy FR-001a (3–30 chars, `[a-z0-9_-]`, unique). The public profile URL `/u/<username>` updates immediately upon change.
+
 **Profile**
 
 - **FR-025**: Users MUST be able to upload a profile picture (JPEG, PNG, WebP; max 5 MB); the server MUST validate both MIME type and magic bytes.
@@ -321,6 +326,7 @@ A logged-in user can edit their public and private profile details: upload a pro
 - **WebAuthnCredential**: Registered passkey. Attributes: id, user_id (FK), credential_id, public_key_cose, sign_count, aaguid, friendly_name, created_at.
 - **TotpConfig**: TOTP configuration per user. Attributes: user_id (FK), secret_encrypted, enabled, backup_codes_hash[] (array of SHA-256 hashes of one-time codes).
 - **KnownLoginIp**: IP addresses seen for a user (for new-device alert logic). Attributes: id, user_id (FK), ip_hash (SHA-256 of IP), first_seen_at, last_seen_at.
+- **EmergencyRevokeToken**: Single-use token embedded in new-device alert emails. Attributes: id, user_id (FK), token_hash (SHA-256), expires_at (+24 h), used_at (nullable). Clicking the link revokes all sessions without requiring login.
 
 ---
 

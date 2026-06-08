@@ -1,15 +1,15 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan:
-specs/003-landing-page/plan.md
+specs/004-auth/plan.md
 
 Constitution index + quick reference: .specify/memory/constitution.md
 Constitution principles (read per task): .specify/memory/principles/<i-x>.md
 Tech stack: .specify/memory/tech-stack.md
 Security policy: .specify/memory/security_constitution.md
-Research (library versions, decisions): specs/003-landing-page/research.md
-Data model: specs/003-landing-page/data-model.md
-Quick-start: specs/003-landing-page/quickstart.md
+Research (library versions, decisions): specs/004-auth/research.md
+Data model: specs/004-auth/data-model.md
+Quick-start: specs/004-auth/quickstart.md
 <!-- SPECKIT END -->
 
 ### Spec Kit
