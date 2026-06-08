@@ -35,11 +35,16 @@ APP_BASE_URL=http://localhost:5173
 # TOTP secret encryption key — generate with: openssl rand -base64 32
 TOTP_ENCRYPTION_KEY=base64encodedAESKey=
 
+# WebAuthn challenge cookie signing key — generate with: openssl rand -base64 32
+WEBAUTHN_CHALLENGE_KEY=base64encodedAESKey=
+
 # GeoIP database path (mounted in Docker Compose)
 GEOIP_DB_PATH=/data/GeoLite2-City.mmdb
 
 # Redis (per-IP rate limiting)
+# Production: set REDIS_PASSWORD and use redis://:${REDIS_PASSWORD}@redis:6379
 REDIS_URL=redis://localhost:6379
+REDIS_PASSWORD=
 
 # MinIO (avatar object storage)
 MINIO_ENDPOINT=http://localhost:9000

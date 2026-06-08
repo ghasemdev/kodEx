@@ -64,11 +64,15 @@ All responses wrapped in `ApiEnvelope<T>` per §IX. Prefix: `/api/v1/`.
 {
   "data": {
     "requiresTotp": true,
-    "totpSessionToken": "<short-lived-opaque-token>"
+    "totpSessionToken": "<short-lived-jwt>"
   }
 }
 ```
-`totpSessionToken` expires in 5 minutes; used as proof of completed password step.
+`totpSessionToken` is a short-lived JWT (TTL=5 min) signed with `JWT_SECRET`. Payload MUST be:
+```json
+{ "type": "totp-session", "sub": "<userId>", "iat": <unix>, "exp": <iat+300> }
+```
+The TOTP route MUST reject tokens where `type != "totp-session"`. The JWT auth guard MUST reject tokens where `type == "totp-session"` (i.e. missing `role` claim).
 
 **Errors**:
 - `401 INVALID_CREDENTIALS` — wrong email or password (no enumeration)

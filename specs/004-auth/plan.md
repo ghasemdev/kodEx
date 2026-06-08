@@ -294,12 +294,15 @@ app/webApp/src/webMain/kotlin/dev/kodex/webapp/
 16. `RoleGuard.kt` middleware — `requireRole(Role)` route extension
 17. `TurnstileVerifier.kt` — HTTP call to Cloudflare
 18. `AuthRoutes.kt` — register, login, logout, refresh, verify-email, resend, forgot/reset-password, username-check, emergency-revoke
-19. `OAuthRoutes.kt` — GitHub + Google OAuth2 code flow (Ktor `ktor-server-auth` OAuth plugin); includes auto-username generation
+19. `OAuthRoutes.kt` — GitHub + Google OAuth2 code flow; MUST use Ktor `ktor-server-auth` OAuth plugin (never manual redirect); plugin generates + validates `state` param (CSRF protection) automatically — do NOT bypass this mechanism; includes auto-username generation
 20. `TotpLoginRoutes.kt` — `/login/totp`
 21. `PasskeyAuthRoutes.kt` — unauthenticated passkey begin/complete
 22. `UserRoutes.kt` (includes `PATCH /me/username`, `POST /me/avatar`), `SessionRoutes.kt`, `OAuthLinkRoutes.kt`, `TotpRoutes.kt`, `PasskeyManageRoutes.kt`
 23. New-device login alert logic — called from `LoginUseCase` after successful auth
 24. `sanitizeRequestId()` applied to all new routes
+24a. `Cache-Control: no-store` MUST be set on all auth route responses (via `CallPlugin` or per-route `response.header()`) per `security_constitution.md §6`
+24b. `ktor-server-rate-limit` plugin MUST be installed on all `POST /api/v1/auth/*` routes (max 20 req / 10s per IP) as defense-in-depth alongside the Redis-based Turnstile counter
+24c. Install `ktor-server-forwarded-header` plugin; use `call.request.origin.remoteHost` after normalisation for all IP hashing — never concatenate raw `X-Forwarded-For`
 
 ### Phase D — Shared Models (`core:models`)
 25. All auth DTOs and request/response types in `core/models/src/commonMain/kotlin/dev/kodex/core/models/auth/`

@@ -4,6 +4,19 @@
 
 ---
 
+## Token Generation Policy
+
+All opaque tokens in this schema are generated server-side as **32 random bytes from `SecureRandom`**, hex-encoded to 64 characters, then SHA-256 hashed before storage. This applies to: `refresh_tokens`, `email_verification_tokens`, `pending_email_changes`, `password_reset_tokens`, `emergency_revoke_tokens`.
+
+```
+rawToken  = SecureRandom.nextBytes(32).toHexString()   // 64-char hex string sent to client
+storedHash = SHA-256(rawToken).toHexString()            // 64-char hex stored in DB
+```
+
+TOTP recovery codes follow the same policy but are 16 bytes, formatted as `XXXXXXXX-XXXXXXXX` (uppercase hex, split at byte 8).
+
+---
+
 ## PostgreSQL Schema (Flyway V3__auth_schema.sql)
 
 ### Table: `users`

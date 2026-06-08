@@ -27,6 +27,8 @@ webauthn4j-core = { module = "com.webauthn4j:webauthn4j-core", version.ref = "we
 
 **Challenge state storage**: WebAuthn requires server to remember the challenge until the assertion response arrives (~30 s). Approach chosen: signed, AES-GCM-encrypted HttpOnly cookie containing the challenge bytes. Avoids any server-side state (no Redis, no PG row). Cookie is set on `begin` and validated + deleted on `complete`.
 
+**Challenge cookie key**: Encrypted with `WEBAUTHN_CHALLENGE_KEY` env var (base64, 32 bytes / 256 bits, `openssl rand -base64 32`). This is a dedicated key — NOT derived from `JWT_SECRET`. IV is randomly generated per cookie and prepended to the ciphertext. See `quickstart.md` for the env var.
+
 ---
 
 ## D2 — TOTP Library
@@ -314,7 +316,7 @@ kotlinx-coroutines-reactive = { module = "org.jetbrains.kotlinx:kotlinx-coroutin
 
 **Max size**: 5 MB (FR-025). Enforced before streaming to MinIO.
 
-**URL format**: `http(s)://<MINIO_PUBLIC_URL>/<MINIO_BUCKET_AVATARS>/<userId>.<ext>`
+**URL format**: `http(s)://<MINIO_PUBLIC_URL>/<MINIO_BUCKET_AVATARS>/<userId>.<ext>` where `ext` is derived from the server-validated MIME type (`jpg`, `png`, `webp`) — NEVER from the client-supplied multipart filename.
 
 **Catalog entries to add**:
 ```toml
@@ -373,7 +375,9 @@ minio-sdk            = { module = "io.minio:minio",                            v
 | `APP_BASE_URL` | Base URL for link generation (e.g. `https://kodex.dev`) | server:app |
 | `TOTP_ENCRYPTION_KEY` | AES-256 key (base64, 32 bytes) for TOTP secret encryption | server:app |
 | `GEOIP_DB_PATH` | Absolute path to GeoLite2-City.mmdb | server:app |
-| `REDIS_URL` | Redis connection URI (e.g. `redis://localhost:6379`) | server:app |
+| `REDIS_URL` | Redis connection URI (e.g. `redis://:${REDIS_PASSWORD}@redis:6379`) | server:app |
+| `REDIS_PASSWORD` | Redis password (required in production; blank for local dev) | server:app |
+| `WEBAUTHN_CHALLENGE_KEY` | AES-256 key for signing WebAuthn challenge cookies (base64, 32 bytes) | server:app |
 | `MINIO_ENDPOINT` | MinIO server URL (e.g. `http://minio:9000`) | server:app |
 | `MINIO_ACCESS_KEY` | MinIO access key | server:app |
 | `MINIO_SECRET_KEY` | MinIO secret key | server:app |

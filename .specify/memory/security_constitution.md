@@ -92,7 +92,9 @@ Refresh token:  7 days     | stored server-side in Redis (revocable)
 |---|---|
 | `JWT_SECRET` | JWT signing secret (≥256 bits) |
 | `DB_PASSWORD` | PostgreSQL password |
-| `REDIS_PASSWORD` | Redis password |
+| `REDIS_PASSWORD` | Redis password (required in production; auth spec adds Redis) |
+| `TOTP_ENCRYPTION_KEY` | AES-256-GCM key for TOTP secret encryption — spec 004 (≥256 bits, base64) |
+| `WEBAUTHN_CHALLENGE_KEY` | AES-256-GCM key for WebAuthn challenge cookie signing — spec 004 (≥256 bits, base64) |
 | `SANDBOX_SHARED_SECRET` | Shared secret for `server` ↔ `sandbox-runner` auth |
 | `WEBAPP_ORIGIN` | Allowed CORS origin for production |
 

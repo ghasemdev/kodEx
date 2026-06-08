@@ -49,6 +49,7 @@ Compact routing map for durable project memory (`docs/memory/`). Keep it short.
 | [docs/security-reviews/2026-06-07-feature-003-landing-page.md](../security-reviews/2026-06-07-feature-003-landing-page.md) | branch | 2026-06-07 | MODERATE | C:0 H:0 M:3 L:1 | A03,A05 |
 | [docs/security-reviews/2026-06-07-feature-003-landing-page-followup.md](../security-reviews/2026-06-07-feature-003-landing-page-followup.md) | followup | 2026-06-07 | MODERATE | C:0 H:0 M:3 L:1 | A03,A05 |
 | [docs/security-reviews/2026-06-07-feature-003-landing-page-whitebox.md](../security-reviews/2026-06-07-feature-003-landing-page-whitebox.md) | whitebox | 2026-06-07 | LOW | C:0 H:0 M:3 L:1 resolved:3 deferred:1 | A03,A05 |
+| [docs/security-reviews/2026-06-09-feature-004-auth-plan.md](../security-reviews/2026-06-09-feature-004-auth-plan.md) | plan | 2026-06-09 | HIGH | C:0 H:2 M:5 L:2 I:2 | A01,A02,A05,A07 |
 
 ## Workflow
 
