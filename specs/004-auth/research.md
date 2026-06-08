@@ -262,7 +262,7 @@ ua-parser-java = { module = "com.github.ua-parser:uap-java", version.ref = "ua-p
 
 ## D14 — Redis Client (Rate Limiting)
 
-**Decision**: `io.lettuce:lettuce-core:6.3.2.RELEASE`
+**Decision**: `io.lettuce:lettuce-core:7.6.0.RELEASE`
 
 **Rationale**:
 - Lettuce is the de facto standard async Java/Kotlin Redis client; fully non-blocking, coroutine-friendly via `await()` on `RedisFuture`
@@ -287,15 +287,19 @@ login:attempts:<sha256(ip)>   String  TTL=600s  # per-IP failed login counter
 
 **Catalog entries to add**:
 ```toml
-lettuce = "6.3.2.RELEASE"
+lettuce = "7.6.0.RELEASE"
 lettuce-core = { module = "io.lettuce:lettuce-core", version.ref = "lettuce" }
+# kotlinx-coroutines-reactive uses the existing "coroutines" version ref (1.11.0):
+kotlinx-coroutines-reactive = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-reactive", version.ref = "coroutines" }
 ```
+
+**Coroutines note**: `kotlinx-coroutines-reactive` and `kotlinx-coroutines-core` must both be on the `server:data` classpath. With them present, lettuce's reactive publisher APIs become suspendable via `awaitSingle()` / `awaitFirstOrNull()` from `kotlinx.coroutines.reactive`.
 
 ---
 
 ## D15 — Avatar Object Storage
 
-**Decision**: MinIO (self-hosted S3-compatible) via `io.minio:minio:8.5.11`
+**Decision**: MinIO (self-hosted S3-compatible) via `io.minio:minio:9.0.1`
 
 **Rationale**:
 - MinIO runs as a single Docker container; zero external cloud dependency in local dev and CI
@@ -314,7 +318,7 @@ lettuce-core = { module = "io.lettuce:lettuce-core", version.ref = "lettuce" }
 
 **Catalog entries to add**:
 ```toml
-minio = "8.5.11"
+minio = "9.0.1"
 minio-sdk = { module = "io.minio:minio", version.ref = "minio" }
 ```
 
@@ -337,8 +341,8 @@ kotlin-onetimepassword = "3.0.0"
 zxcvbn4j             = "1.9.0"
 geoip2               = "5.1.0"
 resend               = "4.14.1"
-lettuce              = "6.3.2.RELEASE"
-minio                = "8.5.11"
+lettuce              = "7.6.0.RELEASE"
+minio                = "9.0.1"
 
 # libraries
 ua-parser-java       = { module = "com.github.ua-parser:uap-java",            version.ref = "ua-parser" }

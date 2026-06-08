@@ -94,8 +94,8 @@ kotlin-onetimepassword = "3.0.0"
 zxcvbn4j               = "1.9.0"
 geoip2                 = "5.1.0"
 resend                 = "4.14.1"
-lettuce                = "6.3.2.RELEASE"
-minio                  = "8.5.11"
+lettuce                = "7.6.0.RELEASE"
+minio                  = "9.0.1"
 ```
 
 Add to `[libraries]`:
@@ -108,6 +108,8 @@ geoip2-lib             = { module = "com.maxmind.geoip2:geoip2",                
 resend-java            = { module = "com.resend:resend-java",                      version.ref = "resend" }
 lettuce-core           = { module = "io.lettuce:lettuce-core",                     version.ref = "lettuce" }
 minio-sdk              = { module = "io.minio:minio",                              version.ref = "minio" }
+# kotlinx-coroutines-reactive — already uses existing "coroutines" version ref:
+kotlinx-coroutines-reactive = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-reactive", version.ref = "coroutines" }
 ```
 
 Add npm dependency to `app/webApp/build.gradle.kts` (inside `jsMain` + `wasmJsMain`):

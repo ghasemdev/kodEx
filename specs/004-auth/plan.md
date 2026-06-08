@@ -18,7 +18,7 @@ Build the complete authentication and identity system for KodEx: email+password 
 
 **Primary Dependencies**:
 - Backend: Ktor 3.5.0, Exposed 1.3.0, Flyway 12.6.1, Koin 4.2.1 (Annotations), argon2-jvm 2.12
-- Auth-specific additions: webauthn4j-core 0.31.6.RELEASE, kotlin-onetimepassword 3.0.0, zxcvbn4j 1.9.0, geoip2 5.1.0, resend-java 4.14.1, uap-java 1.6.1, lettuce-core 6.3.2.RELEASE (Redis), minio 8.5.11 (avatar storage)
+- Auth-specific additions: webauthn4j-core 0.31.6.RELEASE, kotlin-onetimepassword 3.0.0, zxcvbn4j 1.9.0, geoip2 5.1.0, resend-java 4.14.1, uap-java 1.6.1, lettuce-core 7.6.0.RELEASE (Redis), minio 9.0.1 (avatar storage)
 - Frontend: Kilua (latest via Gradle plugin), Ktor Client JS, zxcvbn-ts 3.0.4 (npm)
 
 **Storage**: PostgreSQL (primary DB — all token, session, user data). Redis (per-IP failed login counter for Turnstile/lockout trigger).
