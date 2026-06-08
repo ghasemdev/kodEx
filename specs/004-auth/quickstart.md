@@ -37,6 +37,16 @@ TOTP_ENCRYPTION_KEY=base64encodedAESKey=
 
 # GeoIP database path (mounted in Docker Compose)
 GEOIP_DB_PATH=/data/GeoLite2-City.mmdb
+
+# Redis (per-IP rate limiting)
+REDIS_URL=redis://localhost:6379
+
+# MinIO (avatar object storage)
+MINIO_ENDPOINT=http://localhost:9000
+MINIO_ACCESS_KEY=minioadmin
+MINIO_SECRET_KEY=minioadmin
+MINIO_BUCKET_AVATARS=avatars
+MINIO_PUBLIC_URL=http://localhost:9000
 ```
 
 ## Local Development Setup
@@ -84,6 +94,8 @@ kotlin-onetimepassword = "3.0.0"
 zxcvbn4j               = "1.9.0"
 geoip2                 = "5.1.0"
 resend                 = "4.14.1"
+lettuce                = "6.3.2.RELEASE"
+minio                  = "8.5.11"
 ```
 
 Add to `[libraries]`:
@@ -94,6 +106,8 @@ kotlin-onetimepassword-lib = { module = "dev.turingcomplete:kotlin-onetimepasswo
 zxcvbn4j-lib           = { module = "com.nulab-inc:zxcvbn",                       version.ref = "zxcvbn4j" }
 geoip2-lib             = { module = "com.maxmind.geoip2:geoip2",                  version.ref = "geoip2" }
 resend-java            = { module = "com.resend:resend-java",                      version.ref = "resend" }
+lettuce-core           = { module = "io.lettuce:lettuce-core",                     version.ref = "lettuce" }
+minio-sdk              = { module = "io.minio:minio",                              version.ref = "minio" }
 ```
 
 Add npm dependency to `app/webApp/build.gradle.kts` (inside `jsMain` + `wasmJsMain`):

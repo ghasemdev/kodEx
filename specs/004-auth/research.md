@@ -260,6 +260,68 @@ ua-parser-java = { module = "com.github.ua-parser:uap-java", version.ref = "ua-p
 
 ---
 
+## D14 — Redis Client (Rate Limiting)
+
+**Decision**: `io.lettuce:lettuce-core:6.3.2.RELEASE`
+
+**Rationale**:
+- Lettuce is the de facto standard async Java/Kotlin Redis client; fully non-blocking, coroutine-friendly via `await()` on `RedisFuture`
+- No Redis-specific Kotlin library mature enough for production; lettuce + coroutine wrappers is the established pattern in the Ktor ecosystem
+- Minimal API surface needed: only `INCR`, `EXPIRE`, `GET`, `DEL` for the rate-limit counter use case
+
+**Alternatives considered**:
+- `jedis` — synchronous, thread-per-connection; not suitable for Ktor's coroutine model
+- `kreds` (Kotlin-native) — promising but not production-proven; small community
+- In-memory `ConcurrentHashMap` — single-host only; lost on restart; no TTL native support
+
+**Use cases in this spec**:
+1. **Per-IP failed login counter** (`login:attempts:<sha256(ip)>`) — `INCR` + `EXPIRE 600` on each failed attempt; if count ≥ 3, require Turnstile; if count ≥ 10, trigger account lockout check
+2. **Infrastructure foundation** — sets up Redis in Docker Compose for future rate-limiting (SEC-004) and leaderboard caching (spec 010) without additional infra changes
+
+**Redis key schema**:
+```
+login:attempts:<sha256(ip)>   String  TTL=600s  # per-IP failed login counter
+```
+
+**Connection**: Single `RedisClient` created at startup; `StatefulRedisConnection<String, String>` shared via Koin `@Single`. URI from `REDIS_URL` env var (e.g. `redis://localhost:6379`).
+
+**Catalog entries to add**:
+```toml
+lettuce = "6.3.2.RELEASE"
+lettuce-core = { module = "io.lettuce:lettuce-core", version.ref = "lettuce" }
+```
+
+---
+
+## D15 — Avatar Object Storage
+
+**Decision**: MinIO (self-hosted S3-compatible) via `io.minio:minio:8.5.11`
+
+**Rationale**:
+- MinIO runs as a single Docker container; zero external cloud dependency in local dev and CI
+- S3-compatible API means a production switch to AWS S3 / R2 / GCS requires only env var changes, not code changes
+- Official Java SDK (`io.minio:minio`) covers all needed operations: `putObject`, `presignedGetObjectUrl`
+- File upload flow: server receives `multipart/form-data`, validates MIME type + magic bytes (first 16 bytes), streams directly to MinIO, stores resulting URL in `user_profiles.avatar_url`
+
+**Accepted file types**: `image/jpeg`, `image/png`, `image/webp` — validated by magic bytes:
+- JPEG: `FF D8 FF`
+- PNG: `89 50 4E 47 0D 0A 1A 0A`
+- WebP: `52 49 46 46 … 57 45 42 50`
+
+**Max size**: 5 MB (FR-025). Enforced before streaming to MinIO.
+
+**URL format**: `http(s)://<MINIO_PUBLIC_URL>/<MINIO_BUCKET_AVATARS>/<userId>.<ext>`
+
+**Catalog entries to add**:
+```toml
+minio = "8.5.11"
+minio-sdk = { module = "io.minio:minio", version.ref = "minio" }
+```
+
+**New env vars**: `MINIO_ENDPOINT`, `MINIO_ACCESS_KEY`, `MINIO_SECRET_KEY`, `MINIO_BUCKET_AVATARS`, `MINIO_PUBLIC_URL`.
+
+---
+
 ## New Environment Variables Summary
 
 **Already in catalog (no new entries needed)**:
@@ -275,6 +337,8 @@ kotlin-onetimepassword = "3.0.0"
 zxcvbn4j             = "1.9.0"
 geoip2               = "5.1.0"
 resend               = "4.14.1"
+lettuce              = "6.3.2.RELEASE"
+minio                = "8.5.11"
 
 # libraries
 ua-parser-java       = { module = "com.github.ua-parser:uap-java",            version.ref = "ua-parser" }
@@ -283,6 +347,8 @@ kotlin-onetimepassword-lib = { module = "dev.turingcomplete:kotlin-onetimepasswo
 zxcvbn4j-lib         = { module = "com.nulab-inc:zxcvbn",                     version.ref = "zxcvbn4j" }
 geoip2-lib           = { module = "com.maxmind.geoip2:geoip2",                version.ref = "geoip2" }
 resend-java          = { module = "com.resend:resend-java",                    version.ref = "resend" }
+lettuce-core         = { module = "io.lettuce:lettuce-core",                   version.ref = "lettuce" }
+minio-sdk            = { module = "io.minio:minio",                            version.ref = "minio" }
 ```
 
 ---
@@ -303,3 +369,9 @@ resend-java          = { module = "com.resend:resend-java",                    v
 | `APP_BASE_URL` | Base URL for link generation (e.g. `https://kodex.dev`) | server:app |
 | `TOTP_ENCRYPTION_KEY` | AES-256 key (base64, 32 bytes) for TOTP secret encryption | server:app |
 | `GEOIP_DB_PATH` | Absolute path to GeoLite2-City.mmdb | server:app |
+| `REDIS_URL` | Redis connection URI (e.g. `redis://localhost:6379`) | server:app |
+| `MINIO_ENDPOINT` | MinIO server URL (e.g. `http://minio:9000`) | server:app |
+| `MINIO_ACCESS_KEY` | MinIO access key | server:app |
+| `MINIO_SECRET_KEY` | MinIO secret key | server:app |
+| `MINIO_BUCKET_AVATARS` | Bucket name for avatar storage (e.g. `avatars`) | server:app |
+| `MINIO_PUBLIC_URL` | Public-facing base URL for serving stored objects | server:app |

@@ -322,6 +322,27 @@ Update editable profile fields.
 
 ---
 
+### `POST /api/v1/users/me/avatar`
+
+Upload a profile picture. Replaces any existing avatar.
+
+**Request**: `multipart/form-data` — field name `file`, max 5 MB, accepted types: `image/jpeg`, `image/png`, `image/webp`.
+
+**Success 200**:
+```json
+{
+  "data": {
+    "avatarUrl": "http://minio.kodex.dev/avatars/42.jpg"
+  }
+}
+```
+
+**Errors**:
+- `413 FILE_TOO_LARGE` — exceeds 5 MB
+- `415 UNSUPPORTED_MEDIA_TYPE` — MIME type or magic bytes do not match an accepted image type
+
+---
+
 ### `PATCH /api/v1/users/me/username`
 
 Change the account's username.

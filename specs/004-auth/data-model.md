@@ -325,6 +325,24 @@ object KnownLoginIpsTable : LongIdTable("known_login_ips") {
 
 ---
 
+## Redis Key Schema
+
+All keys use SHA-256 of the raw IP address so raw IPs never leave the application tier.
+
+| Key pattern | Type | TTL | Purpose |
+|-------------|------|-----|---------|
+| `login:attempts:<sha256(ip)>` | String (integer) | 600 s | Per-IP failed login counter. `INCR` on each failure; `EXPIRE 600` on first write. Read before each login attempt: ≥ 3 → require Turnstile token. Reset (`DEL`) on successful login from that IP. |
+
+**Counter lifecycle**:
+1. Login attempt arrives → `GET login:attempts:<ip_hash>`
+2. If value ≥ 3 and no Turnstile token in request → return `400 TURNSTILE_REQUIRED`
+3. If credentials are wrong → `INCR login:attempts:<ip_hash>`, set `EXPIRE 600` (only if key is new via `SET ... NX EX 600` idiom)
+4. If credentials are correct → `DEL login:attempts:<ip_hash>`; proceed to issue tokens
+
+Account lockout (10 consecutive per-account failures, FR-008a) is tracked in `users.failed_login_count` + `users.locked_until` (PostgreSQL — permanent record, not ephemeral).
+
+---
+
 ## KMP Shared Models (`core/models`)
 
 ```

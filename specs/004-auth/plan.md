@@ -18,10 +18,10 @@ Build the complete authentication and identity system for KodEx: email+password 
 
 **Primary Dependencies**:
 - Backend: Ktor 3.5.0, Exposed 1.3.0, Flyway 12.6.1, Koin 4.2.1 (Annotations), argon2-jvm 2.12
-- Auth-specific additions: webauthn4j-core 0.31.6.RELEASE, kotlin-onetimepassword 3.0.0, zxcvbn4j 1.9.0, geoip2 5.1.0, resend-java 4.14.1, uap-java 1.6.1 (User-Agent parsing for device hints)
+- Auth-specific additions: webauthn4j-core 0.31.6.RELEASE, kotlin-onetimepassword 3.0.0, zxcvbn4j 1.9.0, geoip2 5.1.0, resend-java 4.14.1, uap-java 1.6.1, lettuce-core 6.3.2.RELEASE (Redis), minio 8.5.11 (avatar storage)
 - Frontend: Kilua (latest via Gradle plugin), Ktor Client JS, zxcvbn-ts 3.0.4 (npm)
 
-**Storage**: PostgreSQL (primary DB — all token, session, user data). No Redis in this spec.
+**Storage**: PostgreSQL (primary DB — all token, session, user data). Redis (per-IP failed login counter for Turnstile/lockout trigger).
 
 **Testing**: Kotest (JVM), kotlin.test (KMP/JS), Testcontainers (PostgreSQL for integration tests)
 
@@ -31,7 +31,7 @@ Build the complete authentication and identity system for KodEx: email+password 
 
 **Performance Goals**: Auth endpoints ≤ 500 ms p99. Token refresh ≤ 100 ms p95 (single indexed PG query).
 
-**Constraints**: No Redis dependency. HttpOnly cookie for refresh token. Access token in JS memory only (not localStorage). OWASP Argon2id parameters: 2 iterations / 64 MiB memory / 4 threads.
+**Constraints**: HttpOnly cookie for refresh token. Redis used only for ephemeral rate-limit counters (not for session/token storage). Access token in JS memory only (not localStorage). OWASP Argon2id parameters: 2 iterations / 64 MiB memory / 4 threads.
 
 **Scale/Scope**: v1 single-host Docker Compose deployment. All 11 user stories from spec.
 
@@ -133,6 +133,7 @@ server/
 │   │   │   ├── ChangeEmailUseCase.kt
 │   │   │   ├── ChangeUsernameUseCase.kt
 │   │   │   ├── UpdateProfileUseCase.kt
+│   │   │   ├── UploadAvatarUseCase.kt
 │   │   │   ├── GetSessionsUseCase.kt
 │   │   │   └── RevokeSessionUseCase.kt
 │   │   └── repository/
@@ -184,6 +185,10 @@ server/
 │   │   └── ResendEmailService.kt       ← Resend SDK impl
 │   ├── geoip/
 │   │   └── GeoIpService.kt             ← MaxMind GeoLite2 lookup
+│   ├── ratelimit/
+│   │   └── RateLimitService.kt         ← Redis INCR/EXPIRE for per-IP attempt counter
+│   ├── storage/
+│   │   └── AvatarStorageService.kt     ← MinIO putObject; validates MIME + magic bytes; returns public URL
 │   └── crypto/
 │       ├── PasswordHasher.kt           ← Argon2id wrapper
 │       ├── TokenHasher.kt              ← SHA-256 hex utility
@@ -272,6 +277,8 @@ app/webApp/src/webMain/kotlin/dev/kodex/webapp/
 6. Crypto utilities: `PasswordHasher`, `TokenHasher`, `TotpCrypto`
 7. `EmailService` interface + `ResendEmailService` impl
 8. `GeoIpService` impl
+8a. `RateLimitService` impl — Lettuce `RedisClient` Koin `@Single`; `incrementAndGet(key, ttlSeconds)` + `reset(key)` coroutine wrappers
+8b. `AvatarStorageService` impl — MinIO `MinioClient` Koin `@Single`; `upload(userId, bytes, mimeType): String`; validates magic bytes; returns public URL
 
 ### Phase B — Domain Layer
 9. Repository interfaces: `UserRepository`, `TokenRepository`, `OAuthIdentityRepository`, `ProfileRepository`, `SessionRepository`, `PasskeyRepository`, `TotpRepository`
@@ -279,7 +286,7 @@ app/webApp/src/webMain/kotlin/dev/kodex/webapp/
 11. Use cases: Register, Login, Logout, Refresh, VerifyEmail, ResendVerification, ForgotPassword, ResetPassword
 11a. Use case: `EmergencyRevokeAllSessionsUseCase` — validates token, revokes all refresh tokens, marks token used
 12. Use cases: OAuth login + identity linking (includes auto-username generation from email prefix)
-13. Use cases: ChangePassword, ChangeEmail, ChangeUsername, UpdateProfile, GetSessions, RevokeSession
+13. Use cases: ChangePassword, ChangeEmail, ChangeUsername, UpdateProfile, UploadAvatar, GetSessions, RevokeSession
 14. Use cases: RegisterPasskey, AuthenticatePasskey, RemovePasskey
 15. Use cases: SetupTotp, ConfirmTotp, VerifyTotpCode, DisableTotp
 
@@ -290,7 +297,7 @@ app/webApp/src/webMain/kotlin/dev/kodex/webapp/
 19. `OAuthRoutes.kt` — GitHub + Google OAuth2 code flow (Ktor `ktor-server-auth` OAuth plugin); includes auto-username generation
 20. `TotpLoginRoutes.kt` — `/login/totp`
 21. `PasskeyAuthRoutes.kt` — unauthenticated passkey begin/complete
-22. `UserRoutes.kt` (includes `PATCH /me/username`), `SessionRoutes.kt`, `OAuthLinkRoutes.kt`, `TotpRoutes.kt`, `PasskeyManageRoutes.kt`
+22. `UserRoutes.kt` (includes `PATCH /me/username`, `POST /me/avatar`), `SessionRoutes.kt`, `OAuthLinkRoutes.kt`, `TotpRoutes.kt`, `PasskeyManageRoutes.kt`
 23. New-device login alert logic — called from `LoginUseCase` after successful auth
 24. `sanitizeRequestId()` applied to all new routes
 
@@ -312,9 +319,9 @@ app/webApp/src/webMain/kotlin/dev/kodex/webapp/
 35. Unit tests: `PasswordHasher`, `TokenHasher`, `TotpCrypto`, `TurnstileVerifier` (mock HTTP)
 36. Kotest API-level tests: register, login, OAuth callback (mock provider), passkey flow (mock webauthn4j)
 37. Frontend kotlin.test: `AuthStore`, `TokenInterceptor`
-38. Screenshot tests: `SignInPage`, `SignUpPage`, `SecuritySettingsPage`
+38. Screenshot tests: `SignInPage`, `SignUpPage`, `SecuritySettingsPage`, `ProfileSettingsPage`
 
 ### Phase G — Config Updates
-39. `docker-compose.yml` — add `GEOIP_DB_PATH` volume mount, remove Redis service (no longer needed)
+39. `docker-compose.yml` — add `GEOIP_DB_PATH` volume mount; add Redis service (`redis:7-alpine`, port 6379); add MinIO service (`minio/minio:latest`, ports 9000/9001, create `avatars` bucket on startup)
 40. `.github/workflows/ci.yml` — add `CLOUDFLARE_TURNSTILE_SECRET` + other auth secrets to CI environment
 41. `Application.kt` — install `Authentication` plugin with JWT + OAuth2 config; add new `DefaultHeaders` (no change needed — already in place)
