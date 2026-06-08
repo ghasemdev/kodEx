@@ -1,6 +1,6 @@
 # KodEx — Product Roadmap & Spec Index
 
-**Last updated**: 2026-05-29
+**Last updated**: 2026-06-08
 **Active branch**: `develop`
 
 > One row per spec. Each spec lives in `specs/<NNN>-<slug>/` and follows the standard
@@ -14,8 +14,8 @@
 |---|------|-------|--------|--------|
 | 001 | `project-base-setup` | Project foundation, CI/CD, Docker, Ktor, Kilua scaffold | ✅ Done | `develop` |
 | 002 | `design-system` | Design tokens, components, i18n, screenshot tests | ✅ Done | `develop` |
-| 003 | `landing-page` | Public landing page — navbar, hero, features, gamification teaser, footer | 🔜 Next | — |
-| 004 | `auth` | Register, login, JWT, OAuth (GitHub/Google), refresh token, role guard | ⬜ Planned | — |
+| 003 | `landing-page` | Public landing page — navbar, hero, features, gamification teaser, footer | ✅ Done | `develop` |
+| 004 | `auth` | Register/login (email+password + OAuth GitHub/Google), passkeys, 2FA (TOTP), JWT 15 min, refresh token 7 days (PG), email verification, profile edit | 🔜 Next | — |
 | 005 | `exam-browser` | Problems page — catalogue, filters, search, difficulty | ⬜ Planned | — |
 | 006 | `contest-list` | Contests page — active, upcoming, past; registration flow | ⬜ Planned | — |
 | 007 | `contest-taking` | In-contest exam taking — code editor, submit, SSE status, results | ⬜ Planned | — |
@@ -357,9 +357,19 @@ Scroll sections:  ScrollTrigger per section, start = "top 80%"
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-**OAuth providers**: GitHub (`ktor-server-auth` OAuth2 plugin), Google (same).
-**Key tasks**: register / login / logout, JWT access (15 min) + refresh (7 days, Redis),
-role guard middleware, OAuth callback, `EXAM_CREATOR` role grant by Admin.
+**OAuth providers**: GitHub + Google via `ktor-server-auth` OAuth2 server-side code flow (PKCE-ready for future mobile).
+**Key tasks**:
+- Register / login (email+password) with password strength meter + autocomplete hints
+- OAuth GitHub / Google — fetch avatar, name, email on first login
+- Passkeys (WebAuthn/FIDO2) — register + authenticate
+- Email verification on register (magic link or 6-digit OTP — TBD)
+- Forgot password flow
+- JWT access token (15 min) + refresh token (7 days, hashed SHA-256, stored in PostgreSQL — no Redis required)
+- 2FA TOTP (Google Authenticator / Authy) — enable from profile; nudge banner after first login
+- Logout API (revoke refresh token in PG)
+- Profile edit: avatar, name, surname, birthdate, location, LinkedIn URL, GitHub URL
+- Role guard middleware; `EXAM_CREATOR` role grant by Admin
+
 **Depends on**: 002 (design system).
 
 ---
