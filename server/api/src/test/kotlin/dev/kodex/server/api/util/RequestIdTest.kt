@@ -11,13 +11,13 @@ private val UUID_PATTERN =
 class RequestIdTest : FunSpec({
     context("valid UUID") {
         test("lowercase UUID is passed through unchanged") {
-            val id = "550e8400-e29b-41d4-a716-446655440000"
-            sanitizeRequestId(id) shouldBe id
+            val uuid = "550e8400-e29b-41d4-a716-446655440000"
+            sanitizeRequestId(uuid) shouldBe uuid
         }
 
         test("uppercase UUID is passed through unchanged") {
-            val id = "550E8400-E29B-41D4-A716-446655440000"
-            sanitizeRequestId(id) shouldBe id
+            val uuid = "550E8400-E29B-41D4-A716-446655440000"
+            sanitizeRequestId(uuid) shouldBe uuid
         }
     }
 
