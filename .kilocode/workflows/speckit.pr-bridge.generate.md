@@ -1,0 +1,1 @@
+../../.specify/extensions/pr-bridge/.specify-dev/agent-commands/kilocode/speckit.pr-bridge.generate.md

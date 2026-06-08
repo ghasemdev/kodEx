@@ -1,0 +1,1 @@
+../../../.specify/extensions/pr-bridge/.specify-dev/agent-commands/claude/speckit-pr-bridge-generate/SKILL.md

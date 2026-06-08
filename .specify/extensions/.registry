@@ -127,6 +127,50 @@
       },
       "registered_skills": [],
       "installed_at": "2026-05-19T18:57:03.821409+00:00"
+    },
+    "changelog": {
+      "version": "1.0.0",
+      "source": "local",
+      "manifest_hash": "sha256:aeb2805404a982a04d7e358d26b1f4d631f18b9a4fef774e4283b09de21bf342",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "claude": [
+          "speckit.changelog.generate",
+          "speckit.changelog.release",
+          "speckit.changelog.diff",
+          "speckit.changelog.notify"
+        ],
+        "kilocode": [
+          "speckit.changelog.generate",
+          "speckit.changelog.release",
+          "speckit.changelog.diff",
+          "speckit.changelog.notify"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-06-08T18:42:49.273650+00:00"
+    },
+    "pr-bridge": {
+      "version": "1.0.0",
+      "source": "local",
+      "manifest_hash": "sha256:465aab100b655537457a09f22ff650442f2049531a96eb342eff821178df9d0f",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "claude": [
+          "speckit.pr-bridge.generate",
+          "speckit.pr-bridge.checklist",
+          "speckit.pr-bridge.summary"
+        ],
+        "kilocode": [
+          "speckit.pr-bridge.generate",
+          "speckit.pr-bridge.checklist",
+          "speckit.pr-bridge.summary"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-06-08T18:48:54.699173+00:00"
     }
   }
 }

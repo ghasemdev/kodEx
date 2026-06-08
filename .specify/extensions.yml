@@ -1,8 +1,10 @@
 installed:
 - bugfix
+- changelog
 - diagram
 - git
 - memory-md
+- pr-bridge
 - preview
 - qa
 - security-review
@@ -210,6 +212,20 @@ hooks:
     optional: true
     prompt: Run bugfix consistency check after implementation?
     description: Verify spec artifact consistency after implementation completes
+    condition: null
+  - extension: changelog
+    command: speckit.changelog.generate
+    enabled: true
+    optional: true
+    prompt: Execute speckit.changelog.generate?
+    description: Offer to generate changelog entry after implementation
+    condition: null
+  - extension: pr-bridge
+    command: speckit.pr-bridge.generate
+    enabled: true
+    optional: true
+    prompt: Generate a pull request description from the spec artifacts?
+    description: Auto-generate PR description after implementation is complete
     condition: null
   after_checklist:
   - extension: git

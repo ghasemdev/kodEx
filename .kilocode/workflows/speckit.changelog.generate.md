@@ -1,0 +1,1 @@
+../../.specify/extensions/changelog/.specify-dev/agent-commands/kilocode/speckit.changelog.generate.md
