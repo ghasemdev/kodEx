@@ -33,7 +33,11 @@ Build the complete authentication and identity system for KodEx: email+password 
 
 **Constraints**: HttpOnly cookie for refresh token. Redis used only for ephemeral rate-limit counters (not for session/token storage). Access token in JS memory only (not localStorage). OWASP Argon2id parameters: 2 iterations / 64 MiB memory / 4 threads.
 
-**Scale/Scope**: v1 single-host Docker Compose deployment. All 11 user stories from spec.
+**Auth Module Extractability**: `server:domain/auth` contains zero Ktor/Exposed imports. Use cases depend only on domain interfaces + `kotlinx.*` + `core:models`. To reuse in another Kotlin backend: copy `server/domain/auth/**` + `core/models/auth/**`; provide new repository impls; rewrite Ktor routes for target framework.
+
+**Notification Provider Pattern**: email and SMS delivery use a `EmailChannel` / `SmsChannel` interface with an `EmailRouter` / `SmsRouter` load balancer. Each router: filters OPEN-circuit + quota-exhausted channels, sorts by remaining capacity, tries in order (first success wins). Infrastructure: custom `CircuitBreaker` (CLOSED/OPEN/HALF_OPEN, no extra dep) + `QuotaTracker` (ConcurrentHashMap + AtomicLong; Redis-swappable for multi-instance). Adding a provider = one new class + one Koin DI line.
+
+**Scale/Scope**: v1 single-host Docker Compose deployment. Architecture is horizontally scalable: stateless JWT verify, DB-backed token rotation (atomic PG transaction), Redis INCR for rate-limit (atomic). `QuotaTracker` defaults to in-process; swap with Redis-backed impl for multi-instance without domain changes. All 11 user stories from spec.
 
 ---
 
@@ -180,9 +184,22 @@ server/
 │   │   ├── SessionRepositoryImpl.kt
 │   │   ├── PasskeyRepositoryImpl.kt
 │   │   └── TotpRepositoryImpl.kt
-│   ├── email/
-│   │   ├── EmailService.kt             ← interface: send(to, subject, html)
-│   │   └── ResendEmailService.kt       ← Resend SDK impl
+│   ├── notification/
+│   │   ├── channel/
+│   │   │   ├── EmailChannel.kt         ← interface: name, dailyQuota, send(to,subject,html): Result<Unit>
+│   │   │   └── SmsChannel.kt           ← interface: name, dailyQuota, send(to,message): Result<Unit>
+│   │   ├── infrastructure/
+│   │   │   ├── CircuitBreaker.kt       ← CLOSED/OPEN/HALF_OPEN state; opens after N failures; resets after 60s
+│   │   │   └── QuotaTracker.kt         ← ConcurrentHashMap<String, AtomicLong> daily counter; Redis-swappable
+│   │   ├── router/
+│   │   │   ├── EmailRouter.kt          ← load balancer: quota-aware, circuit-breaker-aware, failover chain
+│   │   │   └── SmsRouter.kt            ← same pattern for SMS
+│   │   ├── email/
+│   │   │   ├── ResendEmailChannel.kt   ← Resend REST API (primary, 3k/month free tier)
+│   │   │   └── SendGridEmailChannel.kt ← SendGrid REST API (backup provider)
+│   │   └── sms/
+│   │       ├── KavenegarSmsChannel.kt  ← Kavenegar REST API (Iran-primary)
+│   │       └── TwilioSmsChannel.kt     ← Twilio REST API (international fallback)
 │   ├── geoip/
 │   │   └── GeoIpService.kt             ← MaxMind GeoLite2 lookup
 │   ├── ratelimit/
@@ -261,6 +278,8 @@ app/webApp/src/webMain/kotlin/dev/kodex/webapp/
 | `totpSessionToken` (temp token after password step) | Two-step 2FA flow needs to carry password-verified proof to TOTP step | Storing state in session/Redis not viable; JWT-signed temp token is stateless and short-lived |
 | OAuth username auto-generation | First-time OAuth users have no username; onboarding step adds a screen and ViewModel | Auto-generate from email prefix (strip non-`[a-z0-9_-]`, truncate, suffix if taken); user can change later via PATCH |
 | `EmergencyRevokeTokensTable` for new-device alert | Revoke-all link in alert email must work without login (user may have lost account access if credentials were stolen) | Linking to `/account/security` requires login; a single-use token satisfies FR-034 with no UX friction |
+| Notification Provider Pattern + Circuit Breaker | Resend free tier is 3k emails/month; SMS needs Iran (Kavenegar) + international (Twilio) coverage; provider outages must not block auth flows | Single `EmailService` impl is simpler but fragile — one provider failure = no email delivery; OCP: new provider = one class + one DI line |
+| `QuotaTracker` in-process for v1 | Single-host Docker Compose; AtomicLong is sufficient; no Redis dependency for quota tracking | Redis-backed impl is the multi-instance upgrade path; swapping requires only a new `QuotaTracker` impl registered in Koin — zero domain changes |
 
 ---
 
@@ -275,7 +294,12 @@ app/webApp/src/webMain/kotlin/dev/kodex/webapp/
 4. Flyway migration `V3__auth_schema.sql` — all 11 tables (includes `emergency_revoke_tokens`)
 5. Exposed table definitions (all 11 tables, includes `EmergencyRevokeTokensTable`)
 6. Crypto utilities: `PasswordHasher`, `TokenHasher`, `TotpCrypto`
-7. `EmailService` interface + `ResendEmailService` impl
+7. Notification provider infrastructure:
+   - `EmailChannel` + `SmsChannel` interfaces (`server/domain/.../notification/channel/`)
+   - `CircuitBreaker` + `QuotaTracker` (`server/data/.../notification/infrastructure/`)
+   - `EmailRouter` + `SmsRouter` — load balancer with failover (`server/data/.../notification/router/`)
+   - Channel impls: `ResendEmailChannel`, `SendGridEmailChannel` (email); `KavenegarSmsChannel`, `TwilioSmsChannel` (SMS) — all in `server/data/.../notification/{email,sms}/`
+   - Register all channels + routers in Koin DI (list-injection pattern)
 8. `GeoIpService` impl
 8a. `RateLimitService` impl — Lettuce `RedisClient` Koin `@Single`; `incrementAndGet(key, ttlSeconds)` + `reset(key)` coroutine wrappers
 8b. `AvatarStorageService` impl — MinIO `MinioClient` Koin `@Single`; `upload(userId, bytes, mimeType): String`; validates magic bytes; returns public URL

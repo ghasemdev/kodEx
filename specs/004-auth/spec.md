@@ -330,6 +330,43 @@ A logged-in user can edit their public and private profile details: upload a pro
 
 ---
 
+## Non-Functional Requirements
+
+### NFR-1 — Auth Module Extractability
+
+The `server/domain/auth/` subtree MUST be portable to another Kotlin backend project without modification. Specifically:
+
+- **Zero Ktor imports** in `server:domain` — no `ApplicationCall`, `Route`, or `io.ktor.*` types.
+- **Zero Exposed imports** in `server:domain` — only repository interfaces; table definitions live in `server:data`.
+- **No framework annotations** in use cases — Koin `@Single`/`@Inject` annotations go in `server:app` composition root only.
+- Use cases depend exclusively on: `kotlinx.coroutines`, `kotlinx.datetime`, `core:models`, and domain interfaces.
+
+To reuse in another project: copy `server/domain/auth/**` + `core/models/auth/**`, provide repository implementations for the new data layer. The Ktor routes in `server/api/auth/**` are not portable (framework-specific) and must be rewritten for the target framework.
+
+### NFR-2 — Notification Provider Extensibility (OCP)
+
+All transactional notification delivery (email verification, password reset, security alerts, OTP delivery) MUST be implemented behind a **provider interface** so new delivery channels can be added without modifying existing code.
+
+- A `EmailChannel` interface and a `SmsChannel` interface are the contracts.
+- Each provider is one class implementing the relevant interface.
+- An `EmailRouter` (and `SmsRouter`) dispatches to available providers using:
+  - **Quota awareness**: tracks daily usage per provider; skips exhausted channels.
+  - **Circuit breaker**: opens after N consecutive failures; auto-recovers after a reset window.
+  - **Failover order**: providers sorted by remaining capacity; first success wins.
+- Adding a new provider = one new class + one line in Koin DI. Zero changes to router, use cases, or domain layer.
+
+### NFR-3 — Horizontal Scalability Readiness
+
+The auth backend MUST be deployable as multiple instances behind a load balancer without correctness issues:
+
+- **Stateless request handling**: access token verification is stateless (JWT signature check only).
+- **DB-backed refresh tokens**: token rotation happens in a single indexed transaction — safe under concurrent instances.
+- **Redis rate-limit counter**: `INCR`/`EXPIRE` commands are atomic — correct under multiple instances.
+- **QuotaTracker default**: in-process `AtomicLong` (v1 single-host). For multi-instance: swap with Redis-backed impl behind the same interface — zero domain/router code changes.
+- **No sticky sessions required**: all state is in PostgreSQL + Redis; any instance can serve any request.
+
+---
+
 ## Success Criteria *(mandatory)*
 
 ### Measurable Outcomes

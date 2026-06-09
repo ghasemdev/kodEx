@@ -1,26 +1,26 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version change: 1.4.0 → 1.5.0
-Type of bump: MINOR (unified API response envelope, bilingual error messages, DELETE behavior change)
+Version change: 1.5.0 → 1.6.0
+Type of bump: MINOR (§VIII refresh token storage change; §VII auth extractability + notification provider pattern)
 
 Modified principles:
-  - §IX (API Design Conventions): replaced flat error schema + "no envelope" rule
-    with a unified success/error envelope; changed DELETE from 204 to 200 + data:null;
-    added bilingual userMessage (en/fa) in errors; moved pagination into meta.pagination
+  - §VIII (Auth & AuthZ): refresh token storage changed from Redis to PostgreSQL SHA-256 hash;
+    rationale: infrequent lookup (once/15 min per user), eliminates Redis as mandatory auth infra
+  - §VII (Architecture): added Auth Module Extractability Contract (zero Ktor/Exposed in domain);
+    added Notification Channel Pattern (EmailChannel/SmsChannel interfaces, CircuitBreaker,
+    QuotaTracker, EmailRouter/SmsRouter OCP design)
 
-Structural change (1.5.0):
-  - Split monolithic constitution.md into per-principle files under principles/
-  - This file is now the index + governance only; read individual files for full detail
+Spec 004 (feature/004-auth) triggered this amendment.
 
 Remaining TODOs:
   - TODO(RATIFICATION_DATE): Confirm exact project start date if different from 2026-05-17
-  - TODO(REDIS_USE_CASE): Redis confirmed for refresh tokens + session cache; decide if also used for submission queue/leaderboard before data-model spec
+  - TODO(REDIS_USE_CASE): Redis confirmed for rate-limit counters (spec 004); decide if also used for submission queue/leaderboard before data-model spec; QuotaTracker Redis upgrade path documented in §VII
 -->
 
 # KodEx Constitution
 
-**Version**: 1.5.0 | **Ratified**: 2026-05-17 | **Last Amended**: 2026-05-19
+**Version**: 1.6.0 | **Ratified**: 2026-05-17 | **Last Amended**: 2026-06-09
 
 ---
 
@@ -35,7 +35,7 @@ Remaining TODOs:
 | V | Role-Based Domain Model | Admin + Participant roles. Exam states: DRAFT → PUBLISHED → CLOSED (terminal). | [v-role-based-domain-model.md](principles/v-role-based-domain-model.md) |
 | VI | Auditability | Every submission event logged with correlation ID. Audit logs immutable in prod. | [vi-auditability.md](principles/vi-auditability.md) |
 | VII | Architecture | Clean Arch backend (`:api` → `:domain` ← `:data`). MVI frontend. Detekt on all modules. | [vii-architecture.md](principles/vii-architecture.md) |
-| VIII | Auth & AuthZ | JWT (15 min access / 7 day refresh in Redis). Argon2id for passwords. 401/403 enforced at API layer. | [viii-authentication.md](principles/viii-authentication.md) |
+| VIII | Auth & AuthZ | JWT (15 min access / 7 day refresh **in PostgreSQL SHA-256 hash**). Argon2id for passwords. 401/403 enforced at API layer. | [viii-authentication.md](principles/viii-authentication.md) |
 | IX | API Design | `/api/v1/` prefix. Unified `{data, meta}` envelope on every response. DELETE = 200 + `data:null`. Bilingual `userMessage`. SSE for async grading. | [ix-api-design.md](principles/ix-api-design.md) |
 | X | Testing Policy | Kotest (JVM) + kotlin.test (shared). No cross-layer mocks. Testcontainers for DB/Redis. | [x-testing-policy.md](principles/x-testing-policy.md) |
 

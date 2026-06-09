@@ -170,3 +170,133 @@ private fun setupHoverAnimations() { ... }
 **Rationale**: A single language + clean layering boundary prevents the codebase from
 becoming a tangle of cross-cutting concerns as features are added. MVI aligns frontend
 architecture with patterns familiar from Android/Compose, reducing context-switching cost.
+
+---
+
+## Auth Module — Extractability Contract
+
+The `server/domain/auth/` subtree (plus `core/models/auth/`) MUST be portable to another
+Kotlin JVM backend project without modification. This is an explicit design constraint —
+not a goal for "later". Enforcement rules:
+
+1. **Zero Ktor imports** in `server:domain` — no `ApplicationCall`, `Route`, `PipelineContext`,
+   `io.ktor.server.*`, or any Ktor-server type. Those belong in `server:api` exclusively.
+2. **Zero Exposed imports** in `server:domain` — only repository interfaces defined in pure
+   Kotlin. Table definitions and query implementations live in `server:data` only.
+3. **No DI framework annotations in domain** — use cases MUST NOT carry `@Single`, `@Inject`,
+   or any Koin/DI annotation. Dependency injection wiring belongs in `server:app` only.
+4. **Only allowed imports in `server:domain`**:
+   - `kotlinx.coroutines.*`
+   - `kotlinx.datetime.*`
+   - `dev.kodex.core.models.*`
+   - Other pure-Kotlin domain interfaces within `server:domain`
+
+**Extraction recipe** (reuse auth in a new project):
+```
+Copy → server/domain/auth/**          (use cases + repository interfaces)
+Copy → core/models/auth/**            (DTOs + enums)
+Provide → implementations of UserRepository, TokenRepository, etc. (your data layer)
+Ignore → server/api/auth/**           (Ktor-specific; rewrite for target framework)
+```
+
+This also enables publishing `dev.kodex:auth-domain:<version>` as a private Maven artifact
+for internal reuse across KodEx services.
+
+---
+
+## Notification Channel Pattern (OCP — Open/Closed Principle)
+
+All transactional delivery (email, SMS, OTP) MUST use this pattern. The goal: add a new
+provider by writing one class and one Koin line — zero changes to routers or domain.
+
+### Layer placement
+
+| Artifact | Layer | Location |
+|----------|-------|----------|
+| `EmailChannel`, `SmsChannel` interfaces | Domain | `server/domain/.../notification/channel/` |
+| `CircuitBreaker`, `QuotaTracker` | Infrastructure | `server/data/.../notification/infrastructure/` |
+| `EmailRouter`, `SmsRouter` | Infrastructure | `server/data/.../notification/router/` |
+| `ResendEmailChannel`, `SendGridEmailChannel` | Infrastructure | `server/data/.../notification/email/` |
+| `KavenegarSmsChannel`, `TwilioSmsChannel` | Infrastructure | `server/data/.../notification/sms/` |
+| HTML templates | Infrastructure | `server/data/.../notification/templates/` |
+
+### Interfaces (in `server:domain`)
+
+```kotlin
+interface EmailChannel {
+    val name: String
+    val dailyQuota: Int       // -1 = unlimited
+    suspend fun send(to: String, subject: String, html: String): Result<Unit>
+}
+
+interface SmsChannel {
+    val name: String
+    val dailyQuota: Int
+    suspend fun send(to: String, message: String): Result<Unit>
+}
+```
+
+### Infrastructure Classes
+
+**`CircuitBreaker`** — per-channel, no external dependency:
+```kotlin
+// States: CLOSED (normal) → OPEN (failing) → HALF_OPEN (probing)
+// Opens after failureThreshold consecutive failures.
+// Moves to HALF_OPEN after resetAfter duration; one successful send closes it again.
+class CircuitBreaker(val failureThreshold: Int = 3, val resetAfter: Duration = 60.seconds)
+```
+
+**`QuotaTracker`** — default in-process; Redis-swappable for multi-instance:
+```kotlin
+// Keyed by channel.name. Resets at midnight.
+// For multi-instance: extract QuotaTracker interface; provide RedisQuotaTracker impl.
+class QuotaTracker {
+    fun remainingCapacity(channel: EmailChannel): Long
+    fun increment(channelName: String)
+}
+```
+
+**`EmailRouter`** — routing algorithm (same for `SmsRouter`):
+1. Filter: exclude channels where `circuitBreaker.isAvailable() == false` or `quota.remainingCapacity == 0`
+2. Sort: descending by `quota.remainingCapacity`
+3. Try in order: `channel.send(...)` → success: `quota.increment` + `breaker.recordSuccess` → return
+4. On failure: `breaker.recordFailure` → try next
+5. All failed: `Result.failure(NoChannelAvailableException("All channels exhausted or broken"))`
+
+### Koin Registration (adding a provider = one new line)
+
+```kotlin
+val notificationModule = module {
+    single<List<EmailChannel>> {
+        listOfNotNull(
+            ResendEmailChannel(get<EnvConfig>().resendApiKey),          // primary
+            if (get<EnvConfig>().sendgridApiKey.isNotEmpty())
+                SendGridEmailChannel(get<EnvConfig>().sendgridApiKey)   // backup
+            else null,
+        )
+    }
+    single { EmailRouter(get(), QuotaTracker(), buildBreakers(get())) }
+    single<EmailChannel> { get<EmailRouter>() }   // use cases inject EmailChannel, not EmailRouter
+
+    single<List<SmsChannel>> {
+        listOfNotNull(
+            KavenegarSmsChannel(get<EnvConfig>().kavenegarApiKey),
+            if (get<EnvConfig>().twilioAccountSid.isNotEmpty())
+                TwilioSmsChannel(get<EnvConfig>().twilioAccountSid, get<EnvConfig>().twilioAuthToken)
+            else null,
+        )
+    }
+    single { SmsRouter(get(), QuotaTracker(), buildBreakers(get())) }
+    single<SmsChannel> { get<SmsRouter>() }
+}
+```
+
+### Scaling Behaviour
+
+| Scenario | Behaviour |
+|----------|-----------|
+| Provider rate limit hit | `QuotaTracker` tracks daily usage; router skips channel automatically |
+| Provider outage (3 failures) | `CircuitBreaker` opens; traffic routes to backup; auto-retries after 60 s |
+| Adding capacity | Register new channel in Koin — no code changes anywhere else |
+| Multi-instance deployment | Extract `QuotaTracker` interface; inject `RedisQuotaTracker` in Koin — zero domain/router changes |
+| New provider (e.g. Mailgun) | One new `EmailChannel` impl class + one line in Koin list — router and use cases unchanged |

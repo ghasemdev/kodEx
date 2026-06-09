@@ -49,7 +49,13 @@
 - [ ] T016 [P] Create `server/data/.../crypto/TokenHasher.kt` — `SecureRandom.nextBytes(32).toHexString()` for raw token + SHA-256 hex for stored hash; all 6 token tables use this
 - [ ] T017 [P] Create `server/data/.../crypto/TotpCrypto.kt` — AES-256-GCM encrypt/decrypt using `TOTP_ENCRYPTION_KEY`; prepend random 12-byte IV to ciphertext; base64-encode for storage
 - [ ] T018 [P] Create `server/data/.../crypto/WebAuthnChallengeCrypto.kt` — AES-256-GCM sign/verify WebAuthn challenge bytes using `WEBAUTHN_CHALLENGE_KEY`; output as base64 for cookie value
-- [ ] T019 Create `server/data/.../email/EmailService.kt` (interface) + `ResendEmailService.kt` (impl via `com.resend:resend-java`) in `server/data/src/main/kotlin/dev/kodex/server/data/email/`
+- [ ] T019 Create `EmailChannel.kt` + `SmsChannel.kt` interfaces in `server/data/src/main/kotlin/dev/kodex/server/data/notification/channel/` — `EmailChannel`: `name: String`, `dailyQuota: Int` (-1=unlimited), `suspend fun send(to, subject, html): Result<Unit>`; `SmsChannel`: same shape with `send(to, message)` (see NFR-2 in spec.md)
+- [ ] T147 Create `server/data/.../notification/infrastructure/CircuitBreaker.kt` — `BreakerState` enum (CLOSED/OPEN/HALF_OPEN); `failureThreshold=3`, `resetAfter=60.seconds`; `isAvailable(): Boolean`; `recordSuccess()` + `recordFailure()`; one instance per channel, held in `EmailRouter`/`SmsRouter`
+- [ ] T148 [P] Create `server/data/.../notification/infrastructure/QuotaTracker.kt` — `ConcurrentHashMap<String, AtomicLong>` keyed by `channelName`; `usedToday(name): Long`; `increment(name)`; `remainingCapacity(channel: EmailChannel): Long`; resets at midnight via scheduled coroutine; interface-extracted so Redis-backed impl can replace without changing callers
+- [ ] T149 [P] Create `server/data/.../notification/router/EmailRouter.kt` — implements `EmailChannel`; constructor: `channels: List<EmailChannel>`, `quota: QuotaTracker`, `breakers: Map<String, CircuitBreaker>`; routing: filter OPEN-circuit + quota-exhausted → sort descending by remaining capacity → try in order → first success wins → `Result.failure(NoChannelAvailableException)` if all fail; `@Single` in Koin, injected as the `EmailChannel` binding
+- [ ] T150 [P] Create `server/data/.../notification/router/SmsRouter.kt` — identical pattern for `SmsChannel`; `@Single` bound as `SmsChannel` in Koin
+- [ ] T151 [P] Create email channel impls: `ResendEmailChannel.kt` + `SendGridEmailChannel.kt` in `server/data/.../notification/email/` — both use Ktor `HttpClient` for REST calls (no SDK dep); `ResendEmailChannel` reads `RESEND_API_KEY`; `SendGridEmailChannel` reads `SENDGRID_API_KEY`; both return `Result.failure` on HTTP 4xx/5xx
+- [ ] T152 [P] Create SMS channel impls: `KavenegarSmsChannel.kt` + `TwilioSmsChannel.kt` in `server/data/.../notification/sms/` — Kavenegar: `POST https://api.kavenegar.com/v1/{apikey}/sms/send.json`; Twilio: `POST https://api.twilio.com/2010-04-01/Accounts/{sid}/Messages.json`; both via Ktor `HttpClient`; read keys from `EnvConfig`
 - [ ] T020 Create `server/data/.../geoip/GeoIpService.kt` — `DatabaseReader` from `geoip2-lib`; `lookup(ip: String): GeoResult?` returns `(countryCode, city)`; load from `GEOIP_DB_PATH`
 - [ ] T021 Create `server/data/.../ratelimit/RateLimitService.kt` — Lettuce `RedisClient` Koin `@Single`; suspending `incrementAndGet(key: String, ttlSeconds: Long): Long` using `kotlinx.coroutines.reactive.awaitSingle()`; suspending `reset(key: String)`; Redis key pattern: `login:attempts:<sha256(ip)>` (TTL=600s)
 - [ ] T022 Create `server/data/.../storage/AvatarStorageService.kt` — `MinioClient` Koin `@Single`; `upload(userId: Long, bytes: ByteArray, mimeType: String): String`; validate magic bytes (JPEG `FF D8 FF`, PNG `89 50 4E 47`, WebP `52 49 46 46`); store as `<userId>.<server-derived-ext>`; return public URL; reject if size > 5 MB
@@ -85,7 +91,7 @@
 - [ ] T040 [P] Create `server/api/.../auth/middleware/TurnstileVerifier.kt` — suspending `verify(token: String, ip: String): Boolean`; POST to `https://challenges.cloudflare.com/turnstile/v0/siteverify` via Ktor `HttpClient`; reads `CLOUDFLARE_TURNSTILE_SECRET`
 - [ ] T041 Install `ktor-server-rate-limit` plugin for all `POST /api/v1/auth/*` routes in route registration — limit: 20 requests / 10 s per IP (defense-in-depth beside Redis counter)
 - [ ] T042 Add `Cache-Control: no-store` response header to all `/api/v1/auth/*` route handlers via a Ktor `createApplicationPlugin` call-plugin or per-route helper — per `security_constitution.md §6`
-- [ ] T043 Register all new Koin `@Single` / `@Factory` modules in the Koin `startKoin` block: all new services (Email, GeoIp, RateLimit, AvatarStorage) and all repository impls
+- [ ] T043 Register all new Koin `@Single` / `@Factory` modules in the Koin `startKoin` block: all new services (notification channels + routers, GeoIp, RateLimit, AvatarStorage), all repository impls; use list-injection for `List<EmailChannel>` and `List<SmsChannel>` — bind `EmailRouter` as `EmailChannel` and `SmsRouter` as `SmsChannel`
 - [ ] T044 Update `docker-compose.yml` — add `redis:7-alpine` service (port 6379, no password local dev); add `minio/minio:latest` service (ports 9000/9001, env MINIO_ROOT_USER/PASSWORD); add `GEOIP_DB_PATH` volume mount (`./infra/geoip:/data`); add all new env vars to `server` service
 - [ ] T045 Update `app/webApp/src/webMain/kotlin/dev/kodex/webapp/network/auth/AuthRemoteDataSource.kt` — scaffold interface + `AuthRemoteDataSourceImpl.kt`; add `object ApiRoutes` constants for all new endpoints in the appropriate constants file
 
@@ -105,7 +111,7 @@
 - [ ] T049 [US1] Add `POST /api/v1/auth/register` in `server/api/.../auth/AuthRoutes.kt` — call `TurnstileVerifier` + `RegisterUseCase`; set `refresh_token` HttpOnly SameSite=Lax cookie; return `AuthTokensResponse`; mobile path: return refresh token in body instead of cookie
 - [ ] T050 [P] [US1] Add `GET /api/v1/auth/username/check?username=` in `AuthRoutes.kt` — call `UserRepository.isUsernameTaken`; return `UsernameAvailabilityResponse`
 - [ ] T051 [US1] Add `POST /api/v1/auth/verify-email` + `POST /api/v1/auth/verify-email/resend` in `AuthRoutes.kt` — call respective use cases; set refresh cookie on verify success
-- [ ] T052 [P] [US1] Create email HTML templates: `VerificationMagicLinkEmail` + `VerificationOtpEmail` in `server/data/.../email/templates/` — inline HTML strings, no template engine dependency
+- [ ] T052 [P] [US1] Create email HTML templates: `VerificationMagicLinkEmail` + `VerificationOtpEmail` in `server/data/.../notification/templates/` — inline HTML strings, no template engine dependency
 - [ ] T053 [US1] Create `app/webApp/src/webMain/kotlin/dev/kodex/webapp/pages/auth/SignUpPage.kt` + `AuthViewModel.kt` + `AuthUiState.kt` — form with username (real-time availability check via debounced `GET /username/check`), email, password (zxcvbn-ts strength bar, score ≥ 2 gate), Turnstile widget; submit → `AuthRemoteDataSource.register()`
 - [ ] T054 [US1] Create `app/webApp/.../pages/auth/VerifyEmailPage.kt` — display "check your inbox" state; handle magic-link callback (`?token=`); show "resend" button; update `AuthStore` on verification success
 - [ ] T055 [US1] Add `register`, `verifyEmail`, `resendVerification`, `usernameCheck` methods to `AuthRemoteDataSourceImpl.kt`
@@ -129,7 +135,7 @@
 - [ ] T062 [US2] Create `app/webApp/.../auth/AuthStore.kt` — MVI store; holds `AuthState`; schedules coroutine timer to refresh token 60 s before `expiresAt`; exposes `login()`, `setLoggedIn()`, `logout()`, `refreshNow()`
 - [ ] T063 [US2] Create `app/webApp/.../auth/TokenInterceptor.kt` — Ktor Client plugin; injects `Authorization: Bearer <accessToken>` on every request; intercepts 401, calls `AuthStore.refreshNow()`, retries once
 - [ ] T064 [US2] Create `app/webApp/.../pages/auth/SignInPage.kt` + extend `AuthViewModel.kt` — email + password form; autocomplete attributes; on `RequiresTotp` state → show inline TOTP prompt with `totpSessionToken`; wire Turnstile widget (show after 3 failures)
-- [ ] T065 [P] [US2] Create lockout notification email template `AccountLockedEmail` in `server/data/.../email/templates/`
+- [ ] T065 [P] [US2] Create lockout notification email template `AccountLockedEmail` in `server/data/.../notification/templates/`
 - [ ] T066 [US2] Add `login`, `refresh`, `getMe` methods to `AuthRemoteDataSourceImpl.kt`; wire `TokenInterceptor` into app Ktor Client; add `UserRemoteDataSource.kt` + `UserRemoteDataSourceImpl.kt`
 
 **Checkpoint**: Login → `accessToken` → `GET /users/me` → 200 with user object. Logout and re-login confirmed working.
@@ -177,7 +183,7 @@
 - [ ] T077 [US6] Implement `server/domain/.../users/usecase/ChangePasswordUseCase.kt` — verify current password, validate new password strength, hash + update, revoke all other refresh tokens; handle OAuth-only account (no current password required for first password set)
 - [ ] T078 [US6] Add `POST /api/v1/auth/forgot-password` + `POST /api/v1/auth/reset-password` in `AuthRoutes.kt` — apply `Cache-Control: no-store`; Turnstile on forgot-password
 - [ ] T079 [US6] Add `PATCH /api/v1/users/me/password` in `UserRoutes.kt` — `requireRole(...)`, call `ChangePasswordUseCase`
-- [ ] T080 [P] [US6] Create password reset email template `PasswordResetEmail` in `server/data/.../email/templates/`
+- [ ] T080 [P] [US6] Create password reset email template `PasswordResetEmail` in `server/data/.../notification/templates/`
 - [ ] T081 [US6] Create `app/webApp/.../pages/auth/ForgotPasswordPage.kt` + `ResetPasswordPage.kt` — forgot: email input + Turnstile widget; reset: new password field with zxcvbn-ts strength meter
 - [ ] T082 [US6] Add change-password section to `SecuritySettingsPage.kt` (scaffold if not yet created) — current password + new password fields; POST to `PATCH /users/me/password`
 
@@ -233,7 +239,7 @@
 - [ ] T100 [US8] Add new-device detection to `LoginUseCase.kt` — after successful auth: SHA-256 hash client IP (from `call.request.origin.remoteHost`), check `known_login_ips` by `(userId, ipHash)`; if absent: GeoIP lookup, generate `EmergencyRevokeToken` (32-byte TokenHasher, 24 h TTL), store hash, dispatch `NewDeviceAlertEmail`, insert `known_login_ips` row; if present: update `last_seen_at`
 - [ ] T101 [US8] Implement `server/domain/.../auth/usecase/EmergencyRevokeAllSessionsUseCase.kt` — look up `emergency_revoke_tokens` by SHA-256 hash, check not used + not expired, revoke ALL `refresh_tokens` for user (`revoked_at = now()`), mark emergency token used
 - [ ] T102 [US8] Add `GET /api/v1/auth/emergency-revoke?token=` to `AuthRoutes.kt` — no auth required; call `EmergencyRevokeAllSessionsUseCase`; on success redirect to `APP_BASE_URL/security/sessions-revoked`; on invalid token → `400 TOKEN_INVALID_OR_EXPIRED`
-- [ ] T103 [P] [US8] Create `NewDeviceAlertEmail` template in `server/data/.../email/templates/` — shows timestamp, approximate location (city, country), device hint, includes emergency revoke link (`APP_BASE_URL/api/v1/auth/emergency-revoke?token=<raw>`)
+- [ ] T103 [P] [US8] Create `NewDeviceAlertEmail` template in `server/data/.../notification/templates/` — shows timestamp, approximate location (city, country), device hint, includes emergency revoke link (`APP_BASE_URL/api/v1/auth/emergency-revoke?token=<raw>`)
 - [ ] T104 [P] [US8] Create `app/webApp/.../pages/auth/SessionsRevokedPage.kt` — static confirmation page shown after emergency revoke link is clicked; message: "All sessions have been revoked"
 
 **Checkpoint**: Simulate new IP login → email received → click revoke link → all sessions gone.
@@ -267,7 +273,7 @@
 - [ ] T112 [US10] Implement `server/domain/.../users/usecase/ChangeUsernameUseCase.kt` — validate new username format (`[a-z0-9_-]`, 3–30), check uniqueness, update `users.username`
 - [ ] T113 [US10] Add `PATCH /api/v1/users/me/email` + `POST /api/v1/users/me/email/verify` to `UserRoutes.kt` — protected
 - [ ] T114 [US10] Add `PATCH /api/v1/users/me/username` to `UserRoutes.kt` — protected; 409 on taken, 422 on invalid format
-- [ ] T115 [P] [US10] Create `EmailChangeVerificationEmail` + `EmailChangedNotificationEmail` templates in `server/data/.../email/templates/`
+- [ ] T115 [P] [US10] Create `EmailChangeVerificationEmail` + `EmailChangedNotificationEmail` templates in `server/data/.../notification/templates/`
 - [ ] T116 [US10] Add account-linking + email-change sections to `SecuritySettingsPage.kt` — linked OAuth providers list with link/unlink buttons; change email form; change username form
 
 **Checkpoint**: Email change end-to-end: request → verify → new email active; old email receives notification.
@@ -406,9 +412,9 @@ T127-T141 — all independent Kotest/kotlinx.test/screenshot suites
 
 | Metric | Count |
 |--------|-------|
-| Total tasks | **146** |
+| Total tasks | **152** |
 | Phase 1 (Setup) | 8 |
-| Phase 2 (Foundational) | 37 |
+| Phase 2 (Foundational) | 43 (T009-T045 + T147-T152: +6 notification provider tasks) |
 | Phase 3 US1 Registration | 10 |
 | Phase 4 US2 Login | 11 |
 | Phase 5 US7 Logout | 3 |
