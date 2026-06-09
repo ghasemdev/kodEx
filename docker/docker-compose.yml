@@ -27,7 +27,8 @@ services:
   server:
     build:
       context: ..
-      dockerfile: docker/server.Dockerfile
+      dockerfile: docker/monorepo.Dockerfile
+      target: server
     ports:
       - "${SERVER_PORT:-8080}:8080"
     env_file:
@@ -50,7 +51,8 @@ services:
   sandbox-runner:
     build:
       context: ..
-      dockerfile: docker/sandbox-runner.Dockerfile
+      dockerfile: docker/monorepo.Dockerfile
+      target: sandbox-runner
     expose:
       - "8081"
     env_file:
@@ -61,7 +63,7 @@ services:
       driver: json-file
 
   webapp:
-    image: node:22-alpine
+    image: node:24-alpine
     working_dir: /app
     volumes:
       - ..:/app

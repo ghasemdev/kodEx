@@ -20,7 +20,6 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 rootProject.name = "kodex"
 
 include(
-    ":agentic:code-reviewer",
     ":core",
     ":core:models",
     ":app:shared",
