@@ -283,3 +283,23 @@ Pin kotlin-logging to `8.0.03` in `gradle/libs.versions.toml`. Before upgrading,
 
 **Tradeoffs**
 - Made harder: the unusual patch version may cause confusion in future upgrades
+
+---
+
+### 2026-06-11 - D16: Refresh tokens stored in PostgreSQL (SHA-256 hash), not Redis
+
+**Status**: Active
+
+**Why this is durable**
+§VIII originally specified Redis for refresh token storage. Spec 004 (auth) changed this to
+PostgreSQL as the primary storage, with Redis reserved for ephemeral rate-limit counters only.
+This is a §VIII constitution amendment (v1.5.0 → v1.6.0).
+
+**Decision**
+Refresh tokens are stored as `SHA-256(token)` in the `refresh_tokens` table.
+Lookup: `WHERE token_hash = $1 AND revoked_at IS NULL AND expires_at > now()` — single indexed query.
+Redis is NOT used for token storage. Redis is used only for `login:attempts:<sha256(ip)>` counters (TTL=600s).
+
+**Tradeoffs**
+- Gained: simpler infra (no Redis required for auth); instant revocation via PG `UPDATE`
+- Lost: the micro-latency advantage Redis would have — acceptable because refresh lookup is at most once per 15-min access token lifetime

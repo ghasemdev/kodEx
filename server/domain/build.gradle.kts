@@ -4,4 +4,5 @@ plugins {
 
 dependencies {
     implementation(projects.core.models)
+    implementation(libs.kotlinx.datetime)
 }

@@ -15,14 +15,14 @@
 
 **Purpose**: Wire new dependencies before any domain code is written.
 
-- [ ] T001 Apply §VIII constitution amendment — update `.specify/memory/principles/viii-authentication.md` (Redis → PG for refresh tokens, MINOR bump 1.5.0→1.6.0)
-- [ ] T002 [P] Update `.specify/memory/security_constitution.md` §2 (refresh token storage change) and `docs/memory/DECISIONS.md` (add D16)
-- [ ] T003 Add all new `[versions]` + `[libraries]` catalog entries to `gradle/libs.versions.toml` — webauthn4j, kotlin-onetimepassword, zxcvbn4j, geoip2, resend, ua-parser, lettuce, minio, (kotlinx-coroutines-reactive already added)
-- [ ] T004 [P] Add all new auth env vars to `.env.example` — GITHUB_CLIENT_ID/SECRET, GOOGLE_CLIENT_ID/SECRET, OAUTH_CALLBACK_BASE_URL, CLOUDFLARE_TURNSTILE_SITE_KEY/SECRET, RESEND_API_KEY, EMAIL_FROM, APP_BASE_URL, TOTP_ENCRYPTION_KEY, WEBAUTHN_CHALLENGE_KEY, GEOIP_DB_PATH, REDIS_URL, REDIS_PASSWORD, MINIO_ENDPOINT/ACCESS_KEY/SECRET_KEY/BUCKET_AVATARS/PUBLIC_URL
-- [ ] T005 [P] Add new library dependencies to `server/data/build.gradle.kts` — webauthn4j-core, kotlin-onetimepassword, zxcvbn4j-lib, geoip2-lib, resend-java, ua-parser-java, lettuce-core, kotlinx-coroutines-reactive, minio-sdk, argon2-jvm (verify already present)
-- [ ] T006 [P] Add new library dependencies to `server/api/build.gradle.kts` — ktor-server-rate-limit, ktor-server-forwarded-header (verify both already in catalog)
-- [ ] T007 [P] Add npm dependency to `app/webApp/build.gradle.kts` inside `jsMain` + `wasmJsMain` blocks: `implementation(npm("zxcvbn-ts", "3.0.4"))`
-- [ ] T008 [P] Add all new env vars to `EnvConfig` object in `server/app/src/main/kotlin/dev/kodex/server/app/config/EnvConfig.kt` (add `env("WEBAUTHN_CHALLENGE_KEY")`, `env("REDIS_URL")`, `env("REDIS_PASSWORD")`, `env("MINIO_ENDPOINT")`, etc.)
+- [x] T001 Apply §VIII constitution amendment — update `.specify/memory/principles/viii-authentication.md` (Redis → PG for refresh tokens, MINOR bump 1.5.0→1.6.0)
+- [x] T002 [P] Update `.specify/memory/security_constitution.md` §2 (refresh token storage change) and `docs/memory/DECISIONS.md` (add D16)
+- [x] T003 Add all new `[versions]` + `[libraries]` catalog entries to `gradle/libs.versions.toml` — webauthn4j, kotlin-onetimepassword, zxcvbn4j, geoip2, resend, ua-parser, lettuce, minio, (kotlinx-coroutines-reactive already added)
+- [x] T004 [P] Add all new auth env vars to `.env.example` — GITHUB_CLIENT_ID/SECRET, GOOGLE_CLIENT_ID/SECRET, OAUTH_CALLBACK_BASE_URL, CLOUDFLARE_TURNSTILE_SITE_KEY/SECRET, RESEND_API_KEY, EMAIL_FROM, APP_BASE_URL, TOTP_ENCRYPTION_KEY, WEBAUTHN_CHALLENGE_KEY, GEOIP_DB_PATH, REDIS_URL, REDIS_PASSWORD, MINIO_ENDPOINT/ACCESS_KEY/SECRET_KEY/BUCKET_AVATARS/PUBLIC_URL
+- [x] T005 [P] Add new library dependencies to `server/data/build.gradle.kts` — webauthn4j-core, kotlin-onetimepassword, zxcvbn4j-lib, geoip2-lib, resend-java, ua-parser-java, lettuce-core, kotlinx-coroutines-reactive, minio-sdk, argon2-jvm (verify already present)
+- [x] T006 [P] Add new library dependencies to `server/api/build.gradle.kts` — ktor-server-rate-limit, ktor-server-forwarded-header (verify both already in catalog)
+- [x] T007 [P] Add npm dependency to `app/webApp/build.gradle.kts` inside `jsMain` + `wasmJsMain` blocks: `implementation(npm("zxcvbn-ts", "3.0.4"))`
+- [x] T008 [P] Add all new env vars to `EnvConfig` object in `server/app/src/main/kotlin/dev/kodex/server/app/config/EnvConfig.kt` (add `env("WEBAUTHN_CHALLENGE_KEY")`, `env("REDIS_URL")`, `env("REDIS_PASSWORD")`, `env("MINIO_ENDPOINT")`, etc.)
 
 **Checkpoint**: `./gradlew dependencies` resolves without error on all modules.
 
@@ -36,52 +36,52 @@
 
 ### Database
 
-- [ ] T009 Create Flyway migration `server/data/src/main/resources/db/migration/V3__auth_schema.sql` — all 11 tables: `users`, `user_profiles`, `oauth_identities`, `refresh_tokens`, `email_verification_tokens`, `pending_email_changes`, `password_reset_tokens`, `emergency_revoke_tokens`, `webauthn_credentials`, `totp_configs`, `known_login_ips` — with all indexes per `data-model.md`
-- [ ] T010 [P] Create `server/data/src/main/kotlin/dev/kodex/server/data/db/tables/UsersTable.kt` + `UserProfilesTable.kt` per data-model.md Exposed definitions
-- [ ] T011 [P] Create `server/data/.../db/tables/OAuthIdentitiesTable.kt` + `RefreshTokensTable.kt`
-- [ ] T012 [P] Create `server/data/.../db/tables/EmailVerificationTokensTable.kt` + `PendingEmailChangesTable.kt`
-- [ ] T013 [P] Create `server/data/.../db/tables/PasswordResetTokensTable.kt` + `EmergencyRevokeTokensTable.kt`
-- [ ] T014 [P] Create `server/data/.../db/tables/WebAuthnCredentialsTable.kt` + `TotpConfigsTable.kt` + `KnownLoginIpsTable.kt`
+- [x] T009 Create Flyway migration `server/data/src/main/resources/db/migration/V3__auth_schema.sql` — all 11 tables: `users`, `user_profiles`, `oauth_identities`, `refresh_tokens`, `email_verification_tokens`, `pending_email_changes`, `password_reset_tokens`, `emergency_revoke_tokens`, `webauthn_credentials`, `totp_configs`, `known_login_ips` — with all indexes per `data-model.md`
+- [x] T010 [P] Create `server/data/src/main/kotlin/dev/kodex/server/data/db/tables/UsersTable.kt` + `UserProfilesTable.kt` per data-model.md Exposed definitions
+- [x] T011 [P] Create `server/data/.../db/tables/OAuthIdentitiesTable.kt` + `RefreshTokensTable.kt`
+- [x] T012 [P] Create `server/data/.../db/tables/EmailVerificationTokensTable.kt` + `PendingEmailChangesTable.kt`
+- [x] T013 [P] Create `server/data/.../db/tables/PasswordResetTokensTable.kt` + `EmergencyRevokeTokensTable.kt`
+- [x] T014 [P] Create `server/data/.../db/tables/WebAuthnCredentialsTable.kt` + `TotpConfigsTable.kt` + `KnownLoginIpsTable.kt`
 
 ### Crypto & Infrastructure Services
 
-- [ ] T015 Create `server/data/src/main/kotlin/dev/kodex/server/data/crypto/PasswordHasher.kt` — Argon2id (iter=2, mem=65536, par=4) wrap `de.mkammerer:argon2-jvm`; expose `hash(plain: String): String` and `verify(hash: String, plain: String): Boolean`
-- [ ] T016 [P] Create `server/data/.../crypto/TokenHasher.kt` — `SecureRandom.nextBytes(32).toHexString()` for raw token + SHA-256 hex for stored hash; all 6 token tables use this
-- [ ] T017 [P] Create `server/data/.../crypto/TotpCrypto.kt` — AES-256-GCM encrypt/decrypt using `TOTP_ENCRYPTION_KEY`; prepend random 12-byte IV to ciphertext; base64-encode for storage
-- [ ] T018 [P] Create `server/data/.../crypto/WebAuthnChallengeCrypto.kt` — AES-256-GCM sign/verify WebAuthn challenge bytes using `WEBAUTHN_CHALLENGE_KEY`; output as base64 for cookie value
-- [ ] T019 Create `EmailChannel.kt` + `SmsChannel.kt` interfaces in `server/data/src/main/kotlin/dev/kodex/server/data/notification/channel/` — `EmailChannel`: `name: String`, `dailyQuota: Int` (-1=unlimited), `suspend fun send(to, subject, html): Result<Unit>`; `SmsChannel`: same shape with `send(to, message)` (see NFR-2 in spec.md)
-- [ ] T147 Create `server/data/.../notification/infrastructure/CircuitBreaker.kt` — `BreakerState` enum (CLOSED/OPEN/HALF_OPEN); `failureThreshold=3`, `resetAfter=60.seconds`; `isAvailable(): Boolean`; `recordSuccess()` + `recordFailure()`; one instance per channel, held in `EmailRouter`/`SmsRouter`
-- [ ] T148 [P] Create `server/data/.../notification/infrastructure/QuotaTracker.kt` — `ConcurrentHashMap<String, AtomicLong>` keyed by `channelName`; `usedToday(name): Long`; `increment(name)`; `remainingCapacity(channel: EmailChannel): Long`; resets at midnight via scheduled coroutine; interface-extracted so Redis-backed impl can replace without changing callers
-- [ ] T149 [P] Create `server/data/.../notification/router/EmailRouter.kt` — implements `EmailChannel`; constructor: `channels: List<EmailChannel>`, `quota: QuotaTracker`, `breakers: Map<String, CircuitBreaker>`; routing: filter OPEN-circuit + quota-exhausted → sort descending by remaining capacity → try in order → first success wins → `Result.failure(NoChannelAvailableException)` if all fail; `@Single` in Koin, injected as the `EmailChannel` binding
-- [ ] T150 [P] Create `server/data/.../notification/router/SmsRouter.kt` — identical pattern for `SmsChannel`; `@Single` bound as `SmsChannel` in Koin
-- [ ] T151 [P] Create email channel impls: `ResendEmailChannel.kt` + `SendGridEmailChannel.kt` in `server/data/.../notification/email/` — both use Ktor `HttpClient` for REST calls (no SDK dep); `ResendEmailChannel` reads `RESEND_API_KEY`; `SendGridEmailChannel` reads `SENDGRID_API_KEY`; both return `Result.failure` on HTTP 4xx/5xx
-- [ ] T152 [P] Create SMS channel impls: `KavenegarSmsChannel.kt` + `TwilioSmsChannel.kt` in `server/data/.../notification/sms/` — Kavenegar: `POST https://api.kavenegar.com/v1/{apikey}/sms/send.json`; Twilio: `POST https://api.twilio.com/2010-04-01/Accounts/{sid}/Messages.json`; both via Ktor `HttpClient`; read keys from `EnvConfig`
-- [ ] T020 Create `server/data/.../geoip/GeoIpService.kt` — `DatabaseReader` from `geoip2-lib`; `lookup(ip: String): GeoResult?` returns `(countryCode, city)`; load from `GEOIP_DB_PATH`
-- [ ] T021 Create `server/data/.../ratelimit/RateLimitService.kt` — Lettuce `RedisClient` Koin `@Single`; suspending `incrementAndGet(key: String, ttlSeconds: Long): Long` using `kotlinx.coroutines.reactive.awaitSingle()`; suspending `reset(key: String)`; Redis key pattern: `login:attempts:<sha256(ip)>` (TTL=600s)
-- [ ] T022 Create `server/data/.../storage/AvatarStorageService.kt` — `MinioClient` Koin `@Single`; `upload(userId: Long, bytes: ByteArray, mimeType: String): String`; validate magic bytes (JPEG `FF D8 FF`, PNG `89 50 4E 47`, WebP `52 49 46 46`); store as `<userId>.<server-derived-ext>`; return public URL; reject if size > 5 MB
+- [x] T015 Create `server/data/src/main/kotlin/dev/kodex/server/data/crypto/PasswordHasher.kt` — Argon2id (iter=2, mem=65536, par=4) wrap `de.mkammerer:argon2-jvm`; expose `hash(plain: String): String` and `verify(hash: String, plain: String): Boolean`
+- [x] T016 [P] Create `server/data/.../crypto/TokenHasher.kt` — `SecureRandom.nextBytes(32).toHexString()` for raw token + SHA-256 hex for stored hash; all 6 token tables use this
+- [x] T017 [P] Create `server/data/.../crypto/TotpCrypto.kt` — AES-256-GCM encrypt/decrypt using `TOTP_ENCRYPTION_KEY`; prepend random 12-byte IV to ciphertext; base64-encode for storage
+- [x] T018 [P] Create `server/data/.../crypto/WebAuthnChallengeCrypto.kt` — AES-256-GCM sign/verify WebAuthn challenge bytes using `WEBAUTHN_CHALLENGE_KEY`; output as base64 for cookie value
+- [x] T019 Create `EmailChannel.kt` + `SmsChannel.kt` interfaces in `server/data/src/main/kotlin/dev/kodex/server/data/notification/channel/` — `EmailChannel`: `name: String`, `dailyQuota: Int` (-1=unlimited), `suspend fun send(to, subject, html): Result<Unit>`; `SmsChannel`: same shape with `send(to, message)` (see NFR-2 in spec.md)
+- [x] T147 Create `server/data/.../notification/infrastructure/CircuitBreaker.kt` — `BreakerState` enum (CLOSED/OPEN/HALF_OPEN); `failureThreshold=3`, `resetAfter=60.seconds`; `isAvailable(): Boolean`; `recordSuccess()` + `recordFailure()`; one instance per channel, held in `EmailRouter`/`SmsRouter`
+- [x] T148 [P] Create `server/data/.../notification/infrastructure/QuotaTracker.kt` — `ConcurrentHashMap<String, AtomicLong>` keyed by `channelName`; `usedToday(name): Long`; `increment(name)`; `remainingCapacity(channel: EmailChannel): Long`; resets at midnight via scheduled coroutine; interface-extracted so Redis-backed impl can replace without changing callers
+- [x] T149 [P] Create `server/data/.../notification/router/EmailRouter.kt` — implements `EmailChannel`; constructor: `channels: List<EmailChannel>`, `quota: QuotaTracker`, `breakers: Map<String, CircuitBreaker>`; routing: filter OPEN-circuit + quota-exhausted → sort descending by remaining capacity → try in order → first success wins → `Result.failure(NoChannelAvailableException)` if all fail; `@Single` in Koin, injected as the `EmailChannel` binding
+- [x] T150 [P] Create `server/data/.../notification/router/SmsRouter.kt` — identical pattern for `SmsChannel`; `@Single` bound as `SmsChannel` in Koin
+- [x] T151 [P] Create email channel impls: `ResendEmailChannel.kt` + `SendGridEmailChannel.kt` in `server/data/.../notification/email/` — both use Ktor `HttpClient` for REST calls (no SDK dep); `ResendEmailChannel` reads `RESEND_API_KEY`; `SendGridEmailChannel` reads `SENDGRID_API_KEY`; both return `Result.failure` on HTTP 4xx/5xx
+- [x] T152 [P] Create SMS channel impls: `KavenegarSmsChannel.kt` + `TwilioSmsChannel.kt` in `server/data/.../notification/sms/` — Kavenegar: `POST https://api.kavenegar.com/v1/{apikey}/sms/send.json`; Twilio: `POST https://api.twilio.com/2010-04-01/Accounts/{sid}/Messages.json`; both via Ktor `HttpClient`; read keys from `EnvConfig`
+- [x] T020 Create `server/data/.../geoip/GeoIpService.kt` — `DatabaseReader` from `geoip2-lib`; `lookup(ip: String): GeoResult?` returns `(countryCode, city)`; load from `GEOIP_DB_PATH`
+- [x] T021 Create `server/data/.../ratelimit/RateLimitService.kt` — Lettuce `RedisClient` Koin `@Single`; suspending `incrementAndGet(key: String, ttlSeconds: Long): Long` using `kotlinx.coroutines.reactive.awaitSingle()`; suspending `reset(key: String)`; Redis key pattern: `login:attempts:<sha256(ip)>` (TTL=600s)
+- [x] T022 Create `server/data/.../storage/AvatarStorageService.kt` — `MinioClient` Koin `@Single`; `upload(userId: Long, bytes: ByteArray, mimeType: String): String`; validate magic bytes (JPEG `FF D8 FF`, PNG `89 50 4E 47`, WebP `52 49 46 46`); store as `<userId>.<server-derived-ext>`; return public URL; reject if size > 5 MB
 
 ### Domain — Repository Interfaces
 
-- [ ] T023 [P] Create repository interfaces in `server/domain/src/main/kotlin/dev/kodex/server/domain/auth/repository/` — `UserRepository.kt`, `TokenRepository.kt`, `OAuthIdentityRepository.kt`, `EmergencyRevokeTokenRepository.kt`
-- [ ] T024 [P] Create `server/domain/.../users/repository/ProfileRepository.kt` + `SessionRepository.kt`
-- [ ] T025 [P] Create `server/domain/.../passkey/repository/PasskeyRepository.kt`
-- [ ] T026 [P] Create `server/domain/.../totp/repository/TotpRepository.kt`
+- [x] T023 [P] Create repository interfaces in `server/domain/src/main/kotlin/dev/kodex/server/domain/auth/repository/` — `UserRepository.kt`, `TokenRepository.kt`, `OAuthIdentityRepository.kt`, `EmergencyRevokeTokenRepository.kt`
+- [x] T024 [P] Create `server/domain/.../users/repository/ProfileRepository.kt` + `SessionRepository.kt`
+- [x] T025 [P] Create `server/domain/.../passkey/repository/PasskeyRepository.kt`
+- [x] T026 [P] Create `server/domain/.../totp/repository/TotpRepository.kt`
 
 ### Domain — Repository Implementations
 
-- [ ] T027 Implement `server/data/.../repository/UserRepositoryImpl.kt` — CRUD for `users` + auto-UUID username generation (email prefix, strip non-`[a-z0-9_-]`, truncate 30, numeric suffix if taken); `@Single`
-- [ ] T028 [P] Implement `server/data/.../repository/TokenRepositoryImpl.kt` — refresh token CRUD; active query (`revoked_at IS NULL AND expires_at > now()`); rotate (insert new, revoke old in transaction)
-- [ ] T029 [P] Implement `server/data/.../repository/OAuthIdentityRepositoryImpl.kt` + `EmergencyRevokeTokenRepositoryImpl.kt`
-- [ ] T030 [P] Implement `server/data/.../repository/ProfileRepositoryImpl.kt` + `SessionRepositoryImpl.kt`
-- [ ] T031 [P] Implement `server/data/.../repository/PasskeyRepositoryImpl.kt`
-- [ ] T032 [P] Implement `server/data/.../repository/TotpRepositoryImpl.kt`
+- [x] T027 Implement `server/data/.../repository/UserRepositoryImpl.kt` — CRUD for `users` + auto-UUID username generation (email prefix, strip non-`[a-z0-9_-]`, truncate 30, numeric suffix if taken); `@Single`
+- [x] T028 [P] Implement `server/data/.../repository/TokenRepositoryImpl.kt` — refresh token CRUD; active query (`revoked_at IS NULL AND expires_at > now()`); rotate (insert new, revoke old in transaction)
+- [x] T029 [P] Implement `server/data/.../repository/OAuthIdentityRepositoryImpl.kt` + `EmergencyRevokeTokenRepositoryImpl.kt`
+- [x] T030 [P] Implement `server/data/.../repository/ProfileRepositoryImpl.kt` + `SessionRepositoryImpl.kt`
+- [x] T031 [P] Implement `server/data/.../repository/PasskeyRepositoryImpl.kt`
+- [x] T032 [P] Implement `server/data/.../repository/TotpRepositoryImpl.kt`
 
 ### Shared Models (core:models)
 
-- [ ] T033 [P] Create `core/models/src/commonMain/kotlin/dev/kodex/core/models/auth/Role.kt` + `OAuthProvider.kt` enums
-- [ ] T034 [P] Create `core/models/.../auth/AuthTokensResponse.kt` + `TotpChallengeResponse.kt` + `UsernameAvailabilityResponse.kt`
-- [ ] T035 [P] Create `core/models/.../auth/RegisterRequest.kt` + `LoginRequest.kt` + `TotpLoginRequest.kt` + `ChangeUsernameRequest.kt`
-- [ ] T036 [P] Create `core/models/.../auth/UserDto.kt` + `UserProfileDto.kt` + `UpdateProfileRequest.kt` + `SessionDto.kt` + `OAuthProviderDto.kt` + `PasskeyDto.kt`
+- [x] T033 [P] Create `core/models/src/commonMain/kotlin/dev/kodex/core/models/auth/Role.kt` + `OAuthProvider.kt` enums
+- [x] T034 [P] Create `core/models/.../auth/AuthTokensResponse.kt` + `TotpChallengeResponse.kt` + `UsernameAvailabilityResponse.kt`
+- [x] T035 [P] Create `core/models/.../auth/RegisterRequest.kt` + `LoginRequest.kt` + `TotpLoginRequest.kt` + `ChangeUsernameRequest.kt`
+- [x] T036 [P] Create `core/models/.../auth/UserDto.kt` + `UserProfileDto.kt` + `UpdateProfileRequest.kt` + `SessionDto.kt` + `OAuthProviderDto.kt` + `PasskeyDto.kt`
 
 ### API Base Infrastructure
 

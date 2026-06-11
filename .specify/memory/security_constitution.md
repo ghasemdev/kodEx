@@ -1,6 +1,6 @@
 # KodEx Security Constitution
 
-**Version**: 1.1.0 | **Ratified**: 2026-05-19 | **Last Amended**: 2026-05-29 | **Source**: Compiled from §III, §V, §VI, §VII, §VIII, §IX
+**Version**: 1.2.0 | **Ratified**: 2026-05-19 | **Last Amended**: 2026-06-11 | **Source**: Compiled from §III, §V, §VI, §VII, §VIII, §IX
 
 > This file is the single source of truth for all security audits.
 > All rules are actionable: specific enough for an AI auditor to verify against code.
@@ -22,7 +22,7 @@
 |---|---|---|
 | `sandbox-runner/` HTTP | Sandbox orchestration API | Trusted (shared secret header required) |
 | PostgreSQL (port 5432) | Primary database | Internal only — never exposed publicly |
-| Redis (port 6379) | Session/token store | Internal only — never exposed publicly |
+| Redis (port 6379) | Rate-limit counters (ephemeral) | Internal only — never exposed publicly |
 
 ### Strict Isolation Rules
 - `sandbox-runner` is the **only** service with Docker socket access. The main API MUST NOT have Docker socket access.
@@ -36,7 +36,7 @@
 ### JWT Token Lifecycle
 ```
 Access token:   15 minutes | claims: sub (userId), role, iat, exp
-Refresh token:  7 days     | stored server-side in Redis (revocable)
+Refresh token:  7 days     | stored server-side in PostgreSQL as SHA-256 hash (revocable)
 ```
 - **Library**: `ktor-server-auth-jwt` (official Ktor plugin). No custom JWT parsing.
 - Refresh tokens MUST be invalidated on explicit logout and on password change.
