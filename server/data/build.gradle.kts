@@ -18,7 +18,6 @@ dependencies {
     implementation(libs.kotlin.onetimepassword.lib)
     implementation(libs.zxcvbn4j.lib)
     implementation(libs.geoip2.lib)
-    implementation(libs.resend.java)
     implementation(libs.ua.parser.java)
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.serialization.kotlinx.json)
