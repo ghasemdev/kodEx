@@ -6,6 +6,7 @@ import dev.kodex.server.domain.auth.repository.TokenRepository
 import kotlin.time.Clock
 import kotlin.time.Instant
 import org.jetbrains.exposed.v1.core.ResultRow
+import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.greater
@@ -82,8 +83,7 @@ class TokenRepositoryImpl : TokenRepository {
         deviceHint: String?,
         ipAddress: String?,
     ): RefreshTokenRecord = suspendTransaction {
-        val existing = findActiveByHash(oldHash)
-            ?: error("Refresh token not found or already revoked")
+        val existing = findActiveByHash(oldHash) ?: error("Refresh token not found or already revoked")
         revoke(oldHash)
         create(existing.userId, newHash, newExpiresAt, deviceHint, ipAddress)
     }
@@ -96,7 +96,7 @@ class TokenRepositoryImpl : TokenRepository {
                     RefreshTokensTable.revokedAt.isNull() and
                     (RefreshTokensTable.expiresAt greater now)
             }
-            .orderBy(RefreshTokensTable.issuedAt, org.jetbrains.exposed.v1.core.SortOrder.DESC)
+            .orderBy(RefreshTokensTable.issuedAt, SortOrder.DESC)
             .map { it.toRecord() }
     }
 

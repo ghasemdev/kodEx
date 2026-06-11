@@ -32,8 +32,7 @@ class SessionRepositoryImpl : SessionRepository {
                         ipAddress = row[RefreshTokensTable.ipAddress],
                         issuedAt = row[RefreshTokensTable.issuedAt],
                         expiresAt = row[RefreshTokensTable.expiresAt],
-                        isCurrent = currentTokenHash != null &&
-                            row[RefreshTokensTable.tokenHash] == currentTokenHash,
+                        isCurrent = currentTokenHash != null && row[RefreshTokensTable.tokenHash] == currentTokenHash,
                     )
                 }
         }
