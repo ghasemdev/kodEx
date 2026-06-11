@@ -16,6 +16,7 @@ data class UserRecord(
     val updatedAt: Instant,
 )
 
+@Suppress("TooManyFunctions", "ComplexInterface")
 interface UserRepository {
     suspend fun findById(id: Long): UserRecord?
     suspend fun findByEmail(email: String): UserRecord?

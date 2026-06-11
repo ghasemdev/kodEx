@@ -7,6 +7,7 @@ dependencies {
     implementation(projects.core.models)
 
     implementation(libs.atomicfu)
+    implementation(libs.koin.annotations)
     implementation(libs.bundles.exposed)
     implementation(libs.bundles.database)
     implementation(libs.lettuce.core)

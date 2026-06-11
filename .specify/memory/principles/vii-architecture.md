@@ -120,16 +120,16 @@ via `detekt-convention`, eliminating any need for a separate ktlint pass.
 The following violations have recurred in new UI files (`GlobalNavBar.kt`, `Footer.kt`).
 Each new file MUST be checked against these before committing.
 
-| Rule | What it means | Fix |
-|---|---|---|
-| `StringLiteralDuplication` (threshold=3) | Same string literal used ≥3 times | Extract to a `private const val` at file bottom |
-| `VariableMinLength` (min=3) | Variable name shorter than 3 chars (e.g. `el`) | Use descriptive names: `element`, `iconEl`, `navEl` |
-| `CollapsibleIfStatements` | `if (a) { if (b) { ... } }` nesting | Collapse: `if (a && b) { ... }` |
-| `NoSemicolons` | Semicolon on same line between statements | One statement per line; no `;` |
-| `TrailingCommaOnCallSite` | Missing trailing comma in multi-line calls | Add `,` after last argument before `)` |
-| `Wrapping` | Multiple statements on one line | One expression per line in lambdas/blocks |
-| `MaximumLineLength` (max=120) | Line exceeds 120 chars | Break string concatenation or lambda args across lines |
-| `LabeledExpression` | `return@label` inside forEach | Use a named function or `@Suppress` with comment if unavoidable |
+| Rule                                     | What it means                                  | Fix |
+|------------------------------------------|------------------------------------------------|---|
+| `StringLiteralDuplication` (threshold=3) | Same string literal used ≥3 times              | Extract to a `private const val` at file bottom |
+| `VariableMinLength` (min=2)              | Variable name shorter than 2 chars (e.g. `el`) | Use descriptive names: `element`, `iconEl`, `navEl` |
+| `CollapsibleIfStatements`                | `if (a) { if (b) { ... } }` nesting            | Collapse: `if (a && b) { ... }` |
+| `NoSemicolons`                           | Semicolon on same line between statements      | One statement per line; no `;` |
+| `TrailingCommaOnCallSite`                | Missing trailing comma in multi-line calls     | Add `,` after last argument before `)` |
+| `Wrapping`                               | Multiple statements on one line                | One expression per line in lambdas/blocks |
+| `MaximumLineLength` (max=120)            | Line exceeds 120 chars                         | Break string concatenation or lambda args across lines |
+| `LabeledExpression`                      | `return@label` inside forEach                  | Use a named function or `@Suppress` with comment if unavoidable |
 
 **Constant extraction pattern** — for repeated CSS class fragments in Kilua components:
 

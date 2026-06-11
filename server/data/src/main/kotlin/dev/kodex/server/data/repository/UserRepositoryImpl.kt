@@ -14,6 +14,9 @@ import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 import org.jetbrains.exposed.v1.jdbc.update
 
+private const val USERNAME_MAX_LENGTH = 30
+private const val USERNAME_BASE_MAX_LEN = 27
+
 class UserRepositoryImpl : UserRepository {
     override suspend fun findById(id: Long): UserRecord? = suspendTransaction {
         UsersTable.selectAll().where { UsersTable.id eq id }.firstOrNull()?.toRecord()
@@ -95,13 +98,13 @@ class UserRepositoryImpl : UserRepository {
 
     @Suppress("LabeledExpression")
     override suspend fun generateUsername(emailPrefix: String): String {
-        val sanitized = emailPrefix.lowercase().replace(Regex("[^a-z0-9_-]"), "").take(30)
+        val sanitized = emailPrefix.lowercase().replace(Regex("[^a-z0-9_-]"), "").take(USERNAME_MAX_LENGTH)
         val base = sanitized.ifEmpty { "user" }
         return suspendTransaction {
             if (!isUsernameTaken(base)) return@suspendTransaction base
             var suffix = 1
             while (true) {
-                val candidate = "${base.take(27)}_$suffix"
+                val candidate = "${base.take(USERNAME_BASE_MAX_LEN)}_$suffix"
                 if (!isUsernameTaken(candidate)) return@suspendTransaction candidate
                 suffix++
             }
