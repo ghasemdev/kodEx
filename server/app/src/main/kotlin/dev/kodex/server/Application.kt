@@ -1,11 +1,15 @@
 package dev.kodex.server
 
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 import dev.kodex.core.env.env
 import dev.kodex.core.env.envOrNull
+import dev.kodex.server.api.auth.middleware.ForbiddenException
 import dev.kodex.server.api.response.buildErrorEnvelope
 import dev.kodex.server.api.routes.healthRoutes
 import dev.kodex.server.api.routes.landingRoutes
 import dev.kodex.server.api.util.sanitizeRequestId
+import dev.kodex.server.app.config.EnvConfig
 import dev.kodex.server.di.KoinServerApplication
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
@@ -13,6 +17,9 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.install
 import io.ktor.server.application.log
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.jwt.jwt
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
@@ -28,6 +35,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.routing
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 import org.koin.plugin.module.dsl.withConfiguration
@@ -75,6 +83,18 @@ fun main() {
 
         // SEC-004: log full exception server-side; return generic message to client
         install(StatusPages) {
+            exception<ForbiddenException> { call, _ ->
+                val requestId = sanitizeRequestId(call.request.headers["X-Request-Id"])
+                call.respond(
+                    HttpStatusCode.Forbidden,
+                    buildErrorEnvelope(
+                        message = "Insufficient permissions.",
+                        requestId = requestId,
+                        service = BuildConfig.SERVICE_NAME,
+                        version = BuildConfig.VERSION,
+                    ),
+                )
+            }
             exception<Throwable> { call, cause ->
                 call.application.log.error("Unhandled exception", cause)
                 val requestId = sanitizeRequestId(call.request.headers["X-Request-Id"])
@@ -90,10 +110,46 @@ fun main() {
             }
         }
 
-        install(XForwardedHeaders) // or ForwardedHeaders — restrict to trusted proxy CIDRs
+        // T037: HS256 JWT — validates sub + role claims; rejects tokens with missing role
+        install(Authentication) {
+            jwt("auth-jwt") {
+                realm = "KodEx"
+                verifier(
+                    JWT.require(Algorithm.HMAC256(EnvConfig.jwtSecret))
+                        .build(),
+                )
+                validate { credential ->
+                    val sub = credential.payload.subject?.takeIf { it.isNotEmpty() }
+                        ?: return@validate null
+                    credential.payload.getClaim("role")?.asString()
+                        ?.let { runCatching { dev.kodex.core.models.auth.Role.valueOf(it) }.getOrNull() }
+                        ?: return@validate null
+                    JWTPrincipal(credential.payload)
+                }
+                challenge { _, _ ->
+                    val requestId = sanitizeRequestId(call.request.headers["X-Request-Id"])
+                    call.respond(
+                        HttpStatusCode.Unauthorized,
+                        buildErrorEnvelope(
+                            message = "Missing or invalid authentication token.",
+                            requestId = requestId,
+                            service = BuildConfig.SERVICE_NAME,
+                            version = BuildConfig.VERSION,
+                        ),
+                    )
+                }
+            }
+        }
+
+        install(XForwardedHeaders) // T038: already present — normalises remoteHost after proxy
         install(RateLimit) {
             register(RateLimitName("public")) {
                 rateLimiter(limit = 60, refillPeriod = 1.minutes)
+                requestKey { call -> call.request.origin.remoteHost }
+            }
+            // T041: tighter limit for all auth POST endpoints
+            register(RateLimitName("auth")) {
+                rateLimiter(limit = 20, refillPeriod = 10.seconds)
                 requestKey { call -> call.request.origin.remoteHost }
             }
         }

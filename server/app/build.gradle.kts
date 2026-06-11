@@ -35,6 +35,8 @@ dependencies {
     implementation(projects.server.data)
     implementation(projects.core)
     implementation(libs.koin.annotations)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.server.rate.limit)
     implementation(libs.ktor.server.forwarded.header)
 

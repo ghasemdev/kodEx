@@ -24,6 +24,20 @@ services:
     logging:
       driver: json-file
 
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    logging:
+      driver: json-file
+
   server:
     build:
       context: ..
@@ -36,9 +50,14 @@ services:
     environment:
       DB_HOST: postgres
       REDIS_HOST: redis
+      MINIO_ENDPOINT: http://minio:9000
+      GEOIP_DB_PATH: /data/geoip/GeoLite2-City.mmdb
+    volumes:
+      - ./infra/geoip:/data/geoip:ro
     depends_on:
       - postgres
       - redis
+      - minio
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/v1/health"]
       interval: 10s
@@ -78,3 +97,4 @@ services:
 
 volumes:
   postgres_data:
+  minio_data:

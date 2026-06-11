@@ -4,7 +4,7 @@ import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.KoinApplication
 import org.koin.core.annotation.Module
 
-@Module(includes = [CryptoModule::class])
+@Module(includes = [CryptoModule::class, DataModule::class])
 @ComponentScan("dev.kodex.server")
 class ServerKoinModule
 // Bindings are added per feature via @Single / @Factory on service classes.

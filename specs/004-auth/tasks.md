@@ -85,15 +85,15 @@
 
 ### API Base Infrastructure
 
-- [ ] T037 Install `Authentication { jwt("auth-jwt") { ... } }` plugin in `server/app/src/main/kotlin/dev/kodex/server/app/Application.kt` — configure HS256, `JWT_SECRET`, realm; validate `sub`, `role`, `exp` claims; reject tokens where `role` claim is absent
-- [ ] T038 [P] Install `ktor-server-forwarded-header` plugin in `Application.kt` — enables `call.request.origin.remoteHost` to return the correct client IP after normalisation
-- [ ] T039 Create `server/api/.../auth/middleware/RoleGuard.kt` — `fun Route.requireRole(vararg roles: Role)` extension; responds 403 if JWT role not in set
-- [ ] T040 [P] Create `server/api/.../auth/middleware/TurnstileVerifier.kt` — suspending `verify(token: String, ip: String): Boolean`; POST to `https://challenges.cloudflare.com/turnstile/v0/siteverify` via Ktor `HttpClient`; reads `CLOUDFLARE_TURNSTILE_SECRET`
-- [ ] T041 Install `ktor-server-rate-limit` plugin for all `POST /api/v1/auth/*` routes in route registration — limit: 20 requests / 10 s per IP (defense-in-depth beside Redis counter)
-- [ ] T042 Add `Cache-Control: no-store` response header to all `/api/v1/auth/*` route handlers via a Ktor `createApplicationPlugin` call-plugin or per-route helper — per `security_constitution.md §6`
-- [ ] T043 Register all new Koin `@Single` / `@Factory` modules in the Koin `startKoin` block: all new services (notification channels + routers, GeoIp, RateLimit, AvatarStorage), all repository impls; use list-injection for `List<EmailChannel>` and `List<SmsChannel>` — bind `EmailRouter` as `EmailChannel` and `SmsRouter` as `SmsChannel`
-- [ ] T044 Update `docker-compose.yml` — add `redis:7-alpine` service (port 6379, no password local dev); add `minio/minio:latest` service (ports 9000/9001, env MINIO_ROOT_USER/PASSWORD); add `GEOIP_DB_PATH` volume mount (`./infra/geoip:/data`); add all new env vars to `server` service
-- [ ] T045 Update `app/webApp/src/webMain/kotlin/dev/kodex/webapp/network/auth/AuthRemoteDataSource.kt` — scaffold interface + `AuthRemoteDataSourceImpl.kt`; add `object ApiRoutes` constants for all new endpoints in the appropriate constants file
+- [x] T037 Install `Authentication { jwt("auth-jwt") { ... } }` plugin in `server/app/src/main/kotlin/dev/kodex/server/app/Application.kt` — configure HS256, `JWT_SECRET`, realm; validate `sub`, `role`, `exp` claims; reject tokens where `role` claim is absent
+- [x] T038 [P] Install `ktor-server-forwarded-header` plugin in `Application.kt` — enables `call.request.origin.remoteHost` to return the correct client IP after normalisation
+- [x] T039 Create `server/api/.../auth/middleware/RoleGuard.kt` — `fun Route.requireRole(vararg roles: Role)` extension; responds 403 if JWT role not in set
+- [x] T040 [P] Create `server/api/.../auth/middleware/TurnstileVerifier.kt` — suspending `verify(token: String, ip: String): Boolean`; POST to `https://challenges.cloudflare.com/turnstile/v0/siteverify` via Ktor `HttpClient`; reads `CLOUDFLARE_TURNSTILE_SECRET`
+- [x] T041 Install `ktor-server-rate-limit` plugin for all `POST /api/v1/auth/*` routes in route registration — limit: 20 requests / 10 s per IP (defense-in-depth beside Redis counter)
+- [x] T042 Add `Cache-Control: no-store` response header to all `/api/v1/auth/*` route handlers via a Ktor `createApplicationPlugin` call-plugin or per-route helper — per `security_constitution.md §6`
+- [x] T043 Register all new Koin `@Single` / `@Factory` modules in the Koin `startKoin` block: all new services (notification channels + routers, GeoIp, RateLimit, AvatarStorage), all repository impls; use list-injection for `List<EmailChannel>` and `List<SmsChannel>` — bind `EmailRouter` as `EmailChannel` and `SmsRouter` as `SmsChannel`
+- [x] T044 Update `docker-compose.yml` — add `redis:7-alpine` service (port 6379, no password local dev); add `minio/minio:latest` service (ports 9000/9001, env MINIO_ROOT_USER/PASSWORD); add `GEOIP_DB_PATH` volume mount (`./infra/geoip:/data`); add all new env vars to `server` service
+- [x] T045 Update `app/webApp/src/webMain/kotlin/dev/kodex/webapp/network/auth/AuthRemoteDataSource.kt` — scaffold interface + `AuthRemoteDataSourceImpl.kt`; add `object ApiRoutes` constants for all new endpoints in the appropriate constants file
 
 **Checkpoint**: `./gradlew :server:data:flywayMigrate` succeeds; `./gradlew :server:app:run` starts without errors; all 11 tables visible in PG.
 
