@@ -8,9 +8,7 @@ private const val MEMORY_KIB = 65536
 private const val PARALLELISM = 4
 
 object PasswordHasher {
-    fun hash(plain: String): String =
-        argon2.hash(ITERATIONS, MEMORY_KIB, PARALLELISM, plain.toCharArray())
+    fun hash(plain: String): String = argon2.hash(ITERATIONS, MEMORY_KIB, PARALLELISM, plain.toCharArray())
 
-    fun verify(hash: String, plain: String): Boolean =
-        argon2.verify(hash, plain.toCharArray())
+    fun verify(hash: String, plain: String): Boolean = argon2.verify(hash, plain.toCharArray())
 }

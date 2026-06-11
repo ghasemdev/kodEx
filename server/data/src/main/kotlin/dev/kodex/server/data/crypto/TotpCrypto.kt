@@ -5,13 +5,11 @@ import javax.crypto.Cipher
 import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.SecretKeySpec
 import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
 
 private const val AES_GCM = "AES/GCM/NoPadding"
 private const val GCM_IV_LENGTH = 12
 private const val GCM_TAG_BITS = 128
 
-@OptIn(ExperimentalEncodingApi::class)
 object TotpCrypto {
     private val secureRandom = SecureRandom()
 
