@@ -90,7 +90,7 @@ kotlin {
             implementation(libs.ktor.client.js)
             implementation(libs.kotlinx.browser)
 
-            implementation(npm("zxcvbn-ts", "3.0.4"))
+            implementation(npm("@zxcvbn-ts/core", libs.versions.zxcvbn.ts.get()))
             implementation(npm("@fontsource-variable/inter-tight", libs.versions.fontsource.get()))
             implementation(npm("@fontsource-variable/vazirmatn", libs.versions.fontsource.get()))
             implementation(npm("@fontsource-variable/jetbrains-mono", libs.versions.fontsource.get()))

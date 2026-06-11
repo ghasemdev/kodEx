@@ -17,6 +17,7 @@ kotlin {
         languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1)
         optIn.add("kotlin.time.ExperimentalTime")
         optIn.add("kotlin.uuid.ExperimentalUuidApi")
+        optIn.add("kotlin.io.encoding.ExperimentalEncodingApi")
     }
     // Separate benchmark compilation — src/benchmark/kotlin — can see main classes
     // but is excluded from the production JAR. kotlinx.benchmark targets this compilation.

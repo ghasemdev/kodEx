@@ -467,6 +467,13 @@
   dependencies:
     tslib "^2.4.0"
 
+"@zxcvbn-ts/core@4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@zxcvbn-ts/core/-/core-4.1.0.tgz#e3c0672c59f622b05156f8f15e44d21bdf785173"
+  integrity sha512-n2b+2dVwTmdQuaxI+Df0aBSEc7Gmoj/Kx1YDAaXOJqP1GyR4v1Te8HQNwxhSNjflppjckaONidqjrikrYkb/zQ==
+  dependencies:
+    fastest-levenshtein "1.0.16"
+
 aaa-kilua-assets@0.0.19:
   version "0.0.19"
   resolved "https://registry.yarnpkg.com/aaa-kilua-assets/-/aaa-kilua-assets-0.0.19.tgz#44668100b5726fb15943d1bb5fc9ca2f74b78c94"
@@ -740,6 +747,11 @@ fast-glob@^3.3.2:
     glob-parent "^5.1.2"
     merge2 "^1.3.0"
     micromatch "^4.0.8"
+
+fastest-levenshtein@1.0.16:
+  version "1.0.16"
+  resolved "https://registry.yarnpkg.com/fastest-levenshtein/-/fastest-levenshtein-1.0.16.tgz#210e61b6ff181de91ea9b3d1b84fdedd47e034e5"
+  integrity sha512-eRnCtTTtGZFpQCwhJiUOuxPQWRXVKYDn0b2PeHfXL6/Zi53SLAzAHfVhVWK2AryC/WH05kGfxhFIPvTF0SXQzg==
 
 fastq@^1.6.0:
   version "1.20.1"
