@@ -8,6 +8,7 @@ import io.ktor.server.routing.Route
 
 class ForbiddenException(message: String = "Insufficient permissions.") : RuntimeException(message)
 
+@Suppress("PropertyName", "RedundantSuppression")
 val RoleGuardPlugin = createRouteScopedPlugin("RoleGuard", ::RoleGuardConfig) {
     val required = pluginConfig.roles
     onCall { call ->

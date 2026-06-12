@@ -16,7 +16,6 @@ class CircuitBreaker(
     @Volatile
     private var state: BreakerState = BreakerState.CLOSED
 
-    @Suppress("ReturnCount")
     fun isAvailable(): Boolean {
         if (state == BreakerState.CLOSED) return true
         if (state == BreakerState.OPEN) {

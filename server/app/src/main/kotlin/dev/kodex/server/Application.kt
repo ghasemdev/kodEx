@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import dev.kodex.core.env.env
 import dev.kodex.core.env.envOrNull
+import dev.kodex.core.models.auth.Role
 import dev.kodex.server.api.auth.middleware.ForbiddenException
 import dev.kodex.server.api.response.buildErrorEnvelope
 import dev.kodex.server.api.routes.healthRoutes
@@ -41,6 +42,7 @@ import org.koin.logger.slf4jLogger
 import org.koin.plugin.module.dsl.withConfiguration
 
 private const val PORT = 8080
+private const val X_REQUEST_ID = "X-Request-Id"
 
 @Suppress("LongMethod")
 fun main() {
@@ -84,7 +86,7 @@ fun main() {
         // SEC-004: log full exception server-side; return generic message to client
         install(StatusPages) {
             exception<ForbiddenException> { call, _ ->
-                val requestId = sanitizeRequestId(call.request.headers["X-Request-Id"])
+                val requestId = sanitizeRequestId(call.request.headers[X_REQUEST_ID])
                 call.respond(
                     HttpStatusCode.Forbidden,
                     buildErrorEnvelope(
@@ -97,7 +99,7 @@ fun main() {
             }
             exception<Throwable> { call, cause ->
                 call.application.log.error("Unhandled exception", cause)
-                val requestId = sanitizeRequestId(call.request.headers["X-Request-Id"])
+                val requestId = sanitizeRequestId(call.request.headers[X_REQUEST_ID])
                 call.respond(
                     HttpStatusCode.InternalServerError,
                     buildErrorEnvelope(
@@ -118,16 +120,17 @@ fun main() {
                     JWT.require(Algorithm.HMAC256(EnvConfig.jwtSecret))
                         .build(),
                 )
+                @Suppress("LabeledExpression")
                 validate { credential ->
                     val sub = credential.payload.subject?.takeIf { it.isNotEmpty() }
                         ?: return@validate null
                     credential.payload.getClaim("role")?.asString()
-                        ?.let { runCatching { dev.kodex.core.models.auth.Role.valueOf(it) }.getOrNull() }
+                        ?.let { runCatching { Role.valueOf(it) }.getOrNull() }
                         ?: return@validate null
                     JWTPrincipal(credential.payload)
                 }
                 challenge { _, _ ->
-                    val requestId = sanitizeRequestId(call.request.headers["X-Request-Id"])
+                    val requestId = sanitizeRequestId(call.request.headers[X_REQUEST_ID])
                     call.respond(
                         HttpStatusCode.Unauthorized,
                         buildErrorEnvelope(
