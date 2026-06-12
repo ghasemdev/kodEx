@@ -1,7 +1,7 @@
 package dev.kodex.server.data.repository
 
 import dev.kodex.server.data.db.tables.RefreshTokensTable
-import dev.kodex.server.domain.auth.repository.RefreshTokenRecord
+import dev.kodex.server.domain.auth.model.RefreshTokenRecord
 import dev.kodex.server.domain.auth.repository.TokenRepository
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -16,7 +16,9 @@ import org.jetbrains.exposed.v1.jdbc.insertAndGetId
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 import org.jetbrains.exposed.v1.jdbc.update
+import org.koin.core.annotation.Single
 
+@Single(binds = [TokenRepository::class])
 class TokenRepositoryImpl : TokenRepository {
     override suspend fun create(
         userId: Long,

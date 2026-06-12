@@ -1,7 +1,7 @@
 package dev.kodex.server.data.repository
 
 import dev.kodex.server.data.db.tables.TotpConfigsTable
-import dev.kodex.server.domain.totp.repository.TotpRecord
+import dev.kodex.server.domain.totp.model.TotpRecord
 import dev.kodex.server.domain.totp.repository.TotpRepository
 import kotlin.time.Clock
 import kotlinx.serialization.json.Json
@@ -12,7 +12,9 @@ import org.jetbrains.exposed.v1.jdbc.insertAndGetId
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 import org.jetbrains.exposed.v1.jdbc.update
+import org.koin.core.annotation.Single
 
+@Single(binds = [TotpRepository::class])
 class TotpRepositoryImpl : TotpRepository {
     override suspend fun findByUserId(userId: Long): TotpRecord? = suspendTransaction {
         TotpConfigsTable.selectAll().where { TotpConfigsTable.userId eq userId }.firstOrNull()?.toRecord()

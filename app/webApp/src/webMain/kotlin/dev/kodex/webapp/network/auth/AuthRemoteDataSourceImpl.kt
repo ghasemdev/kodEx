@@ -114,9 +114,7 @@ class AuthRemoteDataSourceImpl(private val client: HttpClient) : AuthRemoteDataS
     }
 
     override suspend fun changePassword(currentPassword: String, newPassword: String) {
-        withContext(
-            ioDispatcher,
-        ) {
+        withContext(ioDispatcher) {
             client.post(ApiRoutes.Auth.CHANGE_PASSWORD) {
                 contentType(ContentType.Application.Json)
                 setBody(ChangePasswordBody(currentPassword, newPassword))

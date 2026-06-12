@@ -1,9 +1,11 @@
 plugins {
     id("kotlin-jvm-convention")
+    alias(libs.plugins.koin.compiler)
 }
 
 dependencies {
     implementation(projects.server.domain)
+    implementation(projects.core)
     implementation(projects.core.models)
 
     implementation(libs.atomicfu)

@@ -1,7 +1,7 @@
 package dev.kodex.server.data.repository
 
 import dev.kodex.server.data.db.tables.WebAuthnCredentialsTable
-import dev.kodex.server.domain.passkey.repository.PasskeyRecord
+import dev.kodex.server.domain.passkey.model.PasskeyRecord
 import dev.kodex.server.domain.passkey.repository.PasskeyRepository
 import kotlin.time.Clock
 import org.jetbrains.exposed.v1.core.ResultRow
@@ -12,7 +12,9 @@ import org.jetbrains.exposed.v1.jdbc.insertAndGetId
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 import org.jetbrains.exposed.v1.jdbc.update
+import org.koin.core.annotation.Single
 
+@Single(binds = [PasskeyRepository::class])
 class PasskeyRepositoryImpl : PasskeyRepository {
     override suspend fun create(
         userId: Long,

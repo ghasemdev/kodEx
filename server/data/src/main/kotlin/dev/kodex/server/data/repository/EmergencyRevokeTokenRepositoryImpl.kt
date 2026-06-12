@@ -1,7 +1,7 @@
 package dev.kodex.server.data.repository
 
 import dev.kodex.server.data.db.tables.EmergencyRevokeTokensTable
-import dev.kodex.server.domain.auth.repository.EmergencyRevokeTokenRecord
+import dev.kodex.server.domain.auth.model.EmergencyRevokeTokenRecord
 import dev.kodex.server.domain.auth.repository.EmergencyRevokeTokenRepository
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -12,10 +12,11 @@ import org.jetbrains.exposed.v1.core.greater
 import org.jetbrains.exposed.v1.core.isNull
 import org.jetbrains.exposed.v1.jdbc.insertAndGetId
 import org.jetbrains.exposed.v1.jdbc.selectAll
-import org.jetbrains.exposed.v1.jdbc.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 import org.jetbrains.exposed.v1.jdbc.update
+import org.koin.core.annotation.Single
 
+@Single(binds = [EmergencyRevokeTokenRepository::class])
 class EmergencyRevokeTokenRepositoryImpl : EmergencyRevokeTokenRepository {
     override suspend fun create(userId: Long, tokenHash: String, expiresAt: Instant): EmergencyRevokeTokenRecord =
         suspendTransaction {
@@ -30,7 +31,7 @@ class EmergencyRevokeTokenRepositoryImpl : EmergencyRevokeTokenRepository {
                 .toRecord()
         }
 
-    override suspend fun findActiveByHash(tokenHash: String): EmergencyRevokeTokenRecord? = newSuspendedTransaction {
+    override suspend fun findActiveByHash(tokenHash: String): EmergencyRevokeTokenRecord? = suspendTransaction {
         val now = Clock.System.now()
         EmergencyRevokeTokensTable.selectAll()
             .where {

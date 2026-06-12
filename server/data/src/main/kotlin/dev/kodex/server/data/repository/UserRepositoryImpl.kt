@@ -2,7 +2,7 @@ package dev.kodex.server.data.repository
 
 import dev.kodex.core.models.auth.Role
 import dev.kodex.server.data.db.tables.UsersTable
-import dev.kodex.server.domain.auth.repository.UserRecord
+import dev.kodex.server.domain.auth.model.UserRecord
 import dev.kodex.server.domain.auth.repository.UserRepository
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -13,10 +13,12 @@ import org.jetbrains.exposed.v1.jdbc.insertAndGetId
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 import org.jetbrains.exposed.v1.jdbc.update
+import org.koin.core.annotation.Single
 
 private const val USERNAME_MAX_LENGTH = 30
 private const val USERNAME_BASE_MAX_LEN = 27
 
+@Single(binds = [UserRepository::class])
 class UserRepositoryImpl : UserRepository {
     override suspend fun findById(id: Long): UserRecord? = suspendTransaction {
         UsersTable.selectAll().where { UsersTable.id eq id }.firstOrNull()?.toRecord()

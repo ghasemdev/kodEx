@@ -1,8 +1,11 @@
 package dev.kodex.server.data.storage
 
+import dev.kodex.core.config.ConfigQualifier
 import io.minio.MinioClient
 import io.minio.PutObjectArgs
 import java.io.ByteArrayInputStream
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 
 private const val MAX_SIZE_BYTES = 5 * 1024 * 1024
 
@@ -12,12 +15,13 @@ private val MAGIC_BYTES = mapOf(
     "webp" to byteArrayOf(0x52.toByte(), 0x49.toByte(), 0x46.toByte(), 0x46.toByte()),
 )
 
+@Single
 class AvatarStorageService(
-    endpoint: String,
-    accessKey: String,
-    secretKey: String,
-    private val bucket: String,
-    private val publicUrl: String,
+    @Named(ConfigQualifier.Minio.ENDPOINT) endpoint: String,
+    @Named(ConfigQualifier.Minio.ACCESS_KEY) accessKey: String,
+    @Named(ConfigQualifier.Minio.SECRET_KEY) secretKey: String,
+    @Named(ConfigQualifier.Minio.BUCKET_AVATARS) private val bucket: String,
+    @Named(ConfigQualifier.Minio.PUBLIC_URL) private val publicUrl: String,
 ) {
     private val minio: MinioClient = MinioClient.builder()
         .endpoint(endpoint)

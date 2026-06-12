@@ -1,12 +1,18 @@
 package dev.kodex.server.data.geoip
 
 import com.maxmind.geoip2.DatabaseReader
+import dev.kodex.core.config.ConfigQualifier
 import java.io.File
 import java.net.InetAddress
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 
 data class GeoResult(val countryCode: String?, val city: String?)
 
-class GeoIpService(dbPath: String) {
+@Single
+class GeoIpService(
+    @Named(ConfigQualifier.Geo.DB_PATH) dbPath: String,
+) {
     private val reader: DatabaseReader? = runCatching {
         DatabaseReader.Builder(File(dbPath)).build()
     }.getOrNull()

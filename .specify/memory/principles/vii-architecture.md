@@ -160,6 +160,21 @@ inside a `forEach` where restructuring would harm readability). Always pair with
 private fun setupHoverAnimations() { ... }
 ```
 
+**Suspend function return style** — Unit-returning suspend functions MUST use block body, not expression body:
+
+```kotlin
+// Wrong — expression body with explicit : Unit is misleading; withContext return value is discarded silently
+override suspend fun verifyEmail(token: String): Unit = withContext(ioDispatcher) { ... }
+
+// Right — block body makes it clear the function produces no return value
+override suspend fun verifyEmail(token: String) {
+    withContext(ioDispatcher) { ... }
+}
+```
+
+The rule: if a suspend function returns `Unit`, write `fun foo() { ... }` not `fun foo(): Unit = ...`.
+Non-Unit-returning functions may still use expression body: `fun login(...): AuthTokensResponse = withContext(...) { ... }`.
+
 **Platform utilities** — never use raw `js()` for values Kotlin can compute:
 
 | Need | Wrong | Right |
@@ -170,6 +185,54 @@ private fun setupHoverAnimations() { ... }
 **Rationale**: A single language + clean layering boundary prevents the codebase from
 becoming a tangle of cross-cutting concerns as features are added. MVI aligns frontend
 architecture with patterns familiar from Android/Compose, reducing context-switching cost.
+
+---
+
+## Config Injection Pattern — `ConfigQualifier` + `@Named`
+
+Environment config strings MUST NOT be injected by passing the `EnvConfig` object into service
+classes. Instead, use named Koin qualifiers so each class declares exactly the strings it needs.
+This keeps classes testable without any Koin or environment setup.
+
+### Three-part structure
+
+| File | Module | Role |
+|------|--------|------|
+| `ConfigQualifier.kt` | `core` | Sealed class with nested groups; each `companion object` holds `const val` qualifier names |
+| `EnvModule.kt` | `server:app` | Single source of truth — reads `EnvConfig` and provides each value as `@Single @Named(...)` |
+| Service class | `server:data` or `server:api` | Declares only the strings it needs via `@Named` constructor params |
+
+### Providing a value (EnvModule only)
+
+```kotlin
+@Single @Named(ConfigQualifier.Redis.URL)
+fun redisUrl(): String = EnvConfig.redisUrl
+```
+
+### Injecting in a service class
+
+```kotlin
+@Single
+class RateLimitService(
+    @Named(ConfigQualifier.Redis.URL) redisUrl: String,
+    @Named(ConfigQualifier.Redis.PASSWORD) redisPassword: String,
+)
+```
+
+### Testing (no Koin, no EnvConfig)
+
+```kotlin
+val service = RateLimitService(redisUrl = "redis://localhost:6379", redisPassword = "")
+```
+
+### Adding a new config value
+
+1. Add a `const val` to the appropriate nested class in `ConfigQualifier` (or add a new nested class).
+2. Add one `@Single @Named(...)` function in `EnvModule`.
+3. Use `@Named(ConfigQualifier.X.Y)` in the consuming class constructor.
+
+**Never** inject `EnvConfig` directly into service classes — it couples them to the runtime
+environment and makes unit tests require a full environment setup.
 
 ---
 

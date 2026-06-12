@@ -1,5 +1,6 @@
 package dev.kodex.server.data.notification.email
 
+import dev.kodex.core.config.ConfigQualifier
 import dev.kodex.server.data.notification.channel.EmailChannel
 import io.ktor.client.HttpClient
 import io.ktor.client.request.bearerAuth
@@ -10,6 +11,8 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import kotlinx.serialization.Serializable
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 
 @Serializable
 private data class SendGridRequest(
@@ -28,13 +31,16 @@ private data class SendGridAddress(val email: String)
 @Serializable
 private data class SendGridContent(val type: String, val value: String)
 
+@Single
 class SendGridEmailChannel(
-    private val apiKey: String,
-    private val from: String,
+    @Named(ConfigQualifier.Email.SENDGRID_API_KEY) private val apiKey: String,
+    @Named(ConfigQualifier.Email.FROM) private val from: String,
     private val httpClient: HttpClient,
 ) : EmailChannel {
     override val name: String = "SendGrid"
     override val dailyQuota: Int = -1
+
+    val isEnabled: Boolean get() = apiKey.isNotEmpty()
 
     override suspend fun send(to: String, subject: String, html: String): Result<Unit> {
         return try {

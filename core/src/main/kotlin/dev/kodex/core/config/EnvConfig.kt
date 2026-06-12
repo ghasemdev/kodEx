@@ -1,4 +1,4 @@
-package dev.kodex.server.app.config
+package dev.kodex.core.config
 
 import dev.kodex.core.env.env
 import dev.kodex.core.env.envOrNull
@@ -22,6 +22,7 @@ object EnvConfig {
     val kavenegarApiKey: String get() = envOrNull("KAVENEGAR_API_KEY") ?: ""
     val twilioAccountSid: String get() = envOrNull("TWILIO_ACCOUNT_SID") ?: ""
     val twilioAuthToken: String get() = envOrNull("TWILIO_AUTH_TOKEN") ?: ""
+    val twilioFromNumber: String get() = envOrNull("TWILIO_FROM_NUMBER") ?: ""
 
     val totpEncryptionKey: String get() = env("TOTP_ENCRYPTION_KEY")
     val webAuthnChallengeKey: String get() = env("WEBAUTHN_CHALLENGE_KEY")

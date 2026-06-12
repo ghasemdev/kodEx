@@ -1,18 +1,24 @@
 package dev.kodex.server.data.notification.sms
 
+import dev.kodex.core.config.ConfigQualifier
 import dev.kodex.server.data.notification.channel.SmsChannel
 import io.ktor.client.HttpClient
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.Parameters
 import io.ktor.http.isSuccess
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 
+@Single
 class KavenegarSmsChannel(
-    private val apiKey: String,
+    @Named(ConfigQualifier.Sms.KAVENEGAR_API_KEY) private val apiKey: String,
     private val httpClient: HttpClient,
 ) : SmsChannel {
     override val name: String = "Kavenegar"
     override val dailyQuota: Int = -1
+
+    val isEnabled: Boolean get() = apiKey.isNotEmpty()
 
     override suspend fun send(to: String, message: String): Result<Unit> {
         return try {

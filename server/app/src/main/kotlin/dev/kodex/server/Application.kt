@@ -2,15 +2,17 @@ package dev.kodex.server
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import dev.kodex.core.config.EnvConfig
 import dev.kodex.core.env.env
 import dev.kodex.core.env.envOrNull
 import dev.kodex.core.models.auth.Role
+import dev.kodex.server.api.auth.middleware.AppRateLimits
 import dev.kodex.server.api.auth.middleware.ForbiddenException
+import dev.kodex.server.api.response.ErrorCode
 import dev.kodex.server.api.response.buildErrorEnvelope
 import dev.kodex.server.api.routes.healthRoutes
 import dev.kodex.server.api.routes.landingRoutes
 import dev.kodex.server.api.util.sanitizeRequestId
-import dev.kodex.server.app.config.EnvConfig
 import dev.kodex.server.di.KoinServerApplication
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
@@ -29,7 +31,6 @@ import io.ktor.server.plugins.defaultheaders.DefaultHeaders
 import io.ktor.server.plugins.forwardedheaders.XForwardedHeaders
 import io.ktor.server.plugins.origin
 import io.ktor.server.plugins.ratelimit.RateLimit
-import io.ktor.server.plugins.ratelimit.RateLimitName
 import io.ktor.server.plugins.ratelimit.rateLimit
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
@@ -43,6 +44,7 @@ import org.koin.plugin.module.dsl.withConfiguration
 
 private const val PORT = 8080
 private const val X_REQUEST_ID = "X-Request-Id"
+private const val HEADER_LANGUAGE = "lang"
 
 @Suppress("LongMethod")
 fun main() {
@@ -87,10 +89,13 @@ fun main() {
         install(StatusPages) {
             exception<ForbiddenException> { call, _ ->
                 val requestId = sanitizeRequestId(call.request.headers[X_REQUEST_ID])
+                val lang = call.request.headers[HEADER_LANGUAGE] ?: "en"
                 call.respond(
                     HttpStatusCode.Forbidden,
                     buildErrorEnvelope(
+                        code = ErrorCode.FORBIDDEN,
                         message = "Insufficient permissions.",
+                        lang = lang,
                         requestId = requestId,
                         service = BuildConfig.SERVICE_NAME,
                         version = BuildConfig.VERSION,
@@ -100,10 +105,13 @@ fun main() {
             exception<Throwable> { call, cause ->
                 call.application.log.error("Unhandled exception", cause)
                 val requestId = sanitizeRequestId(call.request.headers[X_REQUEST_ID])
+                val lang = call.request.headers[HEADER_LANGUAGE] ?: "en"
                 call.respond(
                     HttpStatusCode.InternalServerError,
                     buildErrorEnvelope(
+                        code = ErrorCode.INTERNAL_SERVER_ERROR,
                         message = "An unexpected error occurred.",
+                        lang = lang,
                         requestId = requestId,
                         service = BuildConfig.SERVICE_NAME,
                         version = BuildConfig.VERSION,
@@ -118,23 +126,24 @@ fun main() {
                 realm = "KodEx"
                 verifier(
                     JWT.require(Algorithm.HMAC256(EnvConfig.jwtSecret))
+                        .withClaimPresence("sub")
+                        .withClaimPresence("role")
                         .build(),
                 )
-                @Suppress("LabeledExpression")
                 validate { credential ->
-                    val sub = credential.payload.subject?.takeIf { it.isNotEmpty() }
-                        ?: return@validate null
                     credential.payload.getClaim("role")?.asString()
                         ?.let { runCatching { Role.valueOf(it) }.getOrNull() }
-                        ?: return@validate null
-                    JWTPrincipal(credential.payload)
+                        ?.let { JWTPrincipal(credential.payload) }
                 }
                 challenge { _, _ ->
                     val requestId = sanitizeRequestId(call.request.headers[X_REQUEST_ID])
+                    val lang = call.request.headers[HEADER_LANGUAGE] ?: "en"
                     call.respond(
                         HttpStatusCode.Unauthorized,
                         buildErrorEnvelope(
+                            code = ErrorCode.UNAUTHORIZED,
                             message = "Missing or invalid authentication token.",
+                            lang = lang,
                             requestId = requestId,
                             service = BuildConfig.SERVICE_NAME,
                             version = BuildConfig.VERSION,
@@ -144,14 +153,14 @@ fun main() {
             }
         }
 
-        install(XForwardedHeaders) // T038: already present — normalises remoteHost after proxy
+        install(XForwardedHeaders) // T038: normalises remoteHost after proxy
         install(RateLimit) {
-            register(RateLimitName("public")) {
+            register(AppRateLimits.PUBLIC) {
                 rateLimiter(limit = 60, refillPeriod = 1.minutes)
                 requestKey { call -> call.request.origin.remoteHost }
             }
             // T041: tighter limit for all auth POST endpoints
-            register(RateLimitName("auth")) {
+            register(AppRateLimits.AUTH) {
                 rateLimiter(limit = 20, refillPeriod = 10.seconds)
                 requestKey { call -> call.request.origin.remoteHost }
             }
@@ -164,7 +173,7 @@ fun main() {
 
         routing {
             healthRoutes(startedAt = startedAt, service = BuildConfig.SERVICE_NAME, version = BuildConfig.VERSION)
-            rateLimit(RateLimitName("public")) {
+            rateLimit(AppRateLimits.PUBLIC) {
                 landingRoutes(service = BuildConfig.SERVICE_NAME, version = BuildConfig.VERSION)
             }
         }

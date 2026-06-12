@@ -1,20 +1,8 @@
 package dev.kodex.server.domain.auth.repository
 
 import dev.kodex.core.models.auth.Role
+import dev.kodex.server.domain.auth.model.UserRecord
 import kotlin.time.Instant
-
-data class UserRecord(
-    val id: Long,
-    val username: String,
-    val email: String,
-    val emailVerified: Boolean,
-    val passwordHash: String?,
-    val role: Role,
-    val failedLoginCount: Int,
-    val lockedUntil: Instant?,
-    val createdAt: Instant,
-    val updatedAt: Instant,
-)
 
 @Suppress("TooManyFunctions", "ComplexInterface")
 interface UserRepository {

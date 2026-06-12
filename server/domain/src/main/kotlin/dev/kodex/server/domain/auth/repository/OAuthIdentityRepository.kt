@@ -1,15 +1,7 @@
 package dev.kodex.server.domain.auth.repository
 
 import dev.kodex.core.models.auth.OAuthProvider
-import kotlin.time.Instant
-
-data class OAuthIdentityRecord(
-    val id: Long,
-    val userId: Long,
-    val provider: OAuthProvider,
-    val providerUserId: String,
-    val linkedAt: Instant,
-)
+import dev.kodex.server.domain.auth.model.OAuthIdentityRecord
 
 interface OAuthIdentityRepository {
     suspend fun findByProvider(provider: OAuthProvider, providerUserId: String): OAuthIdentityRecord?

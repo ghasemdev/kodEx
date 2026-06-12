@@ -1,17 +1,6 @@
 package dev.kodex.server.domain.passkey.repository
 
-import kotlin.time.Instant
-
-data class PasskeyRecord(
-    val id: Long,
-    val userId: Long,
-    val credentialId: ByteArray,
-    val publicKeyCose: ByteArray,
-    val signCount: Long,
-    val aaguid: String?,
-    val friendlyName: String?,
-    val createdAt: Instant,
-)
+import dev.kodex.server.domain.passkey.model.PasskeyRecord
 
 interface PasskeyRepository {
     suspend fun create(

@@ -13,6 +13,12 @@ val testMeta = ApiMeta(
     serviceVersion = "0.1.0",
 )
 
+val testError = ApiError(
+    code = "NOT_FOUND",
+    message = "Resource not found.",
+    userMessage = "The requested resource could not be found.",
+)
+
 class ApiEnvelopeTest : FunSpec({
     test("ApiEnvelope serialization round trip with string data") {
         val envelope = ApiEnvelope(data = "hello", meta = testMeta)
@@ -34,16 +40,31 @@ class ApiEnvelopeTest : FunSpec({
         decoded shouldBe testMeta
     }
 
+    test("ApiError fields serialize correctly") {
+        val json = Json.encodeToString(ApiError.serializer(), testError)
+        json shouldContain "NOT_FOUND"
+        json shouldContain "Resource not found."
+        json shouldContain "The requested resource could not be found."
+    }
+
     test("ApiErrorEnvelope serialization round trip") {
-        val errorEnvelope = ApiErrorEnvelope(error = "Not Found", meta = testMeta)
+        val errorEnvelope = ApiErrorEnvelope(data = testError, meta = testMeta)
         val json = Json.encodeToString(ApiErrorEnvelope.serializer(), errorEnvelope)
         val decoded = Json.decodeFromString<ApiErrorEnvelope>(json)
         decoded shouldBe errorEnvelope
     }
 
-    test("ApiErrorEnvelope error field serializes") {
-        val errorEnvelope = ApiErrorEnvelope(error = "Unauthorized", meta = testMeta)
+    test("ApiErrorEnvelope data fields serialize") {
+        val errorEnvelope = ApiErrorEnvelope(data = testError, meta = testMeta)
         val json = Json.encodeToString(ApiErrorEnvelope.serializer(), errorEnvelope)
-        json shouldContain "Unauthorized"
+        json shouldContain "NOT_FOUND"
+        json shouldContain testMeta.requestId
+    }
+
+    test("ApiError userMessage is a single string") {
+        val error = ApiError(code = "UNAUTHORIZED", message = "Unauthorized", userMessage = "دسترسی غیرمجاز")
+        val json = Json.encodeToString(ApiError.serializer(), error)
+        val decoded = Json.decodeFromString<ApiError>(json)
+        decoded.userMessage shouldBe "دسترسی غیرمجاز"
     }
 })

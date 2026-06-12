@@ -2,7 +2,7 @@ package dev.kodex.server.data.repository
 
 import dev.kodex.core.models.auth.OAuthProvider
 import dev.kodex.server.data.db.tables.OAuthIdentitiesTable
-import dev.kodex.server.domain.auth.repository.OAuthIdentityRecord
+import dev.kodex.server.domain.auth.model.OAuthIdentityRecord
 import dev.kodex.server.domain.auth.repository.OAuthIdentityRepository
 import kotlin.time.Clock
 import org.jetbrains.exposed.v1.core.ResultRow
@@ -12,7 +12,9 @@ import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insertAndGetId
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
+import org.koin.core.annotation.Single
 
+@Single(binds = [OAuthIdentityRepository::class])
 class OAuthIdentityRepositoryImpl : OAuthIdentityRepository {
     override suspend fun findByProvider(provider: OAuthProvider, providerUserId: String): OAuthIdentityRecord? =
         suspendTransaction {

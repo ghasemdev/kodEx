@@ -1,7 +1,7 @@
 package dev.kodex.server.data.repository
 
 import dev.kodex.server.data.db.tables.UserProfilesTable
-import dev.kodex.server.domain.users.repository.ProfileRecord
+import dev.kodex.server.domain.users.model.ProfileRecord
 import dev.kodex.server.domain.users.repository.ProfileRepository
 import kotlin.time.Clock
 import kotlinx.datetime.LocalDate
@@ -11,7 +11,9 @@ import org.jetbrains.exposed.v1.jdbc.insertAndGetId
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 import org.jetbrains.exposed.v1.jdbc.update
+import org.koin.core.annotation.Single
 
+@Single(binds = [ProfileRepository::class])
 class ProfileRepositoryImpl : ProfileRepository {
     override suspend fun findByUserId(userId: Long): ProfileRecord? = suspendTransaction {
         UserProfilesTable.selectAll().where { UserProfilesTable.userId eq userId }.firstOrNull()?.toRecord()

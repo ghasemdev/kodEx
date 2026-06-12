@@ -7,18 +7,75 @@ import io.kotest.matchers.string.shouldNotBeEmpty
 import kotlinx.serialization.json.Json
 
 class EnvelopeTest : FunSpec({
-    test("buildErrorEnvelope sets error message") {
+    test("buildErrorEnvelope sets error code and message") {
         val envelope = buildErrorEnvelope(
+            code = ErrorCode.INTERNAL_SERVER_ERROR,
             message = "An unexpected error occurred.",
             requestId = "req-1",
             service = "kodex-api",
             version = "0.1.0",
         )
-        envelope.error shouldBe "An unexpected error occurred."
+        envelope.data.code shouldBe ErrorCode.INTERNAL_SERVER_ERROR
+        envelope.data.message shouldBe "An unexpected error occurred."
+    }
+
+    test("buildErrorEnvelope returns English userMessage by default") {
+        val envelope = buildErrorEnvelope(
+            code = ErrorCode.FORBIDDEN,
+            message = "Insufficient permissions.",
+            requestId = "req-1",
+            service = "kodex-api",
+            version = "0.1.0",
+        )
+        envelope.data.userMessage.shouldNotBeEmpty()
+    }
+
+    test("buildErrorEnvelope returns Farsi userMessage when lang=fa") {
+        val envelope = buildErrorEnvelope(
+            code = ErrorCode.FORBIDDEN,
+            message = "Insufficient permissions.",
+            lang = "fa",
+            requestId = "req-1",
+            service = "kodex-api",
+            version = "0.1.0",
+        )
+        envelope.data.userMessage.shouldNotBeEmpty()
+    }
+
+    test("buildErrorEnvelope falls back to message for unknown code") {
+        val envelope = buildErrorEnvelope(
+            code = "UNKNOWN_CODE",
+            message = "Something went wrong.",
+            requestId = "req-1",
+            service = "kodex-api",
+            version = "0.1.0",
+        )
+        envelope.data.userMessage shouldBe "Something went wrong."
+    }
+
+    test("buildErrorEnvelope falls back to English for unsupported lang") {
+        val enEn = buildErrorEnvelope(
+            code = ErrorCode.UNAUTHORIZED,
+            message = "error",
+            lang = "en",
+            requestId = "req-1",
+            service = "kodex-api",
+            version = "0.1.0",
+        )
+        val enUnknown = buildErrorEnvelope(
+            code = ErrorCode.UNAUTHORIZED,
+            message = "error",
+            lang = "zz",
+            requestId = "req-1",
+            service = "kodex-api",
+            version = "0.1.0",
+        )
+        enUnknown.data.userMessage shouldBe enEn.data.userMessage
     }
 
     test("buildErrorEnvelope sets meta requestId") {
         val envelope = buildErrorEnvelope(
+            code = ErrorCode.UNAUTHORIZED,
             message = "error",
             requestId = "req-abc",
             service = "kodex-api",
@@ -29,6 +86,7 @@ class EnvelopeTest : FunSpec({
 
     test("buildErrorEnvelope sets meta service and version") {
         val envelope = buildErrorEnvelope(
+            code = ErrorCode.NOT_FOUND,
             message = "error",
             requestId = "req-1",
             service = "kodex-api",
@@ -40,6 +98,7 @@ class EnvelopeTest : FunSpec({
 
     test("buildErrorEnvelope sets meta timestamp") {
         val envelope = buildErrorEnvelope(
+            code = ErrorCode.INTERNAL_SERVER_ERROR,
             message = "error",
             requestId = "req-1",
             service = "kodex-api",
@@ -50,6 +109,7 @@ class EnvelopeTest : FunSpec({
 
     test("ApiErrorEnvelope serialization roundtrip") {
         val original = buildErrorEnvelope(
+            code = ErrorCode.INTERNAL_SERVER_ERROR,
             message = "An unexpected error occurred.",
             requestId = "req-roundtrip",
             service = "kodex-api",
@@ -57,7 +117,9 @@ class EnvelopeTest : FunSpec({
         )
         val json = Json.encodeToString(ApiErrorEnvelope.serializer(), original)
         val decoded = Json.decodeFromString<ApiErrorEnvelope>(json)
-        decoded.error shouldBe original.error
+        decoded.data.code shouldBe original.data.code
+        decoded.data.message shouldBe original.data.message
+        decoded.data.userMessage shouldBe original.data.userMessage
         decoded.meta.requestId shouldBe original.meta.requestId
         decoded.meta.service shouldBe original.meta.service
         decoded.meta.serviceVersion shouldBe original.meta.serviceVersion

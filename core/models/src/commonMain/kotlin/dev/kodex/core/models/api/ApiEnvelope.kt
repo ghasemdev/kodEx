@@ -21,7 +21,14 @@ data class ApiMeta(
 )
 
 @Serializable
+data class ApiError(
+    val code: String,
+    val message: String,
+    val userMessage: String,
+)
+
+@Serializable
 data class ApiErrorEnvelope(
-    val error: String,
+    val data: ApiError,
     val meta: ApiMeta,
 )
