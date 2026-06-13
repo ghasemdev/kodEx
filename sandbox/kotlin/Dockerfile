@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:25-jre
 
 # Network isolation: run with --network=none when executing untrusted code
 # Mount submission as read-only volume: -v /path/to/code:/app/submission:ro

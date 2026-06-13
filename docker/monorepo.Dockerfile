@@ -1,6 +1,6 @@
 # docker/monorepo.Dockerfile
 
-FROM gradle:9.5.1-jdk21-jammy AS builder
+FROM gradle:9.5.1-jdk25-jammy AS builder
 
 WORKDIR /app
 
@@ -16,7 +16,7 @@ RUN --mount=type=cache,id=gradle-cache,target=/home/gradle/.gradle \
     --no-daemon
 
 
-FROM eclipse-temurin:21-jre-jammy AS server
+FROM eclipse-temurin:25-jre-jammy AS server
 
 RUN addgroup --system appgroup && adduser --system appuser --ingroup appgroup
 
@@ -30,7 +30,7 @@ EXPOSE 8080
 CMD ["bin/app"]
 
 
-FROM eclipse-temurin:21-jre-jammy AS sandbox-runner
+FROM eclipse-temurin:25-jre-jammy AS sandbox-runner
 
 RUN addgroup --system appgroup && adduser --system appuser --ingroup appgroup
 

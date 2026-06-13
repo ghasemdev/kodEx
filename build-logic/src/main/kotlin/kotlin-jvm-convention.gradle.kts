@@ -12,9 +12,10 @@ plugins {
 }
 
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(25)
     compilerOptions {
-        languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1)
+        languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_4)
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25)
         optIn.add("kotlin.time.ExperimentalTime")
         optIn.add("kotlin.uuid.ExperimentalUuidApi")
         optIn.add("kotlin.io.encoding.ExperimentalEncodingApi")

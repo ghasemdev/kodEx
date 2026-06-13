@@ -1,23 +1,23 @@
 [versions]
-kotlin = "2.3.21"
+kotlin = "2.4.0"
 kotlinx-benchmark = "0.4.17"
 coroutines = "1.11.0"
-compose = "1.11.1"
+compose = "1.12.0-alpha01"
 serialization = "1.11.0"
 datetime = "0.8.0"
 ktor = "3.5.0"
-kilua = "0.0.34"
+kilua = "0.0.35"
 gettext = "0.7.0"
 koin = "4.2.1"
-koin-plugin = "1.0.0"
+koin-plugin = "1.0.1"
 koin-annotations = "2.3.1"
 exposed = "1.3.0"
 hikaricp = "7.0.2"
-flyway = "12.6.1"
+flyway = "12.8.1"
 lettuce = "7.6.0.RELEASE"
 minio   = "9.0.1"
 argon2 = "2.12"
-atomicfu = "0.27.0"
+atomicfu = "0.33.0"
 webauthn4j = "0.31.6.RELEASE"
 kotlin-onetimepassword = "3.0.0"
 zxcvbn4j = "1.9.0"
@@ -31,7 +31,7 @@ napier = "2.7.1"
 docker-java = "3.7.1"
 kotest = "6.1.11"
 testcontainers = "2.0.5"
-detekt = "1.23.8"
+detekt = "2.0.0-alpha.3"
 kover = "0.9.8"
 postgresql-driver = "42.7.11"
 kotlinx-browser = "0.5.0"
@@ -40,10 +40,10 @@ dependencycheck = "12.2.2"
 vite = "0.9.0"
 fontsource = "5.1.1"
 highlightjs = "11.11.1"
-tailwindcss = "4.3.0"
+tailwindcss = "4.3.1"
 html2canvas = "1.4.1"
 gsap = "3.15.0"
-nodejs = "24.16.0"
+nodejs = "26.3.0"
 ksp = "2.3.9"
 
 [libraries]
@@ -52,7 +52,8 @@ gradle-plugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", v
 gradle-plugin-kotlin-serialization = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
 gradle-plugin-kotlin-allopen = { module = "org.jetbrains.kotlin:kotlin-allopen", version.ref = "kotlin" }
 gradle-plugin-kotlin-benchmark = { module = "org.jetbrains.kotlinx.benchmark:org.jetbrains.kotlinx.benchmark.gradle.plugin", version.ref = "kotlinx-benchmark" }
-gradle-plugin-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+#gradle-plugin-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+gradle-plugin-detekt = { module = "dev.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 gradle-plugin-kover = { module = "org.jetbrains.kotlinx:kover-gradle-plugin", version.ref = "kover" }
 gradle-plugin-kilua = { module = "dev.kilua:kilua-gradle-plugin", version.ref = "kilua" }
 gradle-plugin-dependencycheck = { module = "org.owasp:dependency-check-gradle", version.ref = "dependencycheck" }
@@ -131,7 +132,7 @@ kilua-tailwindcss = { module = "dev.kilua:kilua-tailwindcss", version.ref = "kil
 kilua-i18n = { module = "dev.kilua:kilua-i18n", version.ref = "kilua" }
 kilua-fontawesome = { module = "dev.kilua:kilua-fontawesome", version.ref = "kilua" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
-compose-runtime-annotation = { module = "androidx.compose.runtime:runtime-annotation", version.ref = "compose" }
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose" }
 
 # ── Sandbox ───────────────────────────────────────────────────────────────────────────────────────
 docker-java-core = { module = "com.github.docker-java:docker-java-core", version.ref = "docker-java" }
@@ -175,7 +176,8 @@ kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref 
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 koin-compiler = { id = "io.insert-koin.compiler.plugin", version.ref = "koin-plugin" }
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+#detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+detekt = { id = "dev.detekt", version.ref = "detekt" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 kilua = { id = "dev.kilua", version.ref = "kilua" }
 gettext = { id = "name.kropp.kotlinx-gettext", version.ref = "gettext" }
