@@ -42,26 +42,24 @@ class SendGridEmailChannel(
 
     val isEnabled: Boolean get() = apiKey.isNotEmpty()
 
-    override suspend fun send(to: String, subject: String, html: String): Result<Unit> {
-        return try {
-            val body = SendGridRequest(
-                personalizations = listOf(SendGridPersonalization(to = listOf(SendGridAddress(to)))),
-                from = SendGridAddress(from),
-                subject = subject,
-                content = listOf(SendGridContent(type = "text/html", value = html)),
-            )
-            val response = httpClient.post("https://api.sendgrid.com/v3/mail/send") {
-                bearerAuth(apiKey)
-                contentType(ContentType.Application.Json)
-                setBody(body)
-            }
-            if (response.status.isSuccess()) {
-                Result.success(Unit)
-            } else {
-                Result.failure(RuntimeException("SendGrid error ${response.status.value}: ${response.bodyAsText()}"))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
+    override suspend fun send(to: String, subject: String, html: String): Result<Unit> = try {
+        val body = SendGridRequest(
+            personalizations = listOf(SendGridPersonalization(to = listOf(SendGridAddress(to)))),
+            from = SendGridAddress(from),
+            subject = subject,
+            content = listOf(SendGridContent(type = "text/html", value = html)),
+        )
+        val response = httpClient.post("https://api.sendgrid.com/v3/mail/send") {
+            bearerAuth(apiKey)
+            contentType(ContentType.Application.Json)
+            setBody(body)
         }
+        if (response.status.isSuccess()) {
+            Result.success(Unit)
+        } else {
+            Result.failure(RuntimeException("SendGrid error ${response.status.value}: ${response.bodyAsText()}"))
+        }
+    } catch (e: Exception) {
+        Result.failure(e)
     }
 }

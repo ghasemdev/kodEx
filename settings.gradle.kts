@@ -4,6 +4,7 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        maven("https://repo.gradle.org/gradle/libs-releases")
     }
 }
 
@@ -12,6 +13,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        gradlePluginPortal()
+        maven("https://repo.gradle.org/gradle/libs-releases")
         maven("https://jitpack.io")
     }
 }

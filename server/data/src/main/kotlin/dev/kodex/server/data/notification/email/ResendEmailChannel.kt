@@ -33,20 +33,18 @@ class ResendEmailChannel(
 
     val isEnabled: Boolean get() = apiKey.isNotEmpty()
 
-    override suspend fun send(to: String, subject: String, html: String): Result<Unit> {
-        return try {
-            val response = httpClient.post("https://api.resend.com/emails") {
-                bearerAuth(apiKey)
-                contentType(ContentType.Application.Json)
-                setBody(ResendEmailRequest(from = from, to = listOf(to), subject = subject, html = html))
-            }
-            if (response.status.isSuccess()) {
-                Result.success(Unit)
-            } else {
-                Result.failure(RuntimeException("Resend error ${response.status.value}: ${response.bodyAsText()}"))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
+    override suspend fun send(to: String, subject: String, html: String): Result<Unit> = try {
+        val response = httpClient.post("https://api.resend.com/emails") {
+            bearerAuth(apiKey)
+            contentType(ContentType.Application.Json)
+            setBody(ResendEmailRequest(from = from, to = listOf(to), subject = subject, html = html))
         }
+        if (response.status.isSuccess()) {
+            Result.success(Unit)
+        } else {
+            Result.failure(RuntimeException("Resend error ${response.status.value}: ${response.bodyAsText()}"))
+        }
+    } catch (e: Exception) {
+        Result.failure(e)
     }
 }

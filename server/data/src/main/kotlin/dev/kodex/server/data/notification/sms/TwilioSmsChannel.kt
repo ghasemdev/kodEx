@@ -23,26 +23,24 @@ class TwilioSmsChannel(
 
     val isEnabled: Boolean get() = accountSid.isNotEmpty()
 
-    override suspend fun send(to: String, message: String): Result<Unit> {
-        return try {
-            val url = "https://api.twilio.com/2010-04-01/Accounts/$accountSid/Messages.json"
-            val response = httpClient.submitForm(
-                url = url,
-                formParameters = Parameters.build {
-                    append("To", to)
-                    append("From", fromNumber)
-                    append("Body", message)
-                },
-            ) {
-                basicAuth(accountSid, authToken)
-            }
-            if (response.status.isSuccess()) {
-                Result.success(Unit)
-            } else {
-                Result.failure(RuntimeException("Twilio error ${response.status.value}: ${response.bodyAsText()}"))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
+    override suspend fun send(to: String, message: String): Result<Unit> = try {
+        val url = "https://api.twilio.com/2010-04-01/Accounts/$accountSid/Messages.json"
+        val response = httpClient.submitForm(
+            url = url,
+            formParameters = Parameters.build {
+                append("To", to)
+                append("From", fromNumber)
+                append("Body", message)
+            },
+        ) {
+            basicAuth(accountSid, authToken)
         }
+        if (response.status.isSuccess()) {
+            Result.success(Unit)
+        } else {
+            Result.failure(RuntimeException("Twilio error ${response.status.value}: ${response.bodyAsText()}"))
+        }
+    } catch (e: Exception) {
+        Result.failure(e)
     }
 }

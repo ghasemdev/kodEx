@@ -16,6 +16,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven("https://plugins.gradle.org/m2/")
+        maven("https://repo.gradle.org/gradle/libs-releases")
     }
 }
 

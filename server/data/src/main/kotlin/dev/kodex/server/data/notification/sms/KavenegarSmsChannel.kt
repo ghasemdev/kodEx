@@ -20,23 +20,21 @@ class KavenegarSmsChannel(
 
     val isEnabled: Boolean get() = apiKey.isNotEmpty()
 
-    override suspend fun send(to: String, message: String): Result<Unit> {
-        return try {
-            val url = "https://api.kavenegar.com/v1/$apiKey/sms/send.json"
-            val response = httpClient.submitForm(
-                url = url,
-                formParameters = Parameters.build {
-                    append("receptor", to)
-                    append("message", message)
-                },
-            )
-            if (response.status.isSuccess()) {
-                Result.success(Unit)
-            } else {
-                Result.failure(RuntimeException("Kavenegar error ${response.status.value}: ${response.bodyAsText()}"))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
+    override suspend fun send(to: String, message: String): Result<Unit> = try {
+        val url = "https://api.kavenegar.com/v1/$apiKey/sms/send.json"
+        val response = httpClient.submitForm(
+            url = url,
+            formParameters = Parameters.build {
+                append("receptor", to)
+                append("message", message)
+            },
+        )
+        if (response.status.isSuccess()) {
+            Result.success(Unit)
+        } else {
+            Result.failure(RuntimeException("Kavenegar error ${response.status.value}: ${response.bodyAsText()}"))
         }
+    } catch (e: Exception) {
+        Result.failure(e)
     }
 }

@@ -97,7 +97,7 @@ kotlin {
             implementation(npm("highlight.js", libs.versions.highlightjs.get()))
             implementation(npm("gsap", libs.versions.gsap.get()))
             implementation(libs.kotlinx.datetime)
-            implementation(npm("@js-joda/timezone", "2.25.1"))
+            implementation(npm("@js-joda/timezone", libs.versions.joda.get()))
         }
         webTest.dependencies {
             implementation(npm("html2canvas", libs.versions.html2canvas.get()))

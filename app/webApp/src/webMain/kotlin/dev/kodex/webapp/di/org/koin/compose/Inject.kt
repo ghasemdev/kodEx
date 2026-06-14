@@ -70,10 +70,8 @@ inline fun <reified T> koinInject(
     qualifier: Qualifier? = null,
     scope: Scope = currentKoinScope(),
     parametersHolder: ParametersHolder,
-): T {
-    return remember(qualifier, scope, parametersHolder) {
-        scope.getWithParameters(T::class, qualifier, parametersHolder)
-    }
+): T = remember(qualifier, scope, parametersHolder) {
+    scope.getWithParameters(T::class, qualifier, parametersHolder)
 }
 
 /**
@@ -86,8 +84,7 @@ inline fun <reified T> koinInject(
  * @author Arnaud Giuliani
  */
 @Composable
-inline fun <reified T> koinInject(qualifier: Qualifier? = null, scope: Scope = currentKoinScope()): T {
-    return remember(qualifier, scope) {
+inline fun <reified T> koinInject(qualifier: Qualifier? = null, scope: Scope = currentKoinScope()): T =
+    remember(qualifier, scope) {
         scope.get(T::class, qualifier)
     }
-}
