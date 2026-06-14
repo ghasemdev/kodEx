@@ -1,6 +1,8 @@
 package dev.kodex.webapp.design.i18n
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import dev.kilua.i18n.I18n
 import dev.kilua.i18n.LocaleManager
 import dev.kilua.i18n.SimpleLocale
@@ -14,12 +16,8 @@ import kotlinx.browser.localStorage
 // Backed by MutableState so any composable that calls i18n.tr() is automatically
 // subscribed: when initI18n() assigns a new I18n instance, Compose invalidates
 // all callers directly — no dirty-counter reads needed per section.
-@Suppress("PropertyName", "RedundantSuppression")
-private val _i18nState = mutableStateOf(I18n())
-
-var i18n: I18n
-    get() = _i18nState.value
-    private set(value) { _i18nState.value = value }
+var i18n: I18n by mutableStateOf(I18n())
+    private set
 
 private val ALLOWED_LOCALES = setOf("en", "fa")
 

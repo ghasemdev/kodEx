@@ -9,6 +9,7 @@ import dev.kodex.core.models.auth.Role
 import dev.kodex.server.api.auth.middleware.AppRateLimits
 import dev.kodex.server.api.auth.middleware.ForbiddenException
 import dev.kodex.server.api.response.ErrorCode
+import dev.kodex.server.api.response.ServiceInfo
 import dev.kodex.server.api.response.buildErrorEnvelope
 import dev.kodex.server.api.routes.healthRoutes
 import dev.kodex.server.api.routes.landingRoutes
@@ -52,6 +53,7 @@ fun main() {
     val host = envOrNull("SERVER_HOST") ?: "0.0.0.0"
     val webAppOrigin = env("WEBAPP_ORIGIN")
     val startedAt = Clock.System.now()
+    val serviceInfo = ServiceInfo(name = BuildConfig.SERVICE_NAME, version = BuildConfig.VERSION)
 
     embeddedServer(Netty, port = port, host = host) {
         install(ContentNegotiation) { json() }
@@ -92,14 +94,14 @@ fun main() {
                 val lang = call.request.headers[HEADER_LANGUAGE] ?: "en"
                 call.respond(
                     HttpStatusCode.Forbidden,
-                    buildErrorEnvelope(
-                        code = ErrorCode.FORBIDDEN,
-                        message = "Insufficient permissions.",
-                        lang = lang,
-                        requestId = requestId,
-                        service = BuildConfig.SERVICE_NAME,
-                        version = BuildConfig.VERSION,
-                    ),
+                    with(serviceInfo) {
+                        buildErrorEnvelope(
+                            code = ErrorCode.FORBIDDEN,
+                            message = "Insufficient permissions.",
+                            lang = lang,
+                            requestId = requestId,
+                        )
+                    },
                 )
             }
             exception<Throwable> { call, cause ->
@@ -108,14 +110,14 @@ fun main() {
                 val lang = call.request.headers[HEADER_LANGUAGE] ?: "en"
                 call.respond(
                     HttpStatusCode.InternalServerError,
-                    buildErrorEnvelope(
-                        code = ErrorCode.INTERNAL_SERVER_ERROR,
-                        message = "An unexpected error occurred.",
-                        lang = lang,
-                        requestId = requestId,
-                        service = BuildConfig.SERVICE_NAME,
-                        version = BuildConfig.VERSION,
-                    ),
+                    with(serviceInfo) {
+                        buildErrorEnvelope(
+                            code = ErrorCode.INTERNAL_SERVER_ERROR,
+                            message = "An unexpected error occurred.",
+                            lang = lang,
+                            requestId = requestId,
+                        )
+                    },
                 )
             }
         }
@@ -140,14 +142,14 @@ fun main() {
                     val lang = call.request.headers[HEADER_LANGUAGE] ?: "en"
                     call.respond(
                         HttpStatusCode.Unauthorized,
-                        buildErrorEnvelope(
-                            code = ErrorCode.UNAUTHORIZED,
-                            message = "Missing or invalid authentication token.",
-                            lang = lang,
-                            requestId = requestId,
-                            service = BuildConfig.SERVICE_NAME,
-                            version = BuildConfig.VERSION,
-                        ),
+                        with(serviceInfo) {
+                            buildErrorEnvelope(
+                                code = ErrorCode.UNAUTHORIZED,
+                                message = "Missing or invalid authentication token.",
+                                lang = lang,
+                                requestId = requestId,
+                            )
+                        },
                     )
                 }
             }
@@ -172,9 +174,9 @@ fun main() {
         }
 
         routing {
-            healthRoutes(startedAt = startedAt, service = BuildConfig.SERVICE_NAME, version = BuildConfig.VERSION)
+            healthRoutes(startedAt = startedAt, info = serviceInfo)
             rateLimit(AppRateLimits.PUBLIC) {
-                landingRoutes(service = BuildConfig.SERVICE_NAME, version = BuildConfig.VERSION)
+                landingRoutes(info = serviceInfo)
             }
         }
     }.start(wait = true)

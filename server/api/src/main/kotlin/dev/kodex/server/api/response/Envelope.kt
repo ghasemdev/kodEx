@@ -6,23 +6,23 @@ import dev.kodex.core.models.api.ApiErrorEnvelope
 import dev.kodex.core.models.api.ApiMeta
 import kotlin.time.Clock
 
-fun <T> buildEnvelope(data: T, requestId: String, service: String, version: String): ApiEnvelope<T> = ApiEnvelope(
+context(info: ServiceInfo)
+fun <T> buildEnvelope(data: T, requestId: String): ApiEnvelope<T> = ApiEnvelope(
     data = data,
     meta = ApiMeta(
         requestId = requestId,
         timestamp = Clock.System.now().toString(),
-        service = service,
-        serviceVersion = version,
+        service = info.name,
+        serviceVersion = info.version,
     ),
 )
 
+context(info: ServiceInfo)
 fun buildErrorEnvelope(
     code: String,
     message: String,
     lang: String = DEFAULT_LANG,
     requestId: String,
-    service: String,
-    version: String,
 ): ApiErrorEnvelope {
     val effectiveLang = lang.takeIf { it in SUPPORTED_LANGUAGES } ?: DEFAULT_LANG
     val localizedMessage = errorUserMessages[code]?.get(effectiveLang)
@@ -33,8 +33,8 @@ fun buildErrorEnvelope(
         meta = ApiMeta(
             requestId = requestId,
             timestamp = Clock.System.now().toString(),
-            service = service,
-            serviceVersion = version,
+            service = info.name,
+            serviceVersion = info.version,
         ),
     )
 }
