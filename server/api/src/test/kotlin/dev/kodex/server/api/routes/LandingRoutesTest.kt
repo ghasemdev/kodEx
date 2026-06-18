@@ -2,6 +2,7 @@ package dev.kodex.server.api.routes
 
 import dev.kodex.core.models.api.ApiEnvelope
 import dev.kodex.core.models.landing.LandingStatsResponse
+import dev.kodex.server.api.util.serviceInfo
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
@@ -21,7 +22,7 @@ class LandingRoutesTest : FunSpec({
         testApplication {
             application {
                 install(ContentNegotiation) { json() }
-                routing { landingRoutes() }
+                routing { landingRoutes(serviceInfo) }
             }
             val response = client.get("/api/v1/stats/landing")
             response.status shouldBe HttpStatusCode.OK
@@ -32,7 +33,7 @@ class LandingRoutesTest : FunSpec({
         testApplication {
             application {
                 install(ContentNegotiation) { json() }
-                routing { landingRoutes() }
+                routing { landingRoutes(serviceInfo) }
             }
             val response = client.get("/api/v1/stats/landing")
             response.headers["Content-Type"] shouldContain ContentType.Application.Json.toString()
@@ -43,7 +44,7 @@ class LandingRoutesTest : FunSpec({
         testApplication {
             application {
                 install(ContentNegotiation) { json() }
-                routing { landingRoutes() }
+                routing { landingRoutes(serviceInfo) }
             }
             val response = client.get("/api/v1/stats/landing")
             val body = JSON
@@ -56,7 +57,7 @@ class LandingRoutesTest : FunSpec({
         testApplication {
             application {
                 install(ContentNegotiation) { json() }
-                routing { landingRoutes() }
+                routing { landingRoutes(serviceInfo) }
             }
             val response = client.get("/api/v1/stats/landing")
             val body = JSON
@@ -69,7 +70,7 @@ class LandingRoutesTest : FunSpec({
         testApplication {
             application {
                 install(ContentNegotiation) { json() }
-                routing { landingRoutes() }
+                routing { landingRoutes(serviceInfo) }
             }
             val response = client.get("/api/v1/stats/landing")
             val body = JSON
@@ -82,7 +83,7 @@ class LandingRoutesTest : FunSpec({
         testApplication {
             application {
                 install(ContentNegotiation) { json() }
-                routing { landingRoutes() }
+                routing { landingRoutes(serviceInfo) }
             }
             val response = client.get("/api/v1/stats/landing")
             response.headers["Cache-Control"] shouldBe "public, max-age=300"

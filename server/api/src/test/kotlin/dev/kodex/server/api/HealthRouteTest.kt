@@ -3,6 +3,7 @@ package dev.kodex.server.api
 import dev.kodex.core.models.api.ApiEnvelope
 import dev.kodex.core.models.health.HealthResponse
 import dev.kodex.server.api.routes.healthRoutes
+import dev.kodex.server.api.util.serviceInfo
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -20,13 +21,13 @@ import kotlinx.serialization.json.Json
 
 class HealthRouteTest : FunSpec({
     val startedAt = Clock.System.now()
-    val version = "0.1.0-SNAPSHOT"
+    val version = "0.1.0"
 
     test("GET /api/v1/health returns 200") {
         testApplication {
             application {
                 install(ContentNegotiation) { json() }
-                routing { healthRoutes(startedAt = startedAt, version = version) }
+                routing { healthRoutes(startedAt = startedAt, info = serviceInfo) }
             }
             val response = client.get("/api/v1/health")
             response.status shouldBe HttpStatusCode.OK
@@ -37,7 +38,7 @@ class HealthRouteTest : FunSpec({
         testApplication {
             application {
                 install(ContentNegotiation) { json() }
-                routing { healthRoutes(startedAt = startedAt, version = version) }
+                routing { healthRoutes(startedAt = startedAt, info = serviceInfo) }
             }
             val response = client.get("/api/v1/health")
             val body = Json.decodeFromString<ApiEnvelope<HealthResponse>>(response.bodyAsText())
@@ -49,11 +50,11 @@ class HealthRouteTest : FunSpec({
         testApplication {
             application {
                 install(ContentNegotiation) { json() }
-                routing { healthRoutes(startedAt = startedAt, version = version) }
+                routing { healthRoutes(startedAt = startedAt, info = serviceInfo) }
             }
             val response = client.get("/api/v1/health")
             val body = Json.decodeFromString<ApiEnvelope<HealthResponse>>(response.bodyAsText())
-            body.meta.service shouldBe "kodex-api"
+            body.meta.service shouldBe "kodex-api-test"
             body.meta.serviceVersion shouldBe version
         }
     }
@@ -62,7 +63,7 @@ class HealthRouteTest : FunSpec({
         testApplication {
             application {
                 install(ContentNegotiation) { json() }
-                routing { healthRoutes(startedAt = startedAt, version = version) }
+                routing { healthRoutes(startedAt = startedAt, info = serviceInfo) }
             }
             val response = client.get("/api/v1/health")
             val body = Json.decodeFromString<ApiEnvelope<HealthResponse>>(response.bodyAsText())
@@ -74,7 +75,7 @@ class HealthRouteTest : FunSpec({
         testApplication {
             application {
                 install(ContentNegotiation) { json() }
-                routing { healthRoutes(startedAt = startedAt, version = version) }
+                routing { healthRoutes(startedAt = startedAt, info = serviceInfo) }
             }
             val response = client.get("/api/v1/health")
             val body = Json.decodeFromString<ApiEnvelope<HealthResponse>>(response.bodyAsText())
@@ -86,7 +87,7 @@ class HealthRouteTest : FunSpec({
         testApplication {
             application {
                 install(ContentNegotiation) { json() }
-                routing { healthRoutes(startedAt = startedAt, version = version) }
+                routing { healthRoutes(startedAt = startedAt, info = serviceInfo) }
             }
             val response = client.get("/api/v1/health")
             response.headers["Cache-Control"] shouldBe "no-store"
@@ -98,7 +99,7 @@ class HealthRouteTest : FunSpec({
         testApplication {
             application {
                 install(ContentNegotiation) { json() }
-                routing { healthRoutes(startedAt = startedAt, version = version) }
+                routing { healthRoutes(startedAt = startedAt, info = serviceInfo) }
             }
             val response = client.get("/api/v1/health") {
                 headers.append("X-Request-Id", clientRequestId)
@@ -112,7 +113,7 @@ class HealthRouteTest : FunSpec({
         testApplication {
             application {
                 install(ContentNegotiation) { json() }
-                routing { healthRoutes(startedAt = startedAt, version = version) }
+                routing { healthRoutes(startedAt = startedAt, info = serviceInfo) }
             }
             val response = client.get("/api/v1/health") {
                 headers.append("X-Request-Id", "not-a-uuid")

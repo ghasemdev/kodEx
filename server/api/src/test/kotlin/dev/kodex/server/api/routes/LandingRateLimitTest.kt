@@ -2,6 +2,7 @@
 
 package dev.kodex.server.api.routes
 
+import dev.kodex.server.api.util.serviceInfo
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.client.request.get
@@ -29,7 +30,7 @@ class LandingRateLimitTest : FunSpec({
                 }
                 routing {
                     rateLimit(RateLimitName("public")) {
-                        landingRoutes()
+                        landingRoutes(serviceInfo)
                     }
                 }
             }
