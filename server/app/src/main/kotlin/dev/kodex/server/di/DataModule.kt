@@ -26,29 +26,32 @@ class DataModule {
         expectSuccess = false
     }
 
-    @Single
-    fun emailProviders(resend: ResendEmailChannel, sendGrid: SendGridEmailChannel): List<EmailChannel> = listOfNotNull(
-        resend.takeIf { resend.isEnabled },
-        sendGrid.takeIf { sendGrid.isEnabled },
-    )
-
+    // Inject concrete channel types directly to avoid Koin resolving List<EmailChannel>
+    // via getAll<EmailChannel>(), which would include EmailRouter itself and cause a
+    // circular dependency → StackOverflowError.
     @Single(binds = [EmailChannel::class])
-    fun emailRouter(channels: List<EmailChannel>, quota: QuotaTracker): EmailRouter = EmailRouter(
-        channels = channels,
-        quota = quota,
-        breakers = channels.associate { it.name to CircuitBreaker() },
-    )
-
-    @Single
-    fun smsProviders(kavenegar: KavenegarSmsChannel, twilio: TwilioSmsChannel): List<SmsChannel> = listOfNotNull(
-        kavenegar.takeIf { kavenegar.isEnabled },
-        twilio.takeIf { twilio.isEnabled },
-    )
+    fun emailRouter(resend: ResendEmailChannel, sendGrid: SendGridEmailChannel, quota: QuotaTracker): EmailRouter {
+        val channels = listOfNotNull(
+            resend.takeIf { resend.isEnabled },
+            sendGrid.takeIf { sendGrid.isEnabled },
+        )
+        return EmailRouter(
+            channels = channels,
+            quota = quota,
+            breakers = channels.associate { it.name to CircuitBreaker() },
+        )
+    }
 
     @Single(binds = [SmsChannel::class])
-    fun smsRouter(channels: List<SmsChannel>, quota: QuotaTracker): SmsRouter = SmsRouter(
-        channels = channels,
-        quota = quota,
-        breakers = channels.associate { it.name to CircuitBreaker() },
-    )
+    fun smsRouter(kavenegar: KavenegarSmsChannel, twilio: TwilioSmsChannel, quota: QuotaTracker): SmsRouter {
+        val channels = listOfNotNull(
+            kavenegar.takeIf { kavenegar.isEnabled },
+            twilio.takeIf { twilio.isEnabled },
+        )
+        return SmsRouter(
+            channels = channels,
+            quota = quota,
+            breakers = channels.associate { it.name to CircuitBreaker() },
+        )
+    }
 }
