@@ -119,7 +119,7 @@ Pending email verification records (registration + re-send).
 | `user_id` | `BIGINT` | FK → users(id) | CASCADE DELETE |
 | `token_hash` | `CHAR(64)` | NOT NULL | SHA-256 of raw token (magic link) or OTP code |
 | `delivery_mode` | `VARCHAR(20)` | NOT NULL | MAGIC_LINK \| OTP |
-| `expires_at` | `TIMESTAMPTZ` | NOT NULL | 24 h (magic link) \| 15 min (OTP) |
+| `expires_at` | `TIMESTAMPTZ` | NOT NULL | 1 h (magic link) \| 2 min (OTP) |
 | `used_at` | `TIMESTAMPTZ` | NULLABLE | Null = unused |
 
 **OTP storage note**: For 6-digit OTP, store SHA-256(`userId:otp`) as `token_hash` so that the raw 6 digits are never stored.

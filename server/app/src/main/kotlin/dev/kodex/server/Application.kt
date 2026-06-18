@@ -6,8 +6,11 @@ import dev.kodex.core.config.EnvConfig
 import dev.kodex.core.env.env
 import dev.kodex.core.env.envOrNull
 import dev.kodex.core.models.auth.Role
+import dev.kodex.server.api.auth.JwtGenerator
+import dev.kodex.server.api.auth.authRoutes
 import dev.kodex.server.api.auth.middleware.AppRateLimits
 import dev.kodex.server.api.auth.middleware.ForbiddenException
+import dev.kodex.server.api.auth.middleware.TurnstileVerifier
 import dev.kodex.server.api.response.ErrorCode
 import dev.kodex.server.api.response.ServiceInfo
 import dev.kodex.server.api.response.buildErrorEnvelope
@@ -15,6 +18,10 @@ import dev.kodex.server.api.routes.healthRoutes
 import dev.kodex.server.api.routes.landingRoutes
 import dev.kodex.server.api.util.sanitizeRequestId
 import dev.kodex.server.di.KoinServerApplication
+import dev.kodex.server.domain.auth.repository.UserRepository
+import dev.kodex.server.domain.auth.usecase.RegisterUseCase
+import dev.kodex.server.domain.auth.usecase.ResendVerificationUseCase
+import dev.kodex.server.domain.auth.usecase.VerifyEmailUseCase
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
@@ -39,6 +46,7 @@ import io.ktor.server.routing.routing
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+import org.koin.ktor.ext.inject
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 import org.koin.plugin.module.dsl.withConfiguration
@@ -177,6 +185,17 @@ fun main() {
             healthRoutes(startedAt = startedAt, info = serviceInfo)
             rateLimit(AppRateLimits.PUBLIC) {
                 landingRoutes(info = serviceInfo)
+            }
+            rateLimit(AppRateLimits.AUTH) {
+                authRoutes(
+                    registerUseCase = inject<RegisterUseCase>().value,
+                    verifyEmailUseCase = inject<VerifyEmailUseCase>().value,
+                    resendVerificationUseCase = inject<ResendVerificationUseCase>().value,
+                    userRepository = inject<UserRepository>().value,
+                    turnstileVerifier = inject<TurnstileVerifier>().value,
+                    jwtGenerator = inject<JwtGenerator>().value,
+                    serviceInfo = serviceInfo,
+                )
             }
         }
     }.start(wait = true)

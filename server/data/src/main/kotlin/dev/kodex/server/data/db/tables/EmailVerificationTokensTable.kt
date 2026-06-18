@@ -1,9 +1,8 @@
 package dev.kodex.server.data.db.tables
 
+import dev.kodex.server.domain.auth.model.DeliveryMode
 import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
 import org.jetbrains.exposed.v1.datetime.timestamp
-
-enum class DeliveryMode { MAGIC_LINK, OTP }
 
 object EmailVerificationTokensTable : LongIdTable("email_verification_tokens") {
     val userId = reference("user_id", UsersTable)

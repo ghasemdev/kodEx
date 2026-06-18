@@ -44,6 +44,12 @@ sealed class ConfigQualifier {
         }
     }
 
+    sealed class App {
+        companion object {
+            const val BASE_URL = "config.app.base_url"
+        }
+    }
+
     sealed class Sms {
         companion object {
             const val KAVENEGAR_API_KEY = "config.sms.kavenegar_api_key"

@@ -61,6 +61,10 @@ class EnvModule {
     fun emailFrom(): String = EnvConfig.emailFrom
 
     @Single
+    @Named(ConfigQualifier.App.BASE_URL)
+    fun appBaseUrl(): String = EnvConfig.appBaseUrl
+
+    @Single
     @Named(ConfigQualifier.Sms.KAVENEGAR_API_KEY)
     fun kavenegarApiKey(): String = EnvConfig.kavenegarApiKey
 

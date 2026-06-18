@@ -14,6 +14,9 @@ object ErrorCode {
     const val INVALID_CREDENTIALS = "INVALID_CREDENTIALS"
     const val TOKEN_EXPIRED = "TOKEN_EXPIRED"
     const val TOKEN_ALREADY_USED = "TOKEN_ALREADY_USED"
+    const val TOKEN_INVALID = "TOKEN_INVALID"
+    const val TURNSTILE_FAILED = "TURNSTILE_FAILED"
+    const val EMAIL_ALREADY_REGISTERED = "EMAIL_ALREADY_REGISTERED"
 
     // Resources
     const val NOT_FOUND = "NOT_FOUND"
@@ -55,6 +58,18 @@ private val authMessages: Map<String, Map<String, String>> = mapOf(
     ErrorCode.TOKEN_ALREADY_USED to mapOf(
         "en" to "This link has already been used.",
         "fa" to "این لینک قبلاً استفاده شده است.",
+    ),
+    ErrorCode.TOKEN_INVALID to mapOf(
+        "en" to "Invalid verification token.",
+        "fa" to "توکن تأیید نامعتبر است.",
+    ),
+    ErrorCode.TURNSTILE_FAILED to mapOf(
+        "en" to "Bot detection failed. Please try again.",
+        "fa" to "تشخیص ربات ناموفق بود. لطفاً دوباره تلاش کنید.",
+    ),
+    ErrorCode.EMAIL_ALREADY_REGISTERED to mapOf(
+        "en" to "This email address is already registered.",
+        "fa" to "این آدرس ایمیل قبلاً ثبت شده است.",
     ),
 )
 
