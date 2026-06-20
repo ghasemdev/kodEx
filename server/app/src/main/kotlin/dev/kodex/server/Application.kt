@@ -16,12 +16,17 @@ import dev.kodex.server.api.response.ServiceInfo
 import dev.kodex.server.api.response.buildErrorEnvelope
 import dev.kodex.server.api.routes.healthRoutes
 import dev.kodex.server.api.routes.landingRoutes
+import dev.kodex.server.api.users.userRoutes
 import dev.kodex.server.api.util.sanitizeRequestId
 import dev.kodex.server.di.KoinServerApplication
 import dev.kodex.server.domain.auth.repository.UserRepository
+import dev.kodex.server.domain.auth.usecase.LoginUseCase
+import dev.kodex.server.domain.auth.usecase.LogoutUseCase
+import dev.kodex.server.domain.auth.usecase.RefreshTokenUseCase
 import dev.kodex.server.domain.auth.usecase.RegisterUseCase
 import dev.kodex.server.domain.auth.usecase.ResendVerificationUseCase
 import dev.kodex.server.domain.auth.usecase.VerifyEmailUseCase
+import dev.kodex.server.domain.users.repository.ProfileRepository
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
@@ -191,12 +196,20 @@ fun main() {
                     registerUseCase = inject<RegisterUseCase>().value,
                     verifyEmailUseCase = inject<VerifyEmailUseCase>().value,
                     resendVerificationUseCase = inject<ResendVerificationUseCase>().value,
+                    loginUseCase = inject<LoginUseCase>().value,
+                    refreshTokenUseCase = inject<RefreshTokenUseCase>().value,
+                    logoutUseCase = inject<LogoutUseCase>().value,
                     userRepository = inject<UserRepository>().value,
                     turnstileVerifier = inject<TurnstileVerifier>().value,
                     jwtGenerator = inject<JwtGenerator>().value,
                     serviceInfo = serviceInfo,
                 )
             }
+            userRoutes(
+                userRepository = inject<UserRepository>().value,
+                profileRepository = inject<ProfileRepository>().value,
+                serviceInfo = serviceInfo,
+            )
         }
     }.start(wait = true)
 }

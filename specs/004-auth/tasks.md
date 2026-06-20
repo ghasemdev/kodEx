@@ -126,11 +126,11 @@
 
 **Independent Test**: Login with registered account → receive `accessToken`; `GET /users/me` succeeds; wait 15 min or mock expiry → `POST /auth/refresh` silently issues new pair.
 
-- [ ] T056 [US2] Implement `server/domain/.../auth/usecase/LoginUseCase.kt` — check account lockout (`users.locked_until`), check per-IP Redis counter (if ≥ 3 require Turnstile), `PasswordHasher.verify()`, increment Redis counter on failure + reset on success, increment `users.failed_login_count` (lock at 10 + dispatch lockout email), issue access JWT + refresh token (set cookie or body per platform)
-- [ ] T057 [US2] Implement `server/domain/.../auth/usecase/RefreshTokenUseCase.kt` — look up token by SHA-256 hash, check not revoked + not expired, rotate (insert new + revoke old in DB transaction), return new `AuthTokensResponse`
-- [ ] T058 [US2] Add `POST /api/v1/auth/login` in `AuthRoutes.kt` — call `LoginUseCase`; on TOTP-enabled result return `TotpChallengeResponse` with `totpSessionToken` JWT (`{ type:"totp-session", sub:"<userId>", exp:iat+300 }`); otherwise set cookie + return tokens
-- [ ] T059 [US2] Add `POST /api/v1/auth/refresh` in `AuthRoutes.kt` — read `refresh_token` cookie, call `RefreshTokenUseCase`, set new cookie + return new `accessToken`
-- [ ] T060 [US2] Add `GET /api/v1/users/me` in `server/api/.../users/UserRoutes.kt` — protected by `requireRole(PARTICIPANT, EXAM_CREATOR, ADMIN)`; return `UserDto` with full profile
+- [x] T056 [US2] Implement `server/domain/.../auth/usecase/LoginUseCase.kt` — check account lockout (`users.locked_until`), check per-IP Redis counter (if ≥ 3 require Turnstile), `PasswordHasher.verify()`, increment Redis counter on failure + reset on success, increment `users.failed_login_count` (lock at 10 + dispatch lockout email), issue access JWT + refresh token (set cookie or body per platform)
+- [x] T057 [US2] Implement `server/domain/.../auth/usecase/RefreshTokenUseCase.kt` — look up token by SHA-256 hash, check not revoked + not expired, rotate (insert new + revoke old in DB transaction), return new `AuthTokensResponse`
+- [x] T058 [US2] Add `POST /api/v1/auth/login` in `AuthRoutes.kt` — call `LoginUseCase`; on TOTP-enabled result return `TotpChallengeResponse` with `totpSessionToken` JWT (`{ type:"totp-session", sub:"<userId>", exp:iat+300 }`); otherwise set cookie + return tokens
+- [x] T059 [US2] Add `POST /api/v1/auth/refresh` in `AuthRoutes.kt` — read `refresh_token` cookie, call `RefreshTokenUseCase`, set new cookie + return new `accessToken`
+- [x] T060 [US2] Add `GET /api/v1/users/me` in `server/api/.../users/UserRoutes.kt` — protected by `requireRole(PARTICIPANT, EXAM_CREATOR, ADMIN)`; return `UserDto` with full profile
 - [ ] T061 [US2] Create `app/webApp/.../auth/AuthState.kt` — sealed: `LoggedOut | LoggingIn | LoggedIn(user: UserDto, accessToken: String, expiresAt: Instant) | RequiresTotp(totpSessionToken: String)`
 - [ ] T062 [US2] Create `app/webApp/.../auth/AuthStore.kt` — MVI store; holds `AuthState`; schedules coroutine timer to refresh token 60 s before `expiresAt`; exposes `login()`, `setLoggedIn()`, `logout()`, `refreshNow()`
 - [ ] T063 [US2] Create `app/webApp/.../auth/TokenInterceptor.kt` — Ktor Client plugin; injects `Authorization: Bearer <accessToken>` on every request; intercepts 401, calls `AuthStore.refreshNow()`, retries once
@@ -148,8 +148,8 @@
 
 **Independent Test**: Login → capture cookie → logout → attempt refresh with same cookie → 401.
 
-- [ ] T067 [US7] Implement `server/domain/.../auth/usecase/LogoutUseCase.kt` — look up refresh token by hash, set `revoked_at = now()`; if no valid token found, return success silently
-- [ ] T068 [US7] Add `POST /api/v1/auth/logout` in `AuthRoutes.kt` — call `LogoutUseCase`; clear `refresh_token` cookie (`Max-Age=0`); return `data: null`
+- [x] T067 [US7] Implement `server/domain/.../auth/usecase/LogoutUseCase.kt` — look up refresh token by hash, set `revoked_at = now()`; if no valid token found, return success silently
+- [x] T068 [US7] Add `POST /api/v1/auth/logout` in `AuthRoutes.kt` — call `LogoutUseCase`; clear `refresh_token` cookie (`Max-Age=0`); return `data: null`
 - [ ] T069 [US7] Wire logout to navbar profile dropdown in `app/webApp` — call `AuthRemoteDataSource.logout()` → dispatch to `AuthStore` → navigate to `SignInPage`; add `logout` method to `AuthRemoteDataSourceImpl.kt`
 
 **Checkpoint**: Full login → logout → refresh attempted → 401 cycle verified.

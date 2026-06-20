@@ -1,6 +1,8 @@
 package dev.kodex.server.api.auth
 
 import dev.kodex.core.models.auth.AuthTokensResponse
+import dev.kodex.core.models.auth.LoginRequest
+import dev.kodex.core.models.auth.LoginResponse
 import dev.kodex.core.models.auth.RegisterRequest
 import dev.kodex.core.models.auth.UsernameAvailabilityResponse
 import dev.kodex.server.api.auth.middleware.AuthCachePlugin
@@ -11,6 +13,9 @@ import dev.kodex.server.api.response.buildEnvelope
 import dev.kodex.server.api.response.buildErrorEnvelope
 import dev.kodex.server.api.util.sanitizeRequestId
 import dev.kodex.server.domain.auth.repository.UserRepository
+import dev.kodex.server.domain.auth.usecase.LoginUseCase
+import dev.kodex.server.domain.auth.usecase.LogoutUseCase
+import dev.kodex.server.domain.auth.usecase.RefreshTokenUseCase
 import dev.kodex.server.domain.auth.usecase.RegisterUseCase
 import dev.kodex.server.domain.auth.usecase.ResendVerificationUseCase
 import dev.kodex.server.domain.auth.usecase.VerifyEmailUseCase
@@ -57,12 +62,27 @@ private fun ApplicationCall.appendRefreshCookie(rawToken: String) {
     )
 }
 
+private fun ApplicationCall.clearRefreshCookie() {
+    response.cookies.append(
+        name = REFRESH_COOKIE,
+        value = "",
+        httpOnly = true,
+        secure = true,
+        maxAge = 0,
+        path = "/",
+        extensions = mapOf("SameSite" to "Lax"),
+    )
+}
+
 private fun isMobile(platform: String) = platform == "android" || platform == "ios"
 
 fun Route.authRoutes(
     registerUseCase: RegisterUseCase,
     verifyEmailUseCase: VerifyEmailUseCase,
     resendVerificationUseCase: ResendVerificationUseCase,
+    loginUseCase: LoginUseCase,
+    refreshTokenUseCase: RefreshTokenUseCase,
+    logoutUseCase: LogoutUseCase,
     userRepository: UserRepository,
     turnstileVerifier: TurnstileVerifier,
     jwtGenerator: JwtGenerator,
@@ -74,6 +94,9 @@ fun Route.authRoutes(
         usernameCheckRoute(userRepository, serviceInfo)
         verifyEmailRoute(verifyEmailUseCase, jwtGenerator, serviceInfo)
         resendVerificationRoute(resendVerificationUseCase, serviceInfo)
+        loginRoute(loginUseCase, turnstileVerifier, jwtGenerator, serviceInfo)
+        refreshRoute(refreshTokenUseCase, jwtGenerator, serviceInfo)
+        logoutRoute(logoutUseCase, serviceInfo)
     }
 }
 
@@ -276,6 +299,155 @@ private fun Route.resendVerificationRoute(
     post("/verify-email/resend") {
         val body = call.receive<EmailBody>()
         resendVerificationUseCase.execute(body.email, call.platform)
+        call.respond(with(serviceInfo) { buildEnvelope(data = null, requestId = call.requestId) })
+    }
+}
+
+@Suppress("LongMethod")
+private fun Route.loginRoute(
+    loginUseCase: LoginUseCase,
+    turnstileVerifier: TurnstileVerifier,
+    jwtGenerator: JwtGenerator,
+    serviceInfo: ServiceInfo,
+) {
+    post("/login") {
+        val req = call.receive<LoginRequest>()
+        val ip = call.request.origin.remoteHost
+
+        if (loginUseCase.requiresTurnstile(ip) && !turnstileVerifier.verify(req.turnstileToken ?: "", ip)) {
+            call.respond(
+                status = HttpStatusCode.BadRequest,
+                message = with(serviceInfo) {
+                    buildErrorEnvelope(ErrorCode.TURNSTILE_FAILED, "Bot detection failed.", call.lang, call.requestId)
+                },
+            )
+            return@post
+        }
+
+        when (val result = loginUseCase.execute(req.email, req.password, ip, call.deviceHint)) {
+            is LoginUseCase.Result.Success -> {
+                val accessToken = jwtGenerator.generate(result.user.id, result.user.role)
+                if (!isMobile(call.platform)) call.appendRefreshCookie(result.rawRefreshToken)
+                call.respond(
+                    with(serviceInfo) {
+                        buildEnvelope(
+                            data = LoginResponse(
+                                accessToken = accessToken,
+                                expiresIn = jwtGenerator.accessTokenTtlSeconds,
+                            ),
+                            requestId = call.requestId,
+                        )
+                    },
+                )
+            }
+
+            is LoginUseCase.Result.TotpRequired -> {
+                val totpSessionToken = jwtGenerator.generateTotpSessionToken(result.userId)
+                call.respond(
+                    with(serviceInfo) {
+                        buildEnvelope(
+                            data = LoginResponse(requiresTotp = true, totpSessionToken = totpSessionToken),
+                            requestId = call.requestId,
+                        )
+                    },
+                )
+            }
+
+            is LoginUseCase.Result.InvalidCredentials -> {
+                call.respond(
+                    status = HttpStatusCode.Unauthorized,
+                    message = with(serviceInfo) {
+                        buildErrorEnvelope(
+                            code = ErrorCode.INVALID_CREDENTIALS,
+                            message = "Incorrect email or password.",
+                            lang = call.lang,
+                            requestId = call.requestId,
+                        )
+                    },
+                )
+            }
+
+            is LoginUseCase.Result.AccountLocked -> {
+                call.respond(
+                    status = HttpStatusCode.Forbidden,
+                    message = with(serviceInfo) {
+                        buildErrorEnvelope(
+                            code = ErrorCode.ACCOUNT_LOCKED,
+                            message = "Your account has been temporarily locked. Please try again later.",
+                            lang = call.lang,
+                            requestId = call.requestId,
+                        )
+                    },
+                )
+            }
+
+            is LoginUseCase.Result.EmailNotVerified -> {
+                call.respond(
+                    status = HttpStatusCode.Forbidden,
+                    message = with(serviceInfo) {
+                        buildErrorEnvelope(
+                            code = ErrorCode.EMAIL_NOT_VERIFIED,
+                            message = "Please verify your email address before continuing.",
+                            lang = call.lang,
+                            requestId = call.requestId,
+                        )
+                    },
+                )
+            }
+        }
+    }
+}
+
+private fun Route.refreshRoute(
+    refreshTokenUseCase: RefreshTokenUseCase,
+    jwtGenerator: JwtGenerator,
+    serviceInfo: ServiceInfo,
+) {
+    post("/refresh") {
+        val rawToken = call.request.cookies[REFRESH_COOKIE]
+        if (rawToken.isNullOrBlank()) {
+            call.respond(
+                status = HttpStatusCode.Unauthorized,
+                message = with(serviceInfo) {
+                    buildErrorEnvelope(ErrorCode.UNAUTHORIZED, "Missing refresh token.", call.lang, call.requestId)
+                },
+            )
+            return@post
+        }
+
+        val ip = call.request.origin.remoteHost
+        when (val result = refreshTokenUseCase.execute(rawToken, call.deviceHint, ip)) {
+            is RefreshTokenUseCase.Result.Success -> {
+                val accessToken = jwtGenerator.generate(result.user.id, result.user.role)
+                call.appendRefreshCookie(result.rawRefreshToken)
+                call.respond(
+                    with(serviceInfo) {
+                        buildEnvelope(
+                            data = AuthTokensResponse(accessToken, jwtGenerator.accessTokenTtlSeconds),
+                            requestId = call.requestId,
+                        )
+                    },
+                )
+            }
+
+            is RefreshTokenUseCase.Result.Invalid -> {
+                call.clearRefreshCookie()
+                call.respond(
+                    status = HttpStatusCode.Unauthorized,
+                    message = with(serviceInfo) {
+                        buildErrorEnvelope(ErrorCode.UNAUTHORIZED, "Invalid refresh token.", call.lang, call.requestId)
+                    },
+                )
+            }
+        }
+    }
+}
+
+private fun Route.logoutRoute(logoutUseCase: LogoutUseCase, serviceInfo: ServiceInfo) {
+    post("/logout") {
+        val rawToken = call.request.cookies[REFRESH_COOKIE]
+        logoutUseCase.execute(rawToken)
+        call.clearRefreshCookie()
         call.respond(with(serviceInfo) { buildEnvelope(data = null, requestId = call.requestId) })
     }
 }
