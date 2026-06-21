@@ -303,7 +303,7 @@ private fun Route.resendVerificationRoute(
     }
 }
 
-@Suppress("LongMethod")
+@Suppress("LongMethod", "LabeledExpression")
 private fun Route.loginRoute(
     loginUseCase: LoginUseCase,
     turnstileVerifier: TurnstileVerifier,
@@ -398,6 +398,7 @@ private fun Route.loginRoute(
     }
 }
 
+@Suppress("LabeledExpression")
 private fun Route.refreshRoute(
     refreshTokenUseCase: RefreshTokenUseCase,
     jwtGenerator: JwtGenerator,

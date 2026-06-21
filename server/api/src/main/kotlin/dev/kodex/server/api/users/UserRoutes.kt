@@ -25,11 +25,7 @@ import io.ktor.server.routing.route
 private const val LANG_HEADER = "lang"
 private const val REQUEST_ID_HEADER = "X-Request-Id"
 
-fun Route.userRoutes(
-    userRepository: UserRepository,
-    profileRepository: ProfileRepository,
-    serviceInfo: ServiceInfo,
-) {
+fun Route.userRoutes(userRepository: UserRepository, profileRepository: ProfileRepository, serviceInfo: ServiceInfo) {
     route("/api/v1/users") {
         authenticate("auth-jwt") {
             requireRole(Role.PARTICIPANT, Role.EXAM_CREATOR, Role.ADMIN)
@@ -38,6 +34,7 @@ fun Route.userRoutes(
     }
 }
 
+@Suppress("LabeledExpression")
 private fun Route.meRoute(
     userRepository: UserRepository,
     profileRepository: ProfileRepository,

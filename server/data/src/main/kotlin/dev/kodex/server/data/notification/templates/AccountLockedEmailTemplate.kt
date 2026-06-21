@@ -1,5 +1,6 @@
 package dev.kodex.server.data.notification.templates
 
+@Suppress("StringTemplateIndent")
 object AccountLockedEmailTemplate {
     fun render(lockedUntilDisplay: String): String = """
         <!DOCTYPE html>
