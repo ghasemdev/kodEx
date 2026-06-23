@@ -1,9 +1,5 @@
 package dev.kodex.webapp
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import dev.kilua.Application
 import dev.kilua.CoreModule
 import dev.kilua.Hot
@@ -14,11 +10,15 @@ import dev.kilua.startApplication
 import dev.kilua.theme.Theme
 import dev.kilua.theme.ThemeManager
 import dev.kilua.utils.isDom
+import dev.kodex.webapp.core.Router
 import dev.kodex.webapp.design.i18n.initI18n
 import dev.kodex.webapp.di.KoinApp
 import dev.kodex.webapp.gsap.ScrollTrigger
 import dev.kodex.webapp.gsap.gsap
 import dev.kodex.webapp.pages.NotFoundPage
+import dev.kodex.webapp.pages.auth.SignInPage
+import dev.kodex.webapp.pages.auth.SignUpPage
+import dev.kodex.webapp.pages.auth.VerifyEmailPage
 import dev.kodex.webapp.pages.landing.LandingPage
 import dev.kodex.webapp.playground.PlaygroundApp
 import kotlinx.browser.document
@@ -56,18 +56,18 @@ class App : Application() {
                 return@root
             }
 
-            var currentPath by remember { mutableStateOf(window.location.pathname) }
-
             if (isDom) {
                 window.addEventListener("popstate") {
-                    currentPath = window.location.pathname
+                    Router.syncFromBrowser()
                 }
             }
 
-            if (currentPath == "/" || currentPath.isEmpty()) {
-                LandingPage()
-            } else {
-                NotFoundPage()
+            when (Router.currentPath) {
+                "/", "" -> LandingPage()
+                "/sign-up" -> SignUpPage()
+                "/sign-in" -> SignInPage()
+                "/verify-email" -> VerifyEmailPage()
+                else -> NotFoundPage()
             }
         }
     }
@@ -84,3 +84,4 @@ fun app() {
 
 expect fun bundlerHot(): Hot?
 expect fun isDev(): Boolean
+expect fun turnstileSiteKeyFromEnv(): String?

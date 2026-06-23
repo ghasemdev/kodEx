@@ -25,5 +25,11 @@ object ApiRoutes {
         const val PASSKEY_AUTH = "$BASE/passkey/auth"
         const val SESSIONS = "$BASE/sessions"
         const val SESSION_BY_ID = "$BASE/sessions/{id}"
+        const val VERIFY_EMAIL_RESEND = "$BASE/verify-email/resend"
+    }
+
+    object Users {
+        private const val BASE = "/api/v1/users"
+        const val ME = "$BASE/me"
     }
 }

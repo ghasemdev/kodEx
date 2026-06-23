@@ -6,11 +6,10 @@ import dev.kilua.html.div
 import dev.kilua.html.h1
 import dev.kilua.html.p
 import dev.kilua.html.span
+import dev.kodex.webapp.core.Router
 import dev.kodex.webapp.design.components.Button
 import dev.kodex.webapp.design.components.ButtonVariant
 import dev.kodex.webapp.design.i18n.i18n
-import kotlinx.browser.window
-import org.w3c.dom.events.Event
 
 @Composable
 fun IComponent.NotFoundPage() {
@@ -28,10 +27,7 @@ fun IComponent.NotFoundPage() {
         Button(
             label = i18n.tr("Back to Home"),
             variant = ButtonVariant.Primary,
-            onClick = {
-                window.history.pushState(null, "", "/")
-                window.dispatchEvent(Event("popstate"))
-            },
+            onClick = { Router.navigate("/") },
         )
     }
 }

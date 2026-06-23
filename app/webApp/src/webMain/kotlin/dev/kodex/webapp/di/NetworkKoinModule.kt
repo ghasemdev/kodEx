@@ -1,5 +1,7 @@
 package dev.kodex.webapp.di
 
+import dev.kodex.webapp.auth.AuthStore
+import dev.kodex.webapp.auth.TokenInterceptorPlugin
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.js.Js
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -13,7 +15,7 @@ import org.koin.core.annotation.Single
 @Module
 class NetworkKoinModule {
     @Single
-    fun httpClient(): HttpClient = HttpClient(Js) {
+    fun httpClient(authStore: Lazy<AuthStore>): HttpClient = HttpClient(Js) {
         install(ContentNegotiation) {
             // ignoreUnknownKeys: server ApiMeta fields are deserialized too, but
             // keeping this guard is defensive against any future envelope additions.
@@ -25,5 +27,6 @@ class NetworkKoinModule {
             }
         }
         expectSuccess = false
+        install(TokenInterceptorPlugin) { this.authStore = authStore }
     }
 }

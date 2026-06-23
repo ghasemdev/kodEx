@@ -112,9 +112,9 @@
 - [x] T050 [P] [US1] Add `GET /api/v1/auth/username/check?username=` in `AuthRoutes.kt` — call `UserRepository.isUsernameTaken`; return `UsernameAvailabilityResponse`
 - [x] T051 [US1] Add `POST /api/v1/auth/verify-email` + `POST /api/v1/auth/verify-email/resend` in `AuthRoutes.kt` — call respective use cases; set refresh cookie on verify success
 - [x] T052 [P] [US1] Create email HTML templates: `VerificationMagicLinkEmail` + `VerificationOtpEmail` in `server/data/.../notification/templates/` — inline HTML strings, no template engine dependency
-- [ ] T053 [US1] Create `app/webApp/src/webMain/kotlin/dev/kodex/webapp/pages/auth/SignUpPage.kt` + `AuthViewModel.kt` + `AuthUiState.kt` — form with username (real-time availability check via debounced `GET /username/check`), email, password (zxcvbn-ts strength bar, score ≥ 2 gate), Turnstile widget; submit → `AuthRemoteDataSource.register()`
-- [ ] T054 [US1] Create `app/webApp/.../pages/auth/VerifyEmailPage.kt` — display "check your inbox" state; handle magic-link callback (`?token=`); show "resend" button; update `AuthStore` on verification success
-- [ ] T055 [US1] Add `register`, `verifyEmail`, `resendVerification`, `usernameCheck` methods to `AuthRemoteDataSourceImpl.kt`
+- [x] T053 [US1] Create `app/webApp/src/webMain/kotlin/dev/kodex/webapp/pages/auth/SignUpPage.kt` + `AuthViewModel.kt` + `AuthUiState.kt` — form with username (real-time availability check via debounced `GET /username/check`), email, password (zxcvbn-ts strength bar, score ≥ 2 gate), Turnstile widget; submit → `AuthRemoteDataSource.register()`
+- [x] T054 [US1] Create `app/webApp/.../pages/auth/VerifyEmailPage.kt` — display "check your inbox" state; handle magic-link callback (`?token=`); show "resend" button; update `AuthStore` on verification success
+- [x] T055 [US1] Add `register`, `verifyEmail`, `resendVerification`, `usernameCheck` methods to `AuthRemoteDataSourceImpl.kt`
 
 **Checkpoint**: Full registration + verification flow works end-to-end via `curl` smoke tests in `quickstart.md`.
 
@@ -131,12 +131,12 @@
 - [x] T058 [US2] Add `POST /api/v1/auth/login` in `AuthRoutes.kt` — call `LoginUseCase`; on TOTP-enabled result return `TotpChallengeResponse` with `totpSessionToken` JWT (`{ type:"totp-session", sub:"<userId>", exp:iat+300 }`); otherwise set cookie + return tokens
 - [x] T059 [US2] Add `POST /api/v1/auth/refresh` in `AuthRoutes.kt` — read `refresh_token` cookie, call `RefreshTokenUseCase`, set new cookie + return new `accessToken`
 - [x] T060 [US2] Add `GET /api/v1/users/me` in `server/api/.../users/UserRoutes.kt` — protected by `requireRole(PARTICIPANT, EXAM_CREATOR, ADMIN)`; return `UserDto` with full profile
-- [ ] T061 [US2] Create `app/webApp/.../auth/AuthState.kt` — sealed: `LoggedOut | LoggingIn | LoggedIn(user: UserDto, accessToken: String, expiresAt: Instant) | RequiresTotp(totpSessionToken: String)`
-- [ ] T062 [US2] Create `app/webApp/.../auth/AuthStore.kt` — MVI store; holds `AuthState`; schedules coroutine timer to refresh token 60 s before `expiresAt`; exposes `login()`, `setLoggedIn()`, `logout()`, `refreshNow()`
-- [ ] T063 [US2] Create `app/webApp/.../auth/TokenInterceptor.kt` — Ktor Client plugin; injects `Authorization: Bearer <accessToken>` on every request; intercepts 401, calls `AuthStore.refreshNow()`, retries once
-- [ ] T064 [US2] Create `app/webApp/.../pages/auth/SignInPage.kt` + extend `AuthViewModel.kt` — email + password form; autocomplete attributes; on `RequiresTotp` state → show inline TOTP prompt with `totpSessionToken`; wire Turnstile widget (show after 3 failures)
-- [ ] T065 [P] [US2] Create lockout notification email template `AccountLockedEmail` in `server/data/.../notification/templates/`
-- [ ] T066 [US2] Add `login`, `refresh`, `getMe` methods to `AuthRemoteDataSourceImpl.kt`; wire `TokenInterceptor` into app Ktor Client; add `UserRemoteDataSource.kt` + `UserRemoteDataSourceImpl.kt`
+- [x] T061 [US2] Create `app/webApp/.../auth/AuthState.kt` — sealed: `LoggedOut | LoggingIn | LoggedIn(user: UserDto, accessToken: String, expiresAt: Instant) | RequiresTotp(totpSessionToken: String)`
+- [x] T062 [US2] Create `app/webApp/.../auth/AuthStore.kt` — MVI store; holds `AuthState`; schedules coroutine timer to refresh token 60 s before `expiresAt`; exposes `login()`, `setLoggedIn()`, `logout()`, `refreshNow()`
+- [x] T063 [US2] Create `app/webApp/.../auth/TokenInterceptor.kt` — Ktor Client plugin; injects `Authorization: Bearer <accessToken>` on every request; intercepts 401, calls `AuthStore.refreshNow()`, retries once
+- [x] T064 [US2] Create `app/webApp/.../pages/auth/SignInPage.kt` + extend `AuthViewModel.kt` — email + password form; autocomplete attributes; on `RequiresTotp` state → show inline TOTP prompt with `totpSessionToken`; wire Turnstile widget (show after 3 failures)
+- [x] T065 [P] [US2] Create lockout notification email template `AccountLockedEmail` in `server/data/.../notification/templates/`
+- [x] T066 [US2] Add `login`, `refresh`, `getMe` methods to `AuthRemoteDataSourceImpl.kt`; wire `TokenInterceptor` into app Ktor Client; add `UserRemoteDataSource.kt` + `UserRemoteDataSourceImpl.kt`
 
 **Checkpoint**: Login → `accessToken` → `GET /users/me` → 200 with user object. Logout and re-login confirmed working.
 
@@ -150,7 +150,7 @@
 
 - [x] T067 [US7] Implement `server/domain/.../auth/usecase/LogoutUseCase.kt` — look up refresh token by hash, set `revoked_at = now()`; if no valid token found, return success silently
 - [x] T068 [US7] Add `POST /api/v1/auth/logout` in `AuthRoutes.kt` — call `LogoutUseCase`; clear `refresh_token` cookie (`Max-Age=0`); return `data: null`
-- [ ] T069 [US7] Wire logout to navbar profile dropdown in `app/webApp` — call `AuthRemoteDataSource.logout()` → dispatch to `AuthStore` → navigate to `SignInPage`; add `logout` method to `AuthRemoteDataSourceImpl.kt`
+- [x] T069 [US7] Wire logout to navbar profile dropdown in `app/webApp` — call `AuthRemoteDataSource.logout()` → dispatch to `AuthStore` → navigate to `SignInPage`; add `logout` method to `AuthRemoteDataSourceImpl.kt`
 
 **Checkpoint**: Full login → logout → refresh attempted → 401 cycle verified.
 

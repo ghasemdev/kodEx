@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import dev.kilua.core.IComponent
 import dev.kilua.html.div
@@ -14,15 +15,19 @@ import dev.kilua.html.span
 import dev.kodex.shared.session.Plan
 import dev.kodex.shared.session.SessionState
 import dev.kodex.shared.session.UserRole
+import dev.kodex.webapp.auth.AuthStore
+import dev.kodex.webapp.core.Router
 import dev.kodex.webapp.design.components.Button
 import dev.kodex.webapp.design.components.ButtonVariant
 import dev.kodex.webapp.design.components.ComponentSize
 import dev.kodex.webapp.design.components.LanguageSwitcher
 import dev.kodex.webapp.design.components.ThemeSwitcher
 import dev.kodex.webapp.design.i18n.i18n
+import dev.kodex.webapp.di.org.koin.compose.koinInject
 import dev.kodex.webapp.gsap.gsap
 import js.objects.unsafeJso
 import kotlinx.browser.document
+import kotlinx.coroutines.launch
 
 @Composable
 fun IComponent.GlobalNavBar(session: SessionState = SessionState.Guest) {
@@ -145,6 +150,7 @@ private fun IComponent.guestButtons() {
         role("link")
         attribute(ARIA_LABEL, i18n.tr("Sign in to your account"))
         +i18n.tr("Sign In")
+        onClick { Router.navigate(ROUTE_SIGN_IN) }
     }
     Button(
         id = "nav-sign-up",
@@ -152,6 +158,7 @@ private fun IComponent.guestButtons() {
         variant = ButtonVariant.Primary,
         size = ComponentSize.Sm,
         className = "hidden md:inline-flex",
+        onClick = { Router.navigate(ROUTE_SIGN_UP) },
     )
 }
 
@@ -212,6 +219,9 @@ private fun IComponent.authenticatedSection(
 
 @Composable
 private fun IComponent.profileDropdown(username: String, onClose: () -> Unit) {
+    val authStore = koinInject<AuthStore>()
+    val scope = rememberCoroutineScope()
+
     div(
         id = "nav-profile-dropdown",
         className = "absolute end-4 top-16 z-50 min-w-52 rounded-xl bg-surface border " +
@@ -237,6 +247,12 @@ private fun IComponent.profileDropdown(username: String, onClose: () -> Unit) {
             label = i18n.tr("Log Out"),
             className = "text-error hover:bg-error/10",
             onClose = onClose,
+            onClick = {
+                scope.launch {
+                    authStore.logout()
+                    Router.navigate(ROUTE_SIGN_IN)
+                }
+            },
         )
     }
 
@@ -264,6 +280,7 @@ private fun IComponent.dropdownItem(
     label: String,
     className: String = "text-on-surface hover:bg-surface-variant",
     onClose: () -> Unit,
+    onClick: () -> Unit = {},
 ) {
     div(
         id = id,
@@ -274,9 +291,15 @@ private fun IComponent.dropdownItem(
         tabindex(0)
         role(MENUITEM)
         +label
-        onClick { onClose() }
+        onClick {
+            onClick()
+            onClose()
+        }
         onKeydown { e ->
-            if (e.key == ENTER || e.key == " ") onClose()
+            if (e.key == ENTER || e.key == " ") {
+                onClick()
+                onClose()
+            }
             if (e.key == "Escape") onClose()
         }
     }
@@ -353,10 +376,15 @@ private fun IComponent.mobileDrawer(session: SessionState, canCreateExam: Boolea
                     onKeydown { e ->
                         if (e.key == ENTER || e.key == " ") {
                             e.preventDefault()
+                            Router.navigate(ROUTE_SIGN_IN)
                             onClose()
                         }
                     }
                     +i18n.tr("Sign In")
+                    onClick {
+                        Router.navigate(ROUTE_SIGN_IN)
+                        onClose()
+                    }
                 }
                 div(
                     id = "nav-mobile-sign-up",
@@ -368,10 +396,15 @@ private fun IComponent.mobileDrawer(session: SessionState, canCreateExam: Boolea
                     onKeydown { e ->
                         if (e.key == ENTER || e.key == " ") {
                             e.preventDefault()
+                            Router.navigate(ROUTE_SIGN_UP)
                             onClose()
                         }
                     }
                     +i18n.tr("Sign Up")
+                    onClick {
+                        Router.navigate(ROUTE_SIGN_UP)
+                        onClose()
+                    }
                 }
             }
         }
@@ -388,3 +421,5 @@ private const val W_5_H_0_5_BG_ON_SURFACE_ROUNDED_FULL_TRANSITION_ALL =
 private const val ENTER = "Enter"
 private const val BUTTON = "button"
 private const val MENUITEM = "menuitem"
+private const val ROUTE_SIGN_IN = "/sign-in"
+private const val ROUTE_SIGN_UP = "/sign-up"

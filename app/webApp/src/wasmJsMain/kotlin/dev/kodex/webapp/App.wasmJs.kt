@@ -12,3 +12,8 @@ actual fun bundlerHot(): Hot? = null
 private external fun checkDevMode(): Boolean
 
 actual fun isDev(): Boolean = checkDevMode()
+
+@JsFun("() => import.meta.env?.VITE_TURNSTILE_SITE_KEY ?? null")
+private external fun readTurnstileSiteKey(): String?
+
+actual fun turnstileSiteKeyFromEnv(): String? = readTurnstileSiteKey()

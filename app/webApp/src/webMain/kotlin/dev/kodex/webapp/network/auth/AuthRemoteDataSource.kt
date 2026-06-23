@@ -4,6 +4,7 @@ package dev.kodex.webapp.network.auth
 
 import dev.kodex.core.models.auth.AuthTokensResponse
 import dev.kodex.core.models.auth.LoginRequest
+import dev.kodex.core.models.auth.LoginResponse
 import dev.kodex.core.models.auth.RegisterRequest
 import dev.kodex.core.models.auth.TotpChallengeResponse
 import dev.kodex.core.models.auth.TotpLoginRequest
@@ -11,8 +12,9 @@ import dev.kodex.core.models.auth.UsernameAvailabilityResponse
 
 interface AuthRemoteDataSource {
     suspend fun register(request: RegisterRequest): AuthTokensResponse
-    suspend fun verifyEmail(token: String)
-    suspend fun login(request: LoginRequest): AuthTokensResponse
+    suspend fun verifyEmail(token: String): AuthTokensResponse
+    suspend fun resendVerification(email: String)
+    suspend fun login(request: LoginRequest): LoginResponse
     suspend fun totpLogin(request: TotpLoginRequest): AuthTokensResponse
     suspend fun logout()
     suspend fun refresh(): AuthTokensResponse

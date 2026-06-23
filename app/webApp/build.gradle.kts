@@ -91,6 +91,8 @@ kotlin {
             implementation(libs.kotlinx.browser)
 
             implementation(npm("@zxcvbn-ts/core", libs.versions.zxcvbn.ts.get()))
+            implementation(npm("@zxcvbn-ts/language-common", libs.versions.zxcvbn.ts.get()))
+            implementation(npm("@zxcvbn-ts/language-en", libs.versions.zxcvbn.ts.get()))
             implementation(npm("@fontsource-variable/inter-tight", libs.versions.fontsource.get()))
             implementation(npm("@fontsource-variable/vazirmatn", libs.versions.fontsource.get()))
             implementation(npm("@fontsource-variable/jetbrains-mono", libs.versions.fontsource.get()))
